@@ -1,0 +1,23 @@
+{% for r in results %}
+<div class="row">
+	<p class="lead">{{ r.title }}</p>
+</div>
+		{% if r.urls %}
+		{% for u in r.urls %}
+			<div class="row">
+			<label class='checkbox alert alert-warning' id='{{ u.short }}_label'>
+					<input type='checkbox' name='url' value='{{ u.uri }}' id='{{ u.short }}_checkbox'>
+					<a target="_new" href="{{ u.uri }}"><i class="icon-globe"></i></a>&nbsp;<a target="_new" href='{{ u.show }}'>{{ u.show }}</a> 
+			</label>
+			<script type="text/javascript">
+					$("#{{ u.short }}_checkbox").click(function(){  
+							$("#{{ u.short }}_label").toggleClass('alert-warning');
+					        $("#{{ u.short }}_label").toggleClass('alert-success');
+					    });
+			</script>
+			</div>
+		{% endfor %}
+		{% else %}
+			<div class="row"><p>No links found to {{ r.title }}</p></div>
+		{% endif %}
+{% endfor %}

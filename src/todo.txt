@@ -1,0 +1,8 @@
+# TODO
+
+## CrossRef
+
+Connect to the CrossRef API
+
+Inverse lookup of DOI example:
+http://crossref.org/sigg/sigg/FindWorks?format=json&access=rinke.hoekstra@vu.nl&op=OR&expession=Ciccarese%2C%20P.%2C%20et%20al.%3A%20An%20open%20annotation%20ontology%20for%20science%20on%20web%203.0.%20Journal%20of%20biomedical%20semantics%20%282011%29&version=1

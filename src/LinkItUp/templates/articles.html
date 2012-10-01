@@ -1,0 +1,116 @@
+{% extends "dashboard.html" %}
+<!-- <div width='300px'>
+	{{ raw }}
+</div> -->
+
+
+
+{% block dbcontent %}
+		<h3>Articles</h3>
+	{% for i in results.items %}
+		<form method='POST' action='process/{{ i.article_id }}'>
+		{% csrf_token %}
+		<div class="row well">
+			<div class="span9">
+				<strong>{{ i.title }}</strong> <small>(<em>{{ i.status }}</em>, {{ i.published_date }})</small><br/>
+				<a href="{{i.doi}}">{{i.doi}}</a> 
+			</div>
+			<div class="span2">
+				<a class='btn btn-small btn-block btn-primary' id="link_{{ i.article_id }}">Find links</a>
+				<input type='submit' name='task' value='Download RDF' class='btn btn-small btn-block' id="rdf_{{ i.article_id }}"/>
+				<input type='submit' name='task' value='Add to Figshare' class='btn btn-small btn-block' id="figshare_{{ i.article_id }}"/>
+			</div>
+		</div>	
+		<div class="row">
+			<div class="span6">
+				<div class="row">
+					<div class="span1"><strong>files</strong></div>
+					<div class="span5">
+						<ul class="unstyled">
+						{% for f in i.files %}
+							<li><i class='icon-file'></i> {{ f.name }}</li>
+						{% endfor %}
+						</ul>
+					</div>
+				</div>
+				{% if i.authors %}
+				<div class="row">
+					<div class="span1"><strong>authors</strong></div>
+					<div class="span5">
+						<ul class="unstyled">
+						{% for a in i.authors %}
+							<li><i class='icon-user'></i> {{ a.full_name }}</li>
+						{% endfor %}
+						</ul>
+					</div>
+				</div>
+				{% endif %}
+				{% if i.tags %}
+				<div class="row">
+					<div class="span1"><strong>tags</strong></div>
+					<div class="span5">
+						<ul class="unstyled">
+						{% for t in i.tags %}
+							<li><i class='icon-tag'></i> {{ t.name }}</li>
+						{% endfor %}
+						</ul>
+					</div>
+				</div>
+				{% endif %}
+				{% if i.links %}
+				<div class="row">
+					<div class="span1"><strong>links</strong></div>
+					<div class="span5">
+						<ul class="unstyled">
+							{% for l in i.links %}
+								{% if l.link|length > 51 %}
+									<li><i class='icon-share-alt'></i> <a href="{{ l.link }}">{{ l.link|slice:":24" }}... {{ l.link|slice:"-24:" }}</a></li>
+								{% else %}
+									<li><i class='icon-share-alt'></i> <a href="{{ l.link }}">{{ l.link }}</a></li>
+								{% endif %}
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+				{% endif %}
+				{% if i.categories %}
+				<div class="row">
+					<div class="span1"><strong>categories</strong></div>
+					<div class="span5">
+						<ul class="unstyled">
+							{% for c in i.categories %}
+							<li><i class='icon-th-list'></i> {{ c.name }}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+				{% endif %}
+			</div>
+			<div class="span6">
+				<div id="result_{{ i.article_id }}">
+			
+				<script type="text/javascript">
+					$.ajaxSetup ({  
+					        cache: false  
+					    });
+					var ajax_load = "Loading links from DBPedia...";
+					var loadUrl_{{ i.article_id }} = "/linkup/{{ i.article_id }}";
+					$("#link_{{ i.article_id }}").click(function(){  
+					        $("#result_{{ i.article_id }}").html(ajax_load).load(loadUrl_{{ i.article_id }});  
+					    });
+				</script>
+				</div>
+			</div>
+		</div>
+	</form>
+		
+	{% endfor %}
+
+	
+	<!-- <ul>
+	{% for u in urls %}
+		<li>{{ u }}</li>
+	{% endfor %}
+	</ul> -->
+
+{% endblock %}
