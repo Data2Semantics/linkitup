@@ -1,3 +1,6 @@
 .project
 .pydevproject
 *.pyc
+*.ipynb
+.settings
+.*

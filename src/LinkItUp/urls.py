@@ -13,6 +13,11 @@ urlpatterns = patterns('',
     url(r'^clear$', 'LinkItUp.views.clear', name='clear'),
     url(r'^linkup/(?P<article_id>\d+)$', 'LinkItUp.views.linkup', name='linkup'),
     url(r'^process/(?P<article_id>\d+)$', 'LinkItUp.views.process', name='process'),
+    
+    url(r'^dbpedia/(?P<article_id>\d+)$', 'LinkItUp.dbpedia.plugin.linkup', name='dbpedia'),
+    url(r'^dblp/(?P<article_id>\d+)$', 'LinkItUp.dblp.plugin.linkup', name='dblp'),
+    url(r'^crossref/(?P<article_id>\d+)$', 'LinkItUp.crossref.plugin.linkup', name='crossref'),
+    
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 

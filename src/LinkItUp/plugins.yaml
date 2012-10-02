@@ -1,0 +1,12 @@
+dbpedia.plugin:
+  name: DBPedia
+  slug: dbpedia
+  logo: static/img/wikipedia.png
+dblp.plugin:
+  name: DBLP 
+  slug: dblp 
+  logo: static/img/dblp.png
+crossref.plugin:
+  name: CrossRef
+  slug: crossref
+  logo: static/img/crossref.png

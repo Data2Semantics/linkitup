@@ -16,7 +16,10 @@
 				<a href="{{i.doi}}">{{i.doi}}</a> 
 			</div>
 			<div class="span2">
-				<a class='btn btn-small btn-block btn-primary' id="link_{{ i.article_id }}">Find links</a>
+				<!-- <a class='btn btn-small btn-block btn-primary' id="link_{{ i.article_id }}">Find links</a> -->
+				{% for plugin in plugins %}
+					{% include "button.html" %}
+				{% endfor %}
 				<input type='submit' name='task' value='Download RDF' class='btn btn-small btn-block' id="rdf_{{ i.article_id }}"/>
 				<input type='submit' name='task' value='Add to Figshare' class='btn btn-small btn-block' id="figshare_{{ i.article_id }}"/>
 			</div>
@@ -87,19 +90,11 @@
 				{% endif %}
 			</div>
 			<div class="span6">
-				<div id="result_{{ i.article_id }}">
+				{% for plugin in plugins %}
+					{% include "results.html" %}
+				{% endfor %}
 			
-				<script type="text/javascript">
-					$.ajaxSetup ({  
-					        cache: false  
-					    });
-					var ajax_load = "Loading links from DBPedia...";
-					var loadUrl_{{ i.article_id }} = "/linkup/{{ i.article_id }}";
-					$("#link_{{ i.article_id }}").click(function(){  
-					        $("#result_{{ i.article_id }}").html(ajax_load).load(loadUrl_{{ i.article_id }});  
-					    });
-				</script>
-				</div>
+
 			</div>
 		</div>
 	</form>
