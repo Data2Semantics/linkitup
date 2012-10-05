@@ -17,6 +17,9 @@ urlpatterns = patterns('',
     url(r'^dbpedia/(?P<article_id>\d+)$', 'LinkItUp.dbpedia.plugin.linkup', name='dbpedia'),
     url(r'^dblp/(?P<article_id>\d+)$', 'LinkItUp.dblp.plugin.linkup', name='dblp'),
     url(r'^crossref/(?P<article_id>\d+)$', 'LinkItUp.crossref.plugin.linkup', name='crossref'),
+    url(r'^crossref/upload/(?P<article_id>\d+)/(?P<file_id>\d+)$', 'LinkItUp.crossref.plugin.upload', name='upload'),
+    url(r'^crossref/extract/(?P<article_id>\d+)/(?P<file_id>\d+)$', 'LinkItUp.crossref.plugin.extract', name='extract'),
+    url(r'^crossref/match$', 'LinkItUp.crossref.plugin.match', name='match'),
     
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

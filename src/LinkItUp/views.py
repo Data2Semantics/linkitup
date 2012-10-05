@@ -70,7 +70,7 @@ def index(request):
         
         map(__import__, plugins.keys())
         
-#        print results
+        print results
         
         return render_to_response('articles.html',{'raw': str(results),'results': results, 'plugins': plugins.values()},context_instance=RequestContext(request))
         

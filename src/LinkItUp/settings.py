@@ -139,6 +139,11 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+FILE_UPLOAD_HANDLERS = (
+    # "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",)
+
+
 # Should users be created when new OpenIDs are used to log in?
 # OPENID_CREATE_USERS = True
 

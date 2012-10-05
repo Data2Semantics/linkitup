@@ -10,18 +10,22 @@
 	{% for i in results.items %}
 		<form method='POST' action='process/{{ i.article_id }}'>
 		{% csrf_token %}
-		<div class="row well">
-			<div class="span9">
-				<strong>{{ i.title }}</strong> <small>(<em>{{ i.status }}</em>, {{ i.published_date }})</small><br/>
-				<a href="{{i.doi}}">{{i.doi}}</a> 
+		<div class="row">
+			<div class="span8">
+				<div class="well">
+					<strong>{{ i.title }}</strong> <small>(<em>{{ i.status }}</em>, {{ i.published_date }})</small><br/>
+					<a href="{{i.doi}}">{{i.doi}}</a> 
+				</div>
+			</div>
+			<div class="span2">
+				<input type='submit' name='task' value='Download RDF' class='btn btn-small btn-block' id="rdf_{{ i.article_id }}"/>
+				<input type='submit' name='task' value='Add to Figshare' class='btn btn-small btn-block' id="figshare_{{ i.article_id }}"/>
 			</div>
 			<div class="span2">
 				<!-- <a class='btn btn-small btn-block btn-primary' id="link_{{ i.article_id }}">Find links</a> -->
 				{% for plugin in plugins %}
 					{% include "button.html" %}
 				{% endfor %}
-				<input type='submit' name='task' value='Download RDF' class='btn btn-small btn-block' id="rdf_{{ i.article_id }}"/>
-				<input type='submit' name='task' value='Add to Figshare' class='btn btn-small btn-block' id="figshare_{{ i.article_id }}"/>
 			</div>
 		</div>	
 		<div class="row">

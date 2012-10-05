@@ -1,0 +1,13 @@
+{% for r in references %}
+	<p class='text-info small' id='{{ file_id }}_{{ r.id }}'><i class='icon-list'></i>&nbsp;{{ r.text }}</p>
+	<div id='{{ file_id }}_{{ r.id }}_results'></div>
+	
+		<script type="text/javascript">
+ 			$("#{{ file_id }}_{{ r.id }}").click(function(){  
+				$("#{{ file_id }}_{{ r.id }}_results").html('Matching reference #{{ r.id }}');
+				$.get('/crossref/match', { text : "{{ r.text }}" }, function(data) {
+						$("#{{ file_id }}_{{ r.id }}_results").html(data);
+					});
+			    });
+		</script>
+{% endfor %}
