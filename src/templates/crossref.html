@@ -1,13 +1,8 @@
 {% for f in files %}
-<div class="row">
-	<p class="lead">{{ title }}</p>
-	<div class='alert alert-warning'>Due to limitations of the Figshare API, LinkItUp cannot download files directly from Figshare. If you want to run a file through CrossRef, please download the file (by clicking the link), and upload it using the file upload form</div>
-</div>
-<div class="row">
+<div class='alert alert-warning'>Due to limitations of the Figshare API, LinkItUp cannot download files directly from Figshare. If you want to run a file through CrossRef, please download the file (by clicking the link), and upload it using the file upload form</div>
 	<label class='checkbox' id='{{ f.id }}_label'> <i
 		class='icon-file'></i>&nbsp;<a target="_new"
-		href='http://figshare.com/account/media/view?dw=1&file={{ f.id }}.pdf'>{{
-			f.name }}</a>
+		href='http://figshare.com/account/media/view?dw=1&file={{ f.id }}.pdf'>{{ f.name }}</a>
 		<div id='{{ f.id }}_progress' class="progress progress-striped active">
 			<div id='{{ f.id }}_bar' class='bar' style='width: 10%;'>Test</div>
 		</div>
@@ -15,10 +10,11 @@
 			<input id="fileupload" type="file" name="files[]"
 				data-url="crossref/upload/{{ article_id }}/{{ f.id }}" multiple>
 		</div>
-		<div id='{{ f.id }}_results'></div> <script
-			src="static/js/vendor/jquery.ui.widget.js"></script> <script
-			src="static/js/jquery.iframe-transport.js"></script> <script
-			src="static/js/jquery.fileupload.js"></script> <script>
+		<div id='{{ f.id }}_results'></div> 
+		<script src="static/js/vendor/jquery.ui.widget.js"></script> 
+		<script src="static/js/jquery.iframe-transport.js"></script> 
+		<script src="static/js/jquery.fileupload.js"></script> 
+		<script>
 			$(function () {
 				$('#{{ f.id }}_progress').hide();
 			    $('#fileupload').fileupload({
@@ -44,9 +40,9 @@
 			        } 
 			    });
 			});
-			</script>
+		</script>
 	</label>
-</div>
+
 {% endfor %}
 
 

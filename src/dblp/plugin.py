@@ -65,12 +65,13 @@ def linkup(request, article_id):
                                 show = match_uri[:29] + "..." + match_uri[-29:]
                             else :
                                 show = match_uri
-                            authors.append({'uri': match_uri, 'web': match_uri, 'show': show, 'short': short, 'original': a_qname})
+                            authors.append({'type': 'mapping', 'uri': match_uri, 'web': match_uri, 'show': show, 'short': short, 'original': a_qname})
                     except :
                         return render_to_response('message.html',{'type': 'error', 'text':"DBLP endpoint {} produced unintelligible results. Maybe it's down?".format(sparql)})
             
             
-    request.session[article_id] = authors
+    request.session.setdefault(article_id,[]).extend(authors)
+    request.session.modified = True
     
     if authors == [] :
         authors = None

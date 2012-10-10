@@ -6,30 +6,31 @@
 
 
 {% block dbcontent %}
-		<h3>Articles</h3>
+		<div class="row">
+			<div class="offset2 span8">
+				<h3>Articles</h3>
+			</div>
+		</div>
+		
 	{% for i in results.items %}
 		<form method='POST' action='process/{{ i.article_id }}'>
 		{% csrf_token %}
+
 		<div class="row">
-			<div class="span8">
-				<div class="well">
+			<div class="offset2 span8">
+	 			<div class="well" id="{{ i.article_id }}_title">
 					<strong>{{ i.title }}</strong> <small>(<em>{{ i.status }}</em>, {{ i.published_date }})</small><br/>
 					<a href="{{i.doi}}">{{i.doi}}</a> 
-				</div>
+ 				</div>
 			</div>
-			<div class="span2">
-				<input type='submit' name='task' value='Download RDF' class='btn btn-small btn-block' id="rdf_{{ i.article_id }}"/>
-				<input type='submit' name='task' value='Add to Figshare' class='btn btn-small btn-block' id="figshare_{{ i.article_id }}"/>
-			</div>
-			<div class="span2">
-				<!-- <a class='btn btn-small btn-block btn-primary' id="link_{{ i.article_id }}">Find links</a> -->
-				{% for plugin in plugins %}
-					{% include "button.html" %}
-				{% endfor %}
-			</div>
-		</div>	
+		</div>
+		
+
+		
+		<div id="{{ i.article_id }}_details" style="margin-top: 1em;">
 		<div class="row">
-			<div class="span6">
+			<div class="offset2 span6">
+				
 				<div class="row">
 					<div class="span1"><strong>files</strong></div>
 					<div class="span5">
@@ -93,16 +94,33 @@
 				</div>
 				{% endif %}
 			</div>
-			<div class="span6">
+			<div class="span2">
+				{% for plugin in plugins %}
+					{% include "button.html" %}
+				{% endfor %}
+				<br/>
+				<input type='submit' name='task' value='Download RDF' class='btn btn-block' id="rdf_{{ i.article_id }}"/>
+				<input type='submit' name='task' value='Add to Figshare' class='btn btn-primary btn-block' id="figshare_{{ i.article_id }}"/>
+			</div>			
+		</div>
+		<div class="row">
+			<div class="offset2 span8">
+				<hr/>
+			</div>
+		</div>
+		</div>
 				{% for plugin in plugins %}
 					{% include "results.html" %}
 				{% endfor %}
-			
 
-			</div>
-		</div>
 	</form>
+			<script>
+			$("#{{ i.article_id }}_details").hide();
+			$("#{{ i.article_id }}_title").click(function(){
+					$("#{{ i.article_id }}_details").toggle('');
+			})
 		
+		</script>
 	{% endfor %}
 
 	

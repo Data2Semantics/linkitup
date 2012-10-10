@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     url(r'^crossref/(?P<article_id>\d+)$', 'crossref.plugin.linkup', name='crossref'),
     url(r'^crossref/upload/(?P<article_id>\d+)/(?P<file_id>\d+)$', 'crossref.plugin.upload', name='upload'),
     url(r'^crossref/extract/(?P<article_id>\d+)/(?P<file_id>\d+)$', 'crossref.plugin.extract', name='extract'),
-    url(r'^crossref/match$', 'crossref.plugin.match', name='match'),
+    url(r'^crossref/match/(?P<article_id>\d+)/(?P<file_id>\d+)$', 'crossref.plugin.match', name='match'),
     
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

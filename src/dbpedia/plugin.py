@@ -82,12 +82,13 @@ def linkup(request, article_id):
                     else :
                         show = wikipedia_uri
                     
-                    urls.append({'uri': match_uri, 'web': wikipedia_uri, 'show': show, 'short': short, 'original': t_qname})
+                    urls.append({'type': 'mapping', 'uri': match_uri, 'web': wikipedia_uri, 'show': show, 'short': short, 'original': t_qname})
                     
 
     
     
-    request.session[article_id] = urls
+    request.session.setdefault(article_id,[]).extend(urls)
+    request.session.modified = True
     
     if urls == [] :
         urls = None 

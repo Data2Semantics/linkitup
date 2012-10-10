@@ -7,6 +7,8 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 import json
 import subprocess
+import requests
+import urllib
 import xml.etree.ElementTree as et
 
 def linkup(request, article_id):
@@ -69,10 +71,43 @@ def extract(request, article_id, file_id):
         
     return render_to_response('references.html',{'article_id': article_id, 'file_id': file_id, 'references': references})
 
-def match(request):
+def match(request, article_id, file_id):
     # CrossRef search http://crossref.org/sigg/sigg/FindWorks?version=1&access=API_KEY&format=json&op=OR&expression=allen+renear
-    print request.GET['text']
+    text = urllib.unquote(request.GET['text'])
     
-    return HttpResponse('blaa');
+#    print "===Text===\n", text
+    
+    data = {'version': 1,
+            'access': 'API_KEY',
+            'format': 'json',
+            'op': 'OR',
+            'expression': text
+            }
+    
+    r = requests.get('http://crossref.org/sigg/sigg/FindWorks', params=data)
+    
+    results = json.loads(r.text)
+    
+#    print "===Results===\n", results
+    
+    urls = []
+    for r in results[0:3]:
+        # print r['fullCitation']
+        uri = 'http://dx.doi.org/{}'.format(r['doi'])
+        
+        short = r['doi'].replace('./','__')
+        
+        
+        urls.append({'type': 'reference', 'uri': uri, 'web': uri, 'show': r['fullCitation'], 'short': short, 'original': 'FS{}'.format(file_id)})
+    
+    
+    request.session.setdefault(article_id,[]).extend(urls)
+    request.session.modified = True
+    
+    if urls == []:
+        urls = None
+    
+    # print urls
+    return render_to_response('crossref_urls.html',{'urls': urls})
     
     
