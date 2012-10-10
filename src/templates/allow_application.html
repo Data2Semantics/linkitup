@@ -1,9 +1,13 @@
 {% extends "index.html" %}
 
 {% block content %}
-		<div class="page-header">
-			<img id='logo' src='static/img/logo-no-text-150dpi.png' style="float:left; width: 90px; margin-top: -15px; margin-left: -5px;"/>
-  			<h1>LinkItUp <small>Authorization</small></h1>
+		<div class="row">
+			<div class="span12">
+				<div class="page-header">
+					<img id='logo' src='static/img/linkitup-logo-150dpi.png' style="float:left; height:80px; margin-top: -15px; margin-left: -15px; margin-right: 15px;"/>
+		  			<h1 style="padding-top:12px;"><small>Authorization</small></h1>
+				</div>			
+			</div>
 		</div>
 		<div class='row'>
 			<div class='span6 offset3 alert alert-information'>
@@ -18,4 +22,11 @@
 				</form>
 			</div>
 		</div>
+		<div class="row">
+			<div class="span12">
+				<hr/>
+				<img src="static/img/logo-no-text-150dpi.png" style="height: 80px; margin-top:-10px;">The <span style="font-family: 'Open Sans';"><strong>linki</strong>tup</span> service was developed by the <a href="http://www.data2semantics.org">Data2Semantics</a> project.
+			</div>
+		</div>
+	
 {% endblock %}
