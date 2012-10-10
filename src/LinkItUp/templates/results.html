@@ -1,0 +1,13 @@
+				<div id="{{ plugin.slug }}_result_{{ i.article_id }}">
+			
+				<script type="text/javascript">
+					$.ajaxSetup ({  
+					        cache: false  
+					    });
+					var {{ plugin.slug }}_ajax_load = "Loading links from {{ plugin.name }}...";
+					var {{ plugin.slug }}_loadUrl_{{ i.article_id }} = "/{{ plugin.slug }}/{{ i.article_id }}";
+					$("#{{ plugin.slug }}_link_{{ i.article_id }}").click(function(){  
+					        $("#{{ plugin.slug }}_result_{{ i.article_id }}").html({{ plugin.slug }}_ajax_load).load({{ plugin.slug }}_loadUrl_{{ i.article_id }});  
+					    });
+				</script>
+				</div>

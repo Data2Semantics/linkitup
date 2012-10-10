@@ -11,13 +11,12 @@ import requests
 from oauth_hook import OAuthHook
 from urlparse import parse_qs
 import json
-from models import User
-from SPARQLWrapper import SPARQLWrapper, JSON
 from rdflib import ConjunctiveGraph, Namespace, URIRef, Literal, BNode
 from rdflib.namespace import RDF, RDFS, SKOS, OWL
 import re
 import urllib
 from datetime import datetime
+import yaml
 
 
 
@@ -50,7 +49,7 @@ def index(request):
     else :
         oauth_token = request.session.get('oauth_token')
         oauth_token_secret = request.session.get('oauth_token_secret')
-        xoauth_figshare_id = request.session.get('xoauth_figshare_id')
+#        xoauth_figshare_id = request.session.get('xoauth_figshare_id')
         
         oauth_hook = OAuthHook(oauth_token, oauth_token_secret, header_auth=True)
 
@@ -59,155 +58,23 @@ def index(request):
         response = client.get('http://api.figshare.com/v1/my_data/articles')
         results = json.loads(response.content)
         
+        
+        r = client.get('http://api.figshare.com/v1/my_data/articles/95965/files/99919')
+        print r.content
+        
         request.session['items'] = results['items']
         
-        # print results
+        print "Loading plugins"
+        plugins = yaml.load(open('plugins.yaml','r'))
+#        print plugins
         
-        return render_to_response('articles.html',{'raw': str(results),'results': results},context_instance=RequestContext(request))
+        map(__import__, plugins.keys())
+        
+        print results
+        
+        return render_to_response('articles.html',{'raw': str(results),'results': results, 'plugins': plugins.values()},context_instance=RequestContext(request))
         
         
-def linkup(request, article_id):
-    # print article_id
-    items = request.session['items']
-    # print items
-    
-    sparql = SPARQLWrapper("http://dbpedia.org/sparql")
-    sparql.setReturnFormat(JSON)
-    
-    dblp = SPARQLWrapper("http://www4.wiwiss.fu-berlin.de/dblp/sparql")
-    dblp.setReturnFormat(JSON)
-    
-
-    
-    urls = []
-    authors = []
-
-    
-    for i in items :
-        # print i['article_id'], article_id
-        if str(i['article_id']) == str(article_id):
-            # print "{} is the id we were looking for".format(article_id)
-            
-            if len(i['authors']) > 0 :
-                # print "Checking for authors..."
-                
-                for author in i['authors'] :
-                    a_id = author['id']
-                    # print a_id
-                    a_label = author['full_name'].strip()
-                    # print a_label
-                    a_qname = 'FS{}'.format(a_id)
-                    # print a_qname
-                    
-                    q = """
-                        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-                        
-                        SELECT ?s 
-                        WHERE {
-                            ?s a foaf:Person .
-                            ?s foaf:name '"""+a_label+"""'.
-                        }
-                    """
-                    
-                    # print q
-                    
-                    dblp.setQuery(q)
-                    
-                    # print "query ran"
-    
-                    try :
-                        results = dblp.query().convert()
-    
-                        # print "DBLP done"
-                        for result in results["results"]["bindings"]:
-                            match_uri = result["s"]["value"]
-                            # print match_uri
-                            
-                            short = re.sub('\s','_',a_label)
-                            
-                            if len(match_uri) > 61 :
-                                show = match_uri[:29] + "..." + match_uri[-29:]
-                            else :
-                                show = match_uri
-                            authors.append({'uri': match_uri, 'web': match_uri, 'show': show, 'short': short, 'original': a_qname})
-                    except :
-                        print "DBLP endpoint {} produced unintelligible results. Maybe it's down?".format(dblp)
-            
-            
-            tags_and_categories = i['tags'] + i['categories']
-            for tag in tags_and_categories :
-                # print tag
-                
-                t_id = tag['id']
-                t_label = tag['name'].strip()
-                t_qname = 'FS{}'.format(t_id)
-
-                if t_label.lower().startswith('inchikey=') :
-                    t_match = re.findall('^.*?\=(.*)$',t_label)[0]
-                    # print t_match
-                    
-                    q = """
-                        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                        PREFIX dbpprop: <http://dbpedia.org/property/> 
-                        SELECT ?s
-                        WHERE { 
-                            ?s dbpprop:inchikey ?label .
-                            ?label bif:contains '\""""+t_match+"""\"' .
-                            FILTER (regex(str(?label), '^"""+t_match+"""$', 'i')).
-                            FILTER (regex(str(?s), '^http://dbpedia.org/resource')).
-                        	FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). 
-                        	FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')).
-                        	FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). 
-                        }
-                    """
-                else :
-                    t_match = t_label
-                    q = """
-                        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                        SELECT ?s
-                        WHERE { 
-                            ?s rdfs:label ?label .
-                            ?label bif:contains '\""""+t_match+"""\"' .
-                            FILTER (regex(str(?label), '^"""+t_match+"""$', 'i')).
-                            FILTER (regex(str(?s), '^http://dbpedia.org/resource')).
-                        	FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). 
-                        	FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')).
-                        	FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). 
-                        }
-                    """
-                sparql.setQuery(q)
-
-                results = sparql.query().convert()
-                # print "DBpedia done"
-                for result in results["results"]["bindings"]:
-                    match_uri = result["s"]["value"]
-                    # print match_uri
-                    
-                    wikipedia_uri = re.sub('dbpedia.org/resource','en.wikipedia.org/wiki',match_uri)
-                    
-                    short = re.sub('http://dbpedia.org/resource/','',match_uri)
-                    # print wikipedia_uri
-                    
-                    if len(wikipedia_uri) > 61 :
-                        show = wikipedia_uri[:29] + "..." + wikipedia_uri[-29:]
-                    else :
-                        show = wikipedia_uri
-                    
-                    urls.append({'uri': match_uri, 'web': wikipedia_uri, 'show': show, 'short': short, 'original': t_qname})
-                    
-
-    
-    
-    request.session[article_id] = urls + authors
-    
-    if urls == [] :
-        urls = None 
-    if authors == [] :
-        authors = None
-        
-    
-        
-    return render_to_response('urls.html',{'article_id': article_id, 'results':[{'title':'Wikipedia','urls': urls},{'title':'DBLP','urls': authors}]})
 
 
 def process(request, article_id):
@@ -336,12 +203,12 @@ def rdf(request, article_id):
                     g.add((FS[l_qname],SKOS.exactMatch,URIRef(l_match)))
                 
             # print "Processing files..."
-            for file in i['files'] :
-                # print file
-                f_id = file['id']
-                f_value = file['name']
-                f_mime = file['mime_type']
-                f_size = file['size']
+            for f in i['files'] :
+                # print f
+                f_id = f['id']
+                f_value = f['name']
+                f_mime = f['mime_type']
+                f_size = f['size']
                 f_qname = 'FS{}'.format(f_id)
                 
                 g.add((URIRef(doi),FSV['file'],FS[f_qname]))
@@ -386,7 +253,7 @@ def update(request, article_id):
     
     oauth_token = request.session.get('oauth_token')
     oauth_token_secret = request.session.get('oauth_token_secret')
-    xoauth_figshare_id = request.session.get('xoauth_figshare_id')
+#    xoauth_figshare_id = request.session.get('xoauth_figshare_id')
         
     oauth_hook = OAuthHook(oauth_token, oauth_token_secret, header_auth=True)
 
@@ -402,7 +269,7 @@ def update(request, article_id):
         
             response = client.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(article_id),
                                 data=json.dumps(body), headers=headers)
-            results = json.loads(response.content)
+#            results = json.loads(response.content)
             # print results
     
     body = {'tag_name': 'Enriched with LinkItUp'}
@@ -410,7 +277,7 @@ def update(request, article_id):
         
     response = client.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(article_id),
                                 data=json.dumps(body), headers=headers)
-    results = json.loads(response.content)
+#    results = json.loads(response.content)
     # print results
             
     return HttpResponseRedirect('/')

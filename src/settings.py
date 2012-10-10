@@ -101,7 +101,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'LinkItUp.urls'
 
 TEMPLATE_DIRS = (
-    "/Users/hoekstra/projects/data2semantics/linkitup/src/LinkItUp/templates",
+    "/Users/hoekstra/projects/LinkItUp/src/LinkItUp/templates",
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -111,7 +111,7 @@ STATIC_URL = "/static/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    "/Users/hoekstra/projects/data2semantics/linkitup/src/LinkItUp/static",
+    "/Users/hoekstra/projects/LinkItUp/src/LinkItUp/static",
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -138,6 +138,11 @@ AUTHENTICATION_BACKENDS = (
     # 'django_openid_auth.auth.OpenIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
+
+FILE_UPLOAD_HANDLERS = (
+    # "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",)
+
 
 # Should users be created when new OpenIDs are used to log in?
 # OPENID_CREATE_USERS = True
