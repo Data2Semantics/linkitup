@@ -11,7 +11,7 @@
 		</div>
 		<div class='row'>
 			<div class='span6 offset3 alert alert-information'>
-				<form method='POST' action='/pin' class='form-inline'>
+				<form method='POST' action='pin' class='form-inline'>
 					{% csrf_token %}
 					<legend>Please enter your PIN</legend>
 					<span class='help-block'>Please <a target="_new" href="{{ authorize_url }}">go to Figshare</a> and allow LinkItUp to access and modify your Figshare articles.</span>
