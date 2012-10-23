@@ -3,7 +3,7 @@
 		{% for u in r.urls %}
 			<label class='checkbox alert alert-warning' id='{{ u.short }}_label'>
 					<input type='checkbox' name='url' value='{{ u.uri }}' id='{{ u.short }}_checkbox'>
-					<a target="_new" href="{{ u.uri }}"><i class="icon-globe"></i></a>&nbsp;<a target="_new" href='{{ u.show }}'>{{ u.show }}</a> 
+					<a target="_new" href="{{ u.uri }}"><i class="icon-globe"></i></a>&nbsp;<a target="_new" href='{{ u.web }}'>{{ u.show }}</a> 
 			</label>
 			<script type="text/javascript">
 					$("#{{ u.short }}_checkbox").click(function(){  
