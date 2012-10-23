@@ -101,8 +101,8 @@ Corresponding LDR URIs are added to the RDF representation via `skos:exactMatch`
 * Django 1.3
 * [RDFLib](https://github.com/RDFLib/rdflib)
 * SPARQLWrapper
-* Requests
-* OAuth
+* requests
+* requests-oauth
 * PyYAML
 * Optional:
 	* Linkitup includes its own reference extraction functionality, but this may perform sub-optimally for non-standard PDF layouts. You could try using [pdf-extract](https://github.com/CrossRef/pdfextract) instead (the code for calling pdf-extract is ready to use)
