@@ -71,8 +71,6 @@ def index(request):
         
         return render_to_response('articles.html',{'raw': str(results),'results': results, 'plugins': plugins.values()},context_instance=RequestContext(request))
         
-        
-
 
 def process(request, article_id):
     if request.POST['task'] == "Download RDF" :

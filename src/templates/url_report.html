@@ -1,0 +1,11 @@
+{% for r in results %}
+		{% if r.urls %}
+		{% for u in r.urls %}
+			<label class='alert alert-info' id='{{ u.short }}_label'>
+					<a target="_new" href="{{ u.uri }}"><i class="icon-globe"></i></a>&nbsp;<a target="_new" href='{{ u.web }}'>{{ u.show }}</a> 
+			</label>
+		{% endfor %}
+		{% else %}
+			<p>No links found to {{ r.title }}</p>
+		{% endif %}
+{% endfor %}

@@ -10,3 +10,7 @@ crossref.plugin:
   name: CrossRef
   slug: crossref
   logo: static/img/crossref.png
+ldr.plugin:
+  name: Linked Data Repository
+  slug: ldr
+  logo: static/img/ldr.png
