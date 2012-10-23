@@ -84,6 +84,15 @@ Users are presented with a list of three matches per reference. They can select 
 
 The selected DOI URIs are added to the RDF representation using `act:references` links from the Figshare DOI URI.
 
+### Linked Data Repository
+
+The LDR plugin takes all *tags* from a Figshare publication, and does a literal string match to concepts in the Elsevier Linked Data Repository. Currently this repository only contains a vocabulary of funding agencies.
+
+Users are presented with a list of LDR concepts that match the tags of their publication. They can select the matches they feel are appropriate, and add them as *links* to the Figshare repository.
+
+Corresponding LDR URIs are added to the RDF representation via `skos:exactMatch` properties to the related tag.
+
+
 ## Requirements
 
 **Linki**tup uses the following libraries:
@@ -92,5 +101,8 @@ The selected DOI URIs are added to the RDF representation using `act:references`
 * Django 1.3
 * [RDFLib](https://github.com/RDFLib/rdflib)
 * SPARQLWrapper
+* Requests
+* OAuth
+* PyYAML
 * Optional:
 	* Linkitup includes its own reference extraction functionality, but this may perform sub-optimally for non-standard PDF layouts. You could try using [pdf-extract](https://github.com/CrossRef/pdfextract) instead (the code for calling pdf-extract is ready to use)
