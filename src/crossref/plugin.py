@@ -10,6 +10,8 @@ import subprocess
 import requests
 import urllib
 import xml.etree.ElementTree as et
+from extract import extract_references
+import re
 
 def linkup(request, article_id):
     items = request.session.get('items',[])
@@ -59,15 +61,21 @@ def extract(request, article_id, file_id):
 
     tempfile = request.session['files'][file_id]
     print 'extract: files_file_id (tempfile)', tempfile
-    output = subprocess.check_output(['pdf-extract','extract','--references',tempfile])
-    print output
     
-    root = et.fromstring(output)
-    
-    references = []
-    
-    for child in root :
-        references.append({'id': child.attrib['order'], 'text': child.text})
+#### THE CODE BELOW IS FOR USE WITH CROSSREF PDF-EXTRACT (If you manage to get it running on your system)
+#    output = subprocess.check_output(['pdf-extract','extract','--references',tempfile])
+#    print output
+#    
+#    root = et.fromstring(output)
+#    
+#    references = []
+#    
+#    for child in root :
+#        references.append({'id': child.attrib['order'], 'text': child.text})
+####
+
+    # Use the custom reference extraction function from the bundled extract.py script
+    references = extract_references(tempfile)
         
     return render_to_response('references.html',{'article_id': article_id, 'file_id': file_id, 'references': references})
 
@@ -95,7 +103,7 @@ def match(request, article_id, file_id):
         # print r['fullCitation']
         uri = 'http://dx.doi.org/{}'.format(r['doi'])
         
-        short = r['doi'].replace('./','__')
+        short = re.sub('\.|/','_',r['doi'])
         
         
         urls.append({'type': 'reference', 'uri': uri, 'web': uri, 'show': r['fullCitation'], 'short': short, 'original': 'FS{}'.format(file_id)})

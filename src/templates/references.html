@@ -4,7 +4,12 @@
 	
 		<script>
  			$("#{{ file_id }}_{{ r.id }}").click(function(){  
-				$("#{{ file_id }}_{{ r.id }}_results").html('Matching text #{{ r.id }}');
+ 				var html = "<div class='progress progress-striped active'>" +
+						   "<div class='bar' style='width: 100%;'>Matching reference text #{{ r.id }}</div> " +
+						   "</div>";
+ 				
+ 				
+				$("#{{ file_id }}_{{ r.id }}_results").html(html);
 				var rtext = escape("{{ r.text|escapejs }}");
 				$.get("/crossref/match/{{ article_id }}/{{ file_id }}", { text: rtext },
 						   function(data){
