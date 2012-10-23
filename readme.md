@@ -1,9 +1,11 @@
 ![linkitup](https://raw.github.com/Data2Semantics/linkitup/master/src/static/img/linkitup-logo-72dpi.png) 
 
-=**Author**=
+<!--=**Author**=
 	Rinke Hoekstra
 =**Date**=
 	2012-10-15
+=**URL**=
+	[http://github.com/Data2Semantics/linkitup](https://github.com/Data2Semantics/linkitup/commit/21eb445d7d2da2b935de5219e4625b518900d121)-->
 
 ## About
 **Linki**tup is a Web-based dashboard for **enrichment** of research output published via the [Figshare.com](http://figshare.com) repository service. 
