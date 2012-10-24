@@ -4,6 +4,12 @@
 			<label class='checkbox alert alert-warning' id='{{ u.short }}_label'>
 					<input type='checkbox' name='url' value='{{ u.uri }}' id='{{ u.short }}_checkbox'>
 					<a target="_new" href="{{ u.uri }}"><i class="icon-globe"></i></a>&nbsp;<a target="_new" href='{{ u.web }}'>{{ u.show }}</a> 
+					{% if u.extra %}
+					({{ u.extra }})
+					{% endif %}
+					{% if u.subscript %}
+					<small style='float:right;'>{{ u.subscript }}</small>
+					{% endif %}
 			</label>
 			<script type="text/javascript">
 					$("#{{ u.short }}_checkbox").click(function(){  

@@ -17,6 +17,7 @@ import re
 import urllib
 from datetime import datetime
 import yaml
+from pprint import pprint
 
 
 
@@ -60,6 +61,8 @@ def index(request):
         
         
         request.session['items'] = results['items']
+        
+#        pprint(request.session['items'])
         
         print "Loading plugins"
         plugins = yaml.load(open('plugins.yaml','r'))

@@ -14,3 +14,7 @@ ldr.plugin:
   name: Linked Data Repository
   slug: ldr
   logo: static/img/ldr.png
+orcid.plugin:
+  name: ORCID
+  slug: orcid
+  logo: static/img/orcid.png
