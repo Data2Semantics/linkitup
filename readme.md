@@ -12,7 +12,7 @@
 
 **Linki**tup currently does two things:
 
-* it takes metadata entered through [Figshare.com](http://figshare.com) and tries to find equivalent terms, categories, persons or entities on the Linked Data cloud.
+* it takes metadata entered through [Figshare.com](http://figshare.com) and tries to find equivalent terms, categories, persons or entities on the Linked Data cloud and several Web 2.0 services.
 * it extracts references from publications in [Figshare.com](http://figshare.com), and tries to find the corresponding [Digital Object Identifier](http://doi.org) (DOI).
 
 **Linki**tup is developed within the COMMIT [Data2Semantics](http://www.data2semantics.org) project, a research project that develops technology for adding semantics to research data.  
@@ -92,17 +92,25 @@ Users are presented with a list of LDR concepts that match the tags of their pub
 
 Corresponding LDR URIs are added to the RDF representation via `skos:exactMatch` properties to the related tag.
 
+### ORCID
+
+The ORCID plugin takes all *authors* from a Figshare publication, and does a search for these authors using the ORCID search API.
+
+Users are presented with a list of potential matches. They can select the matches they feel are appropriate, and add them as *links* to the Figshare repository.
+
+Corresponding ORCID URIs are added to the RDF representation via `owl:sameAs` to the matching author.
+
 
 ## Requirements
 
 **Linki**tup uses the following libraries:
 
-* Python 2.7
-* Django 1.3
+* [Python 2.7](http://docs.python.org/2/)
+* [Django 1.3](https://www.djangoproject.com/)
 * [RDFLib](https://github.com/RDFLib/rdflib)
-* SPARQLWrapper
-* requests
-* requests-oauth
-* PyYAML
+* [SPARQLWrapper](http://sparql-wrapper.sourceforge.net/)
+* [requests](http://docs.python-requests.org/en/latest/)
+* [requests-oauth](https://github.com/maraujop/requests-oauth)
+* [PyYAML](http://pyyaml.org/)
 * Optional:
 	* Linkitup includes its own reference extraction functionality, but this may perform sub-optimally for non-standard PDF layouts. You could try using [pdf-extract](https://github.com/CrossRef/pdfextract) instead (the code for calling pdf-extract is ready to use)
