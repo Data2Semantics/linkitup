@@ -175,4 +175,4 @@ def update(request, article_id):
 def clear(request):
     request.session.clear()
     
-    return(HttpResponse('Session data cleared!'))
+    return render_to_response('warning.html',{'message':'Session data cleared!'})
