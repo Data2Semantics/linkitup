@@ -8,7 +8,7 @@ import requests
 import json
 import re
 import urllib
-from pprint import pprint
+
 
 
 orcid_url = 'http://pub.orcid.org/'
@@ -32,10 +32,8 @@ def linkup(request, article_id):
                 a_qname = 'FS{}'.format(a_id)
                 full_name = a['full_name'].strip()
 
-                print full_name
                 request_uri = credit_search_url + urllib.quote_plus(full_name) + "&rows=3"
                 
-                print request_uri
                 headers = {'Accept': 'application/orcid+json'}
                 
                 r = requests.get(request_uri, headers=headers)
@@ -59,7 +57,7 @@ def linkup(request, article_id):
                             name = "{} {}".format(details['given-names']['value'],details['family-name']['value'])
                         
                         if score_double < 2 :
-                            print "Score {} for {} is below 2, not including it in results.".format(sr['relevancy-score']['value'], name)
+#                            print "Score {} for {} is below 2, not including it in results.".format(sr['relevancy-score']['value'], name)
                             continue
                             
                         uri = "http://orcid.org/{}".format(orcid)
@@ -67,7 +65,6 @@ def linkup(request, article_id):
                         short = re.sub(' |/|\|\.|-','_',orcid)
                     
                         
-                        print uri, name
                         urls.append({'type':'mapping', 'uri': uri, 'web': uri, 'show': name, 'short': short, 'original': a_qname, 'extra': orcid, 'subscript': score})
                     
     request.session.setdefault(article_id,[]).extend(urls)

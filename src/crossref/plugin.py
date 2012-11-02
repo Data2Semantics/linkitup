@@ -6,10 +6,8 @@ Created on 2 Oct 2012
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 import json
-import subprocess
 import requests
 import urllib
-import xml.etree.ElementTree as et
 from extract import extract_references
 import re
 
@@ -82,9 +80,7 @@ def extract(request, article_id, file_id):
 def match(request, article_id, file_id):
     # CrossRef search http://crossref.org/sigg/sigg/FindWorks?version=1&access=API_KEY&format=json&op=OR&expression=allen+renear
     text = urllib.unquote(request.GET['text'])
-    
-#    print "===Text===\n", text
-    
+
     data = {'version': 1,
             'access': 'API_KEY',
             'format': 'json',
@@ -96,11 +92,9 @@ def match(request, article_id, file_id):
     
     results = json.loads(r.text)
     
-#    print "===Results===\n", results
     
     urls = []
     for r in results[0:3]:
-        # print r['fullCitation']
         uri = 'http://dx.doi.org/{}'.format(r['doi'])
         
         short = re.sub('\.|/','_',r['doi'])
@@ -115,7 +109,6 @@ def match(request, article_id, file_id):
     if urls == []:
         urls = None
     
-    # print urls
     return render_to_response('crossref_urls.html',{'urls': urls})
     
     

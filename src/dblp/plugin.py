@@ -20,20 +20,14 @@ def linkup(request, article_id):
     authors = []
 
     for i in items :
-        # print i['article_id'], article_id
         if str(i['article_id']) == str(article_id):
-            # print "{} is the id we were looking for".format(article_id)
             
             if len(i['authors']) > 0 :
-                # print "Checking for authors..."
                 
                 for author in i['authors'] :
                     a_id = author['id']
-                    # print a_id
                     a_label = author['full_name'].strip()
-                    # print a_label
                     a_qname = 'FS{}'.format(a_id)
-                    # print a_qname
                     
                     q = """
                         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -45,19 +39,13 @@ def linkup(request, article_id):
                         }
                     """
                     
-                    # print q
-                    
                     sparql.setQuery(q)
-                    
-                    # print "query ran"
     
                     try :
                         results = sparql.query().convert()
     
-                        # print "DBLP done"
                         for result in results["results"]["bindings"]:
                             match_uri = result["s"]["value"]
-                            # print match_uri
                             
                             short = re.sub('\s','_',a_label)
                             

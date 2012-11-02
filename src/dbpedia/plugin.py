@@ -10,9 +10,7 @@ import re
 
 
 def linkup(request, article_id):
-    # print article_id
     items = request.session['items']
-    # print items
     
     sparql = SPARQLWrapper("http://dbpedia.org/sparql")
     sparql.setReturnFormat(JSON)
@@ -25,7 +23,6 @@ def linkup(request, article_id):
             
             tags_and_categories = i['tags'] + i['categories']
             for tag in tags_and_categories :
-                # print tag
                 
                 t_id = tag['id']
                 t_label = tag['name'].strip()
@@ -33,7 +30,6 @@ def linkup(request, article_id):
 
                 if t_label.lower().startswith('inchikey=') :
                     t_match = re.findall('^.*?\=(.*)$',t_label)[0]
-                    # print t_match
                     
                     q = """
                         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -70,12 +66,10 @@ def linkup(request, article_id):
                 # print "DBpedia done"
                 for result in results["results"]["bindings"]:
                     match_uri = result["s"]["value"]
-                    # print match_uri
                     
                     wikipedia_uri = re.sub('dbpedia.org/resource','en.wikipedia.org/wiki',match_uri)
                     
                     short = re.sub('http://dbpedia.org/resource/','',match_uri)
-                    # print wikipedia_uri
                     
                     if len(wikipedia_uri) > 61 :
                         show = wikipedia_uri[:29] + "..." + wikipedia_uri[-29:]

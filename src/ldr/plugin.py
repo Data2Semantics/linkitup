@@ -21,15 +21,11 @@ def linkup(request, article_id):
     
     
     for i in items :
-        if str(i['article_id']) == str(article_id):
-            print article_id
-            
+        if str(i['article_id']) == str(article_id):        
             tags_and_categories = i['tags'] + i['categories']
             
             for t in tags_and_categories:
-                print t['name']
                 for v in _known_vocabularies :
-                    print v
                     data = {'conceptName': t['name']}
                     
                     request_uri = 'http://data.elsevier.com/content/vocabulary/concept/{}'.format(v)
