@@ -10,12 +10,14 @@ from datetime import datetime
 import re
 
 
-def get_rdf(request, article_id):
-    """Takes everything we know about the article specified in article_id, and builds a simple RDF graph.
+def get_rdf(request, article_id, checked_urls):
+    """Takes everything we know about the article specified in article_id, and builds a simple RDF graph. 
+    
+    We only consider the URLs of checkboxes that were selected by the user.
     
     Returns the RDF graph as a ConjunctiveGraph"""
     
-    checked_urls = request.POST.getlist('url')
+
     
     FSV = Namespace('http://figshare.com/vocab/')
     FS = Namespace('http://figshare.com/resource/')
