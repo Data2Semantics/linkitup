@@ -89,8 +89,9 @@ def get_articles(request):
         results = json.loads(response.content)
         
         request.session['items'] = results['items']
+        request.session.modified = True
     
-    return
+    return results
 
 
 
