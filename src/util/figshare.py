@@ -27,7 +27,7 @@ def get_auth_url(request):
     
     response = requests.post('http://api.figshare.com/v1/pbl/oauth/request_token', hooks={'pre_request': figshare_oauth_hook})
     
-    qs = parse_qs(response.text)
+    qs = parse_qs(response.content)
     
     if 'error' in qs:
         raise Exception(qs['error'])
@@ -51,16 +51,16 @@ def validate_oauth_verifier(request, oauth_verifier):
     
     figshare_oauth_hook = OAuthHook(oauth_request_token, oauth_request_token_secret, header_auth=True)
     response = requests.post('http://api.figshare.com/v1/pbl/oauth/access_token', {'oauth_verifier': oauth_verifier}, hooks={'pre_request': figshare_oauth_hook})
-    response = parse_qs(response.content)
+    response_content = parse_qs(response.content)
     
-    if response == {} :
+    if response_content == {} :
         raise Exception('Authorization failed')
-    elif 'error' in response :
-        raise Exception(response['error'])
+    elif 'error' in response_content :
+        raise Exception(response_content['error'])
     else :
-        oauth_token = response['oauth_token'][0]
-        oauth_token_secret = response['oauth_token_secret'][0]
-        xoauth_figshare_id = response['xoauth_figshare_id'][0]
+        oauth_token = response_content['oauth_token'][0]
+        oauth_token_secret = response_content['oauth_token_secret'][0]
+        xoauth_figshare_id = response_content['xoauth_figshare_id'][0]
     
         request.session['oauth_token'] = oauth_token
         request.session['oauth_token_secret'] = oauth_token_secret
@@ -83,7 +83,7 @@ def get_articles(request):
 
     response = client.get('http://api.figshare.com/v1/my_data/articles')
 
-    if 'error' in response :
+    if 'error' in response.content :
         raise Exception(response['error'])
     else :
         results = json.loads(response.content)
