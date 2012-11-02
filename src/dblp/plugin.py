@@ -14,7 +14,7 @@ import re
 def linkup(request, article_id):
     items = request.session['items']
 
-    sparql = SPARQLWrapper("http://www4.wiwiss.fu-berlin.de/dblp/sparql")
+    sparql = SPARQLWrapper("http://dblp.l3s.de/d2r/sparql")
     sparql.setReturnFormat(JSON)
     
     authors = []
@@ -40,7 +40,7 @@ def linkup(request, article_id):
                         
                         SELECT ?s 
                         WHERE {
-                            ?s a foaf:Person .
+                            ?s a foaf:Agent .
                             ?s foaf:name '"""+a_label+"""'.
                         }
                     """
