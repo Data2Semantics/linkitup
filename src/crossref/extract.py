@@ -1,3 +1,15 @@
+"""
+
+Module:    extract.py
+Author:    Rinke Hoekstra
+Created:   22 October 2012
+
+Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam 
+http://github.com/Data2Semantics/linkitup
+
+"""
+
+
 from pdfminer.pdfinterp import PDFResourceManager, process_pdf
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
