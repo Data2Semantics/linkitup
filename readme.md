@@ -1,5 +1,7 @@
 ![linkitup](https://raw.github.com/Data2Semantics/linkitup/master/src/static/img/linkitup-logo-72dpi.png) 
 
+Copyright © 2012, Rinke Hoekstra, VU University Amsterdam/Data2Semantics Project
+
 <!--=**Author**=
 	Rinke Hoekstra
 =**Date**=
