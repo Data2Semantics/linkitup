@@ -5,31 +5,38 @@
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h3 id="{{ plugin.slug }}_modallabel_{{ i.article_id }}">{{ plugin.name }}</h3>
   </div>
-  <div id="{{ plugin.slug }}_modalbody_{{ i.article_id }}" class="modal-body">
-    <p>Loading...</p>
-  </div>
+  <div id="{{ plugin.slug }}_modalbody_{{ i.article_id }}" class="modal-body"></div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
   </div>
 </div>
 
 			
-				<script type="text/javascript">
-					$.ajaxSetup ({  
-					        cache: false  
-					    });
-					$("#{{ plugin.slug }}_result_{{ i.article_id }}").hide();
-					
-					
-					var html = "<div class='progress progress-striped active'>" +
-					   "<div class='bar' style='width: 100%;'>Loading links from {{ plugin.name }}...</div> " +
-					   "</div>";
-					
-					var {{ plugin.slug }}_ajax_load = html;
-					var {{ plugin.slug }}_loadUrl_{{ i.article_id }} = "/{{ plugin.slug }}/{{ i.article_id }}";
-					$("#{{ plugin.slug }}_link_{{ i.article_id }}").click(function(){  
-							$("#{{ plugin.slug }}_result_{{ i.article_id }}").modal('show');
-					        $("#{{ plugin.slug }}_modalbody_{{ i.article_id }}").html({{ plugin.slug }}_ajax_load).load({{ plugin.slug }}_loadUrl_{{ i.article_id }}); 
-					        
-					    });
-				</script>
+<script type="text/javascript">
+	$.ajaxSetup ({  
+	        cache: false  
+	    });
+	$("#{{ plugin.slug }}_result_{{ i.article_id }}").hide();
+	
+	
+	var html = "<div class='progress progress-striped active'>" +
+	   "<div class='bar' style='width: 100%;'>Loading links from {{ plugin.name }}...</div> " +
+	   "</div>";
+	
+	var {{ plugin.slug }}_ajax_load = html;
+	var {{ plugin.slug }}_loadUrl_{{ i.article_id }} = "/{{ plugin.slug }}/{{ i.article_id }}";
+	$("#{{ plugin.slug }}_link_{{ i.article_id }}").click(function(){  
+			$("#{{ plugin.slug }}_result_{{ i.article_id }}").modal('show');
+			console.log($("#{{ plugin.slug }}_modalbody_{{ i.article_id }}").text());
+			
+			
+			if($("#{{ plugin.slug }}_modalbody_{{ i.article_id }}").text() == '') {
+	        	$("#{{ plugin.slug }}_modalbody_{{ i.article_id }}").html({{ plugin.slug }}_ajax_load).load({{ plugin.slug }}_loadUrl_{{ i.article_id }},function(response, status, xhr) {
+	        		if (status == "success") {
+						$('#{{ plugin.slug }}_link_{{ i.article_id }}').toggleClass('btn-info btn-success');
+	        		}
+	        	}); 
+	        	
+			}
+	    });
+</script>
