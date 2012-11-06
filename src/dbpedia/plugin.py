@@ -38,7 +38,7 @@ def linkup(request, article_id):
                     q = """
                         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                         PREFIX dbpprop: <http://dbpedia.org/property/> 
-                        SELECT ?s
+                        SELECT DISTINCT ?s
                         WHERE { 
                             ?s dbpprop:inchikey ?label .
                             ?label bif:contains '\""""+t_match+"""\"' .
@@ -53,7 +53,7 @@ def linkup(request, article_id):
                     t_match = t_label
                     q = """
                         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                        SELECT ?s
+                        SELECT DISTINCT ?s
                         WHERE { 
                             ?s rdfs:label ?label .
                             ?label bif:contains '\""""+t_match+"""\"' .
