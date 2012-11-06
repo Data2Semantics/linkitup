@@ -1,0 +1,13 @@
+body {
+	background-image: url('../img/bg.png');
+}
+
+.container {
+	background-color: white;
+	padding: 1em;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	border: 1px solid #333;
+	box-shadow: 5px 5px 5px #222;
+}
+
