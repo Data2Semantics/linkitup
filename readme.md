@@ -139,25 +139,29 @@ You can test run **Linki**tup by running `python manage.py runserver` in the `sr
 
 A more permanent (scalable) option is to use [mod_python](http://www.modpython.org/) in [Apache](http://httpd.apache.org). Use a site configuration that is something akin to e.g.:
 
-	<Virtualhost *:80>
-        ServerName YOUR.SERVER.NAME
+```apache
+<Virtualhost *:80>
+	ServerName YOUR.SERVER.NAME
         DocumentRoot /PATH/TO/LINKITUP/
 
-			Alias /static /PATH/TO/LINKITUP/src/static
+	Alias /static /PATH/TO/LINKITUP/src/static
 				
-			<Location "/">
-	              SetHandler mod_python
-	              PythonHandler django.core.handlers.modpython
-	              SetEnv DJANGO_SETTINGS_MODULE settings
-	              PythonOption django.root /linkitup
-	              PythonDebug On
-	              PythonPath "['/PATH/TO/LINKITUP/src','/PATH/TO/LINKITUP/'] + sys.path"
-	      </Location>
-	      <Location "/static/">
-	              SetHandler None
-	      </Location>
-	</VirtualHost>
-	
+	<Location "/">
+		SetHandler mod_python
+		PythonHandler django.core.handlers.modpython
+		SetEnv DJANGO_SETTINGS_MODULE settings
+		PythonOption django.root /linkitup
+		PythonDebug On
+		PythonPath "['/PATH/TO/LINKITUP/src','/PATH/TO/LINKITUP/'] + sys.path"
+	</Location>
+	<Location "/static/">
+		SetHandler None
+	</Location>
+</VirtualHost>
+```
+
+Make sure to change ownership of the `src` directory to the user running the Apache webserver. Also, the `sqlite.db` file should be writable by the webserver.
+
 **Buglet:** it is quite hard to find out the current path from within [mod_python](http://www.modpython.org/). For now, be sure to set an absolute path to the `plugins.yaml` file in the `views.py` module.
 	
 ## Writing your own Linkitup Plugin
@@ -176,14 +180,14 @@ The `linkup` method should return a Django `HttpResponse` object (typically cont
 	
 For instance, add a module `example/plugin.py` to the src folder:
 
-```	
+```python	
 def linkup(request, article_id):
 	return HttpResponse("You requested something about article {}!".format(article_id))
 ```
 
 Typically, this plugin also writes new **links** to the `request.session` dictionary (where `article_id` is the key):
 
-```
+```python
 from django.shortcuts import render_to_response
 
 def linkup(request, article_id):
@@ -226,7 +230,7 @@ The call to `render_to_response` will render the resulting links as a partial HT
 #### Step 2
 Add an appropriate Django URL pattern to the `urls.py` file that directs HTTP requests to your new `linkup` method. For instance:
 
-```
+```python
 urlpatterns = patterns('',
 
 	# These are the standard Linkitup URL patterns
@@ -248,7 +252,7 @@ Make sure not to forget the trailing comma in the patterns specification.
 #### Step 3
 Add your plugin to the `plugins.yaml` file:
 
-```
+```yaml
 example.plugin:
   name: Example
   slug: example
