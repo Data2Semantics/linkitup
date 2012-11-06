@@ -6,9 +6,9 @@
 	2012-10-15
 =**URL**=
 	[http://github.com/Data2Semantics/linkitup](https://github.com/Data2Semantics/linkitup/commit/21eb445d7d2da2b935de5219e4625b518900d121)-->
-
+	
 ## About
-**Linki**tup is a Web-based dashboard for **enrichment** of research output published via the [Figshare.com](http://figshare.com) repository service. 
+**Linki**tup is a Web-based dashboard for **enrichment** of research output published via the [Figshare.com](http://figshare.com) repository service. For license terms, see below.
 
 **Linki**tup currently does two things:
 
@@ -56,6 +56,7 @@ These file types can be assigned:
 * **Links**, links to relevant other material.
 * **Authors**, the authors of the publication
 
+
 ## Features
 
 The functionality of **linki**tup is provided through a plugin mechanism. This version of **linki**tup is shipped with three plugins.
@@ -100,9 +101,23 @@ Users are presented with a list of potential matches. They can select the matche
 
 Corresponding ORCID URIs are added to the RDF representation via `owl:sameAs` to the matching author.
 
+## License
+**Linki**tup is free software, you can redistribute it and/or modify it under the terms of GNU [Affero General Public License](http://www.gnu.org/licenses/agpl-3.0.html) as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-## Requirements
+You should have received a copy of the the GNU Affero General Public License along with **Linki**tup (in the file `AGPL_LICENSE`). If not, see <http://www.gnu.org/licenses/agpl-3.0.html>
 
+**Additional permission** under the GNU Affero GPL version 3 section 7:
+
+If you modify this Program, or any covered work, by linking or
+combining it with other code, such other code is not for that reason
+alone subject to any of the requirements of the GNU Affero GPL
+version 3.
+
+**Paraphrased**: the additional permission removes the *copyleft* obligation of AGPL, and thereby ensures compatibility with the LGPL while maintaining the extension of the GPL to web services, as provided by the AGPL.
+
+## Installation
+
+### Dependencies
 **Linki**tup uses the following libraries:
 
 * [Python 2.7](http://docs.python.org/2/)
@@ -114,3 +129,35 @@ Corresponding ORCID URIs are added to the RDF representation via `owl:sameAs` to
 * [PyYAML](http://pyyaml.org/)
 * Optional:
 	* Linkitup includes its own reference extraction functionality, but this may perform sub-optimally for non-standard PDF layouts. You could try using [pdf-extract](https://github.com/CrossRef/pdfextract) instead (the code for calling pdf-extract is ready to use)
+	
+### Setup
+**Linki**tup is a [Django](https://www.djangoproject.com) project. Django uses absolute paths for the `templates` and `static` folders. Be sure to set the proper paths for your system in the `settings.py` file.
+
+You can test run **Linki**tup by running `python manage.py runserver` in the `src` folder of the **Linki**tup installation.
+
+A more permanent (scalable) option is to use [mod_python](http://www.modpython.org/) in [Apache](http://httpd.apache.org). Use a site configuration that is something akin to e.g.:
+
+	<Virtualhost *:80>
+        ServerName YOUR.SERVER.NAME
+        DocumentRoot /PATH/TO/LINKITUP/
+
+			Alias /static /PATH/TO/LINKITUP/src/static
+				
+			<Location "/">
+	              SetHandler mod_python
+	              PythonHandler django.core.handlers.modpython
+	              SetEnv DJANGO_SETTINGS_MODULE settings
+	              PythonOption django.root /linkitup
+	              PythonDebug On
+	              PythonPath "['/PATH/TO/LINKITUP/src','/PATH/TO/LINKITUP/'] + sys.path"
+	      </Location>
+	      <Location "/static/">
+	              SetHandler None
+	      </Location>
+	</VirtualHost>
+	
+
+
+
+
+
