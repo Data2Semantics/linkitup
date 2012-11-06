@@ -67,7 +67,6 @@ def linkup(request, article_id):
                 sparql.setQuery(q)
 
                 results = sparql.query().convert()
-                # print "DBpedia done"
                 for result in results["results"]["bindings"]:
                     match_uri = result["s"]["value"]
                     

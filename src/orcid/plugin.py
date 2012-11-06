@@ -28,8 +28,6 @@ def linkup(request, article_id):
     
     for i in items :
         if str(i['article_id']) == str(article_id):
-            print article_id
-            
             authors = i['authors']
             
             
