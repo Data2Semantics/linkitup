@@ -56,13 +56,20 @@ patterns = [_ieeetr,_abstract,_alpha,_authordate, _jas99,_apa, _named, _these, _
 
 
 def main(fileGlob):
-    print fileGlob
+    """Runs the extraction engine over the files returned by matching the file mask (glob) pattern"""
     
     for fileName in glob.glob(fileGlob) :
         extract_references(fileName)
         
         
 def extract_references(fileName):
+    """Runs the extraction engine over a single file, specified by its name (full or relative path).
+    
+    1. Convert the PDF to a plain text document
+    2. Extract references from the text
+    
+    Returns the references
+    """
     print "Converting PDF to plain text..."
     document = convert_pdf(fileName)
     print "... done"
@@ -75,6 +82,7 @@ def extract_references(fileName):
 
 
 def convert_pdf(path):
+    """Uses the pdfminer library to get the contents of the PDF as a string, returns the string"""
     rsrcmgr = PDFResourceManager()
     retstr = StringIO()
     codec = 'utf-8'
@@ -91,7 +99,13 @@ def convert_pdf(path):
     return pdf_as_string
 
 def extract_references_from_text(document):
-    print document
+    """Takes a plain text version of a document, finds the reference section, 
+    and tries to match regular expression patterns to the text. 
+    
+    If the pattern returns multiple matches, we have found the type of bibliograpic reference style used.
+    Clean each reference (i.e. remove line breaks), and add them to a dictionary
+    
+    Returns a dictionary of index/text pairs for all references found."""
     
     print "Finding reference section..."
     references_section = re.split('(References|Bibliography)',document)[-1]
@@ -134,6 +148,7 @@ def extract_references_from_text(document):
     
     
 if __name__ == "__main__":
+    """Only used for testing purposes."""
 #    main('/Users/hoekstra/Downloads/99918.pdf')
 #    main('/Users/hoekstra/Downloads/j02-08.pdf')
 #    main('/Users/hoekstra/Downloads/Principles of Health Interoperability HL7 and SNOMED.pdf')
