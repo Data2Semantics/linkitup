@@ -13,7 +13,7 @@
 		</div>
 		
 	{% for i in results.items %}
-		<form method='POST' action='process/{{ i.article_id }}'>
+		<form id='{{ i.article_id }}_form' method='POST' action='process/{{ i.article_id }}'>
 		{% csrf_token %}
 
 			<div class="row">
@@ -22,10 +22,14 @@
 						<strong>{{ i.title }}</strong> <small>(<em>{{ i.status }}</em>, {{ i.published_date }})</small><br/>
 						<a href="{{i.doi}}">{{i.doi}}</a> 
 	 				</div>
+	 				<div id='{{ i.article_id }}_updated_figshare' class="alert alert-success">
+					  <button type="button" class="close" data-dismiss="alert">&times;</button>
+					  <strong>Success!</strong> <strong>Linki</strong>tup data has been pushed back to Figshare.
+					</div>
 				</div>
 			</div>
 			
-	
+			
 			
 			<div id="{{ i.article_id }}_details" style="margin-top: 1em;">
 			<div class="row">
@@ -98,6 +102,7 @@
 						{% include "button.html" %}
 					{% endfor %}
 					<br/>
+					<a class='btn btn-block' id="show_{{ i.article_id }}">Show Selection</a>
 					<input type='submit' name='task' value='Download RDF' class='btn btn-block' id="rdf_{{ i.article_id }}"/>
 					<input type='submit' name='task' value='Add to Figshare' class='btn btn-primary btn-block' id="figshare_{{ i.article_id }}"/>
 				</div>			
@@ -112,11 +117,62 @@
 				{% include "results.html" %}
 			{% endfor %}
 		</form>
+		<div class="modal hide fade" id="links_{{ i.article_id }}" tabindex="-1" role="dialog" aria-hidden="true">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		    <h3>Selected Links</h3>
+		  </div>
+		  <div id="links_modalbody_{{ i.article_id }}" class="modal-body">
+		    <p>Loading...</p>
+		  </div>
+		  <div class="modal-footer">
+		    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		  </div>
+		</div>
+
+			
 		<script>
 			$("#{{ i.article_id }}_details").hide();
 			$("#{{ i.article_id }}_title").click(function(){
 					$("#{{ i.article_id }}_details").toggle('');
 			})
+			
+			$.ajaxSetup ({  
+					        cache: false  
+					    });
+					
+			$("#links_{{ i.article_id }}").hide();
+			
+			$("#show_{{ i.article_id }}").click(function(){
+
+		        $("#links_modalbody_{{ i.article_id }}").empty(); 
+		        
+		        var start = "<label class='checkbox alert alert-info'><a href='";
+		        var middle1 = "' target='_new'>";
+		        var end = "</a></label>";
+		        
+				$("#{{ i.article_id }}_form :input[type='checkbox']:checked").each( 
+						function(){
+				        	if ($(this).attr('name') != 'csrfmiddlewaretoken') {
+				          		$("#links_modalbody_{{ i.article_id }}").append(start + $(this).attr('web') + middle1 + $(this).attr('show') + end);
+				        	}
+		        });
+		        
+		        $("#links_{{ i.article_id }}").modal('show');
+			});
+			
+			$("#{{ i.article_id }}_updated_figshare").hide();
+			
+/*             $("#{{ i.article_id }}_form").submit( function () {    
+                $.post(
+                 'process/{{ i.article_id }}',
+                  $(this).serialize(),
+                  function(data){
+                	 $("#{{ i.article_id }}_updated_figshare").show();
+                  }
+                );
+                return false;   
+              });   */
 		</script>
 	{% endfor %}
 {% endblock %}
