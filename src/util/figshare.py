@@ -1,8 +1,13 @@
-'''
-Created on Nov 2, 2012
+"""
 
-@author: hoekstra
-'''
+Module:    figshare.py
+Author:    Rinke Hoekstra
+Created:   2 November 2012
+
+Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam 
+http://github.com/Data2Semantics/linkitup
+
+"""
 
 import requests
 from oauth_hook import OAuthHook

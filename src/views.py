@@ -1,8 +1,16 @@
-"""The Django Views module for Linkitup
+"""
+
+Module:    views.py
+Author:    Rinke Hoekstra
+Created:   24 October 2012
+
+Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam 
+http://github.com/Data2Semantics/linkitup
+
+The Django Views module for Linkitup
 
 This module responds to the HTTP requests to URLs matching the patterns specified in the :mod:`urls` module.
 
-.. moduleauthor:: Rinke Hoekstra <rinke.hoekstra@vu.nl>
 """
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -12,7 +20,6 @@ import requests
 from oauth_hook import OAuthHook
 import json
 import yaml
-import os.path
 
 
 from util.figshare import get_auth_url, validate_oauth_verifier, get_articles

@@ -1,6 +1,15 @@
-from django.conf.urls.defaults import patterns, include, url
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.conf import settings
+"""
+
+Module:    urls.py
+Author:    Rinke Hoekstra
+Created:   22 September 2012
+
+Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam 
+http://github.com/Data2Semantics/linkitup
+
+"""
+
+from django.conf.urls.defaults import patterns, url
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin

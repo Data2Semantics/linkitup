@@ -1,8 +1,14 @@
-'''
-Created on Oct 24, 2012
+"""
 
-@author: hoekstra
-'''
+Module:    plugin.py
+Author:    Rinke Hoekstra
+Created:   24 October 2012
+
+Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam 
+http://github.com/Data2Semantics/linkitup
+
+"""
+
 from django.shortcuts import render_to_response
 import requests
 import json

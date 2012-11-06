@@ -1,8 +1,15 @@
-'''
-Created on Nov 2, 2012
+"""
 
-@author: hoekstra
-'''
+Module:    rdf.py
+Author:    Rinke Hoekstra
+Created:   2 November 2012
+
+Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam 
+http://github.com/Data2Semantics/linkitup
+
+"""
+
+
 from rdflib import ConjunctiveGraph, Namespace, URIRef, Literal, BNode
 from rdflib.namespace import RDF, RDFS, SKOS, OWL
 from urllib import quote
