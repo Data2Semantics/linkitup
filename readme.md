@@ -59,7 +59,7 @@ These file types can be assigned:
 
 ## Features
 
-The functionality of **linki**tup is provided through a plugin mechanism. This version of **linki**tup is shipped with three plugins.
+The functionality of **linki**tup is provided through a plugin mechanism. This version of **linki**tup is shipped with five **plugins** (See below for instructions on writing your own plugin).
 
 ### Wikipedia/DBPedia
 
@@ -156,6 +156,112 @@ A more permanent (scalable) option is to use [mod_python](http://www.modpython.o
 	      </Location>
 	</VirtualHost>
 	
+**Buglet:** it is quite hard to find out the current path from within [mod_python](http://www.modpython.org/). For now, be sure to set an absolute path to the `plugins.yaml` file in the `views.py` module.
+	
+## Writing your own Linkitup Plugin
+
+**Linki**tup has a very simple plugin infrastructure that allows you to integrate your own plugins. 
+
+This is done in three steps:
+
+#### Step 1
+Create a new python package containing a `plugin.py` module. This module should typically have at least one method called `linkup` (though if you know a little Django, you can choose whatever you like) that takes two arguments:
+
+* a Django `HttpRequest` object (`request`) 
+* an integer holding the Figshare article identifier (`article_id`) 
+
+The `linkup` method should return a Django `HttpResponse` object (typically containing some HTML)
+	
+For instance, add a module `example/plugin.py` to the src folder:
+
+```	
+def linkup(request, article_id):
+	return HttpResponse("You requested something about article {}!".format(article_id))
+```
+
+Typically, this plugin also writes new **links** to the `request.session` dictionary (where `article_id` is the key):
+
+```
+from django.shortcuts import render_to_response
+
+def linkup(request, article_id):
+	# Specify a link
+	link = {'type':     'mapping', 			
+			 'uri':      'http://example.com/machine/processable',
+			 'web':      'http://example.com/human/readable',
+			 'show':     'Nice link found!',
+			 'short':    'nicelinkfound',
+			 'original': 'http://figshare.com/the/original/figshare/tag'}
+	
+	urls = [link]
+	
+	# Add the link to the session 
+	request.session.setdefault(article_id,[]).extend(urls)
+	
+	# Make sure the session knows it has changed
+	request.session.modified = True 
+	
+	# Return an HTML response
+	return render_to_response("urls.html",{'article_id': article_id, 'results':[{'title':'Example','urls': urls}]})
+```
+
+A link is a dictionary with the following keys:
+
+
+| key | value |
+| --- | ----- |
+| `type` | Can be `mapping` (for categories, tags, authors) or `reference` for bibliographic reference. |
+| `uri` | The internal URI for the link (used in the RDF serialization). For instance, a link to a DBPedia page |
+| `web` | The external URI for the link (used for presentation to the user). For instance, a link to a Wikipedia page. |
+| `show` | The text to show for the URI. URIs are quite ugly to look at, and we oftentimes want to show something a bit more readable.	|
+| `short` | A *slug* used in the construction of an identifier for the link (in the HTML page) |
+| `original` | A (constructed) URI of the original resource. **Linki**tup usually uses a `Namespace` object from the RDFLib library to construct a URI within (a fictional) Figshare namespace. **NB:** this is bound to be changed to a proper **Linki**tup namespace. |
+
+
+The call to `render_to_response` will render the resulting links as a partial HTML form with checkboxes that will be shown as a modal dialog box in the **Linki**tup user interface. Checked links will be submitted to Figshare, or converted to RDF if the user clicks one of these buttons.
+
+	
+#### Step 2
+Add an appropriate Django URL pattern to the `urls.py` file that directs HTTP requests to your new `linkup` method. For instance:
+
+```
+urlpatterns = patterns('',
+
+	# These are the standard Linkitup URL patterns
+    url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/img/favicon.ico'}),
+    url(r'^$', 'views.index', name='index'),
+    url(r'^authorize', 'views.authorize', name='authorize'),
+    url(r'^validate', 'views.validate', name='validate'),
+    url(r'^clear$', 'views.clear', name='clear'),
+    url(r'^linkup/(?P<article_id>\d+)$', 'views.linkup', name='linkup'),
+    url(r'^process/(?P<article_id>\d+)$', 'views.process', name='process'),
+    
+    # Below are the Linkitup plugin URL patterns
+    url(r'^example/(?P<article_id>\d+)$', 'example.plugin.linkup', name='example'),
+)
+```
+
+Make sure not to forget the trailing comma in the patterns specification.
+
+#### Step 3
+Add your plugin to the `plugins.yaml` file:
+
+```
+example.plugin:
+  name: Example
+  slug: example
+  logo: static/img/example.png
+```
+
+The `name` attribute is used to render a title for the button and the modal dialog in the **Linki**tup UI. The `slug` attribute is used to generate HTML identifiers for the plugin. The `logo` is currently not used.
+
+#### Done!
+
+Happy linking!
+
+
+
+
 
 
 
