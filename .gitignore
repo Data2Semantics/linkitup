@@ -7,3 +7,5 @@
 *.db
 
 *.db
+
+src/sqlite.db
