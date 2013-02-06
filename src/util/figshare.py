@@ -9,28 +9,34 @@ http://github.com/Data2Semantics/linkitup
 
 """
 
+from __future__ import unicode_literals
 import requests
-from oauth_hook import OAuthHook
+from requests_oauthlib import OAuth1
 from time import time
 from urlparse import parse_qs
 from urllib import unquote
 import json
 import random
 import string
+from pprint import pprint
 
-OAuthHook.consumer_key = 'K9qG70PgROIg8CpZGJlGRg'
-OAuthHook.consumer_secret = '0JdZcz5pz0HwyWbeiwsviA'
+## NB: Code now depends on requests v1.0 and oauth_requests
 
+client_key = 'K9qG70PgROIg8CpZGJlGRg'
+client_secret = '0JdZcz5pz0HwyWbeiwsviA'
 
+request_token_url = "http://api.figshare.com/v1/pbl/oauth/request_token"
+access_token_url = "http://api.figshare.com/v1/pbl/oauth/access_token"
 
 def get_auth_url(request):
     """Uses the consumer key and secret to get a token and token secret for requesting authorization from Figshare
     
     Returns the authorization URL, or raises an exception if the response contains an error.
     """
-    figshare_oauth_hook = OAuthHook(header_auth=True)
+    oauth = OAuth1(client_key, client_secret=client_secret)
     
-    response = requests.post('http://api.figshare.com/v1/pbl/oauth/request_token', hooks={'pre_request': figshare_oauth_hook})
+    
+    response = requests.post(url=request_token_url, auth=oauth)
     
     qs = parse_qs(response.content)
     
@@ -54,8 +60,14 @@ def validate_oauth_verifier(request, oauth_verifier):
     oauth_request_token = request.session.get('oauth_request_token')
     oauth_request_token_secret = request.session.get('oauth_request_token_secret')
     
-    figshare_oauth_hook = OAuthHook(oauth_request_token, oauth_request_token_secret, header_auth=True)
-    response = requests.post('http://api.figshare.com/v1/pbl/oauth/access_token', {'oauth_verifier': oauth_verifier}, hooks={'pre_request': figshare_oauth_hook})
+    oauth = OAuth1(client_key,
+                   client_secret=client_secret,
+                   resource_owner_key=oauth_request_token,
+                   resource_owner_secret=oauth_request_token_secret,
+                   verifier=oauth_verifier)
+    
+
+    response = requests.post(url=access_token_url, auth=oauth)
     response_content = parse_qs(response.content)
     
     if response_content == {} :
@@ -82,21 +94,52 @@ def get_articles(request):
     oauth_token = request.session.get('oauth_token')
     oauth_token_secret = request.session.get('oauth_token_secret')
 
-    oauth_hook = OAuthHook(oauth_token, oauth_token_secret, header_auth=True)
 
-    client = requests.session(hooks={'pre_request': oauth_hook})
+    oauth = OAuth1(client_key,
+                   client_secret=client_secret,
+                   resource_owner_key=oauth_token,
+                   resource_owner_secret=oauth_token_secret)
 
-    response = client.get('http://api.figshare.com/v1/my_data/articles')
-
-    if 'error' in response.content :
-        raise Exception(response['error'])
-    else :
-        results = json.loads(response.content)
-        
-        request.session['items'] = results['items']
-        request.session.modified = True
     
-    return results
+    
+    accumulated_results = None
+    
+    page = 0
+    
+    # Make sure to reset the items in the session (otherwise the session keeps on increasing with every call to this function)
+    request.session['items'] = []
+    request.session.modified = True
+
+    while True:
+        page += 1
+        params = {'page': page}
+        
+        response = requests.get(url='http://api.figshare.com/v1/my_data/articles',auth=oauth, params=params)
+        response_content = parse_qs(response.content)
+        
+        if 'error' in response_content :
+            raise Exception(response_content['error'])
+            break
+        else :
+            results = json.loads(response.content)
+            
+            if len(results['items']) == 0:
+                print "No more results"
+                break
+            else :
+                request.session['items'].extend(results['items'])
+                
+                request.session.modified = True
+                
+                if accumulated_results == None :
+                    accumulated_results = results
+                else :
+                    accumulated_results['items'].extend(results['items'])
+
+        
+    
+        
+    return accumulated_results
 
 
 
