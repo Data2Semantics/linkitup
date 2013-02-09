@@ -31,9 +31,12 @@ PLUGINS_FILE = "/Users/hoekstra/projects/data2semantics/linkitup/src/plugins.yam
 # PLUGINS_FILE = "/var/www/linkitup.data2semantics.org/src/plugins.yaml"
 
 def index(request):
-    """This function generates the landing page for Linkitup (it is called for requests to the base URL of the application)
+    """This function generates the landing page for Linkitup (it is called for requests to the base URL of the application)"""
     
-    If this session has not yet been initialized (i.e. we don't yet have an oauth_token from Figshare), 
+    return render_to_response('landing.html')
+    
+def dashboard(request):
+    """If this session has not yet been initialized (i.e. we don't yet have an oauth_token from Figshare), 
     it starts up the three-legged authentication procedure for OAuth v1.
     
     Otherwise, it initializes the session variable with the article details of the Figshare author
@@ -90,7 +93,7 @@ def validate(request):
      
     try:
         validate_oauth_verifier(request, oauth_verifier)
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect('/dashboard')
     except Exception as e:
         return render_to_response('error.html',{'message': e.message })
     

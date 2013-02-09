@@ -18,6 +18,7 @@ from django.conf.urls.defaults import patterns, url
 urlpatterns = patterns('',
     url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/img/favicon.ico'}),
     url(r'^$', 'views.index', name='index'),
+    url(r'^dashboard$', 'views.dashboard', name='dashboard'),
     url(r'^authorize', 'views.authorize', name='authorize'),
     url(r'^validate', 'views.validate', name='validate'),
     url(r'^clear$', 'views.clear', name='clear'),

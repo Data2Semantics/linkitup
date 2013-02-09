@@ -1,16 +1,15 @@
 {% extends "index.html" %}
 
-{% block content %}
-		<div class="row">
-			<div class="span12">
-				<div class="page-header">
-					<a href='/'><img id='logo' src='static/img/linkitup-logo-150dpi.png' style="float:left; height:80px; margin-top: -15px; margin-left: -15px; margin-right: 15px;"/></a>
-		  			<h1 style="padding-top:12px;"><small>Dashboard</small><a href='/clear' class='btn btn-mini' style='float: right; font-weight: normal;'>Logout</a></h1>
-		  			
-				</div>			
-			</div>
-		</div>
 
+{% block pagetitle %}
+	Dashboard
+{% endblock %}
+
+{% block logout %}
+<a href='/clear' class='btn btn-mini' style='float: right; font-weight: normal;'>Logout</a>
+{% endblock %}
+
+{% block content %}
 		<div class='row'>
 <!-- 			<div class='span12'> -->
 				{% block dbcontent %}{% endblock %}
