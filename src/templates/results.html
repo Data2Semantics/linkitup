@@ -33,7 +33,7 @@
 			if($("#{{ plugin.slug }}_modalbody_{{ i.article_id }}").text() == '') {
 	        	$("#{{ plugin.slug }}_modalbody_{{ i.article_id }}").html({{ plugin.slug }}_ajax_load).load({{ plugin.slug }}_loadUrl_{{ i.article_id }},function(response, status, xhr) {
 	        		if (status == "success") {
-						$('#{{ plugin.slug }}_link_{{ i.article_id }}').toggleClass('btn-info btn-success');
+						$('#{{ plugin.slug }}_link_{{ i.article_id }}').toggleClass('active');
 	        		}
 	        	}); 
 	        	

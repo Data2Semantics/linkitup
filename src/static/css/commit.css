@@ -46,6 +46,9 @@ body {
 
 .nav-list > li > input.text-button {
   padding: 3px 15px;
+  width: 138px;
+  color: rgb(0, 136, 204);
+  cursor: auto;
 }
 
 .nav-list > .active > input.text-button,
