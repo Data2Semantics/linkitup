@@ -142,6 +142,49 @@ def get_articles(request):
     return accumulated_results
 
 
+def update_article(request, article_id, article_urls, checked_urls):
+    oauth_token = request.session.get('oauth_token')
+    oauth_token_secret = request.session.get('oauth_token_secret')
+
+
+    oauth = OAuth1(client_key,
+                   client_secret=client_secret,
+                   resource_owner_key=oauth_token,
+                   resource_owner_secret=oauth_token_secret)
+        
+    
+    print "Checked urls: ", checked_urls
+    for u in article_urls :
+        if u['uri'] in checked_urls :
+            body = {'link': u['web']}
+            headers = {'content-type':'application/json'}
+        
+            response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(article_id),
+                                data=json.dumps(body), headers=headers, auth=oauth)
+            results = json.loads(response.content)
+            print "Added {} with the following results:\n".format(u['uri']), results
+    
+    body = {'tag_name': 'Enriched with LinkItUp'}
+    headers = {'content-type':'application/json'}
+        
+    response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(article_id),
+                                data=json.dumps(body), headers=headers, auth=oauth)
+    
+    
+    return
+    
+    ## The below doesn't work as it replaces the files currently attached to the article!
+#    g = getRDF(request, article_id)
+#    graph = g.serialize(format='turtle')
+#    
+#    
+#    files = {'filedata':('metadata.ttl', graph)}
+#
+#    response = client.put('http://api.figshare.com/v1/my_data/articles/{}/files'.format(article_id),
+#                      files=files)
+#    results = json.loads(response.content)
+    # print results
+
 
 
 
