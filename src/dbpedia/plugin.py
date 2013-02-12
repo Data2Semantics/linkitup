@@ -16,7 +16,7 @@ import re
 def linkup(request, article_id):
     items = request.session['items']
     
-    sparql = SPARQLWrapper("http://dbpedia.org/sparql")
+    sparql = SPARQLWrapper("http://live.dbpedia.org/sparql")
     sparql.setReturnFormat(JSON)
     
     urls = []
