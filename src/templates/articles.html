@@ -4,20 +4,38 @@
 </div> -->
 
 
+<!-- {% block articles %}
+
+<li class="dropdown">
+	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Articles <b class="caret"></b></a>
+	<ul class="dropdown-menu">
+
+	</ul>
+</li>
+{% endblock %} -->
+
+
+{% block tabs %}
+	{% for i in results.items %}
+		<li class="span3 {% if forloop.first %}active{% endif %}"><a href="#{{ i.article_id }}_tab" data-toggle="tab">{{ i.title }}</a></li>
+	{% endfor %}
+{% endblock %}
+
 
 {% block dbcontent %}
-		<div class="row">
+<!-- 		<div class="row">
 			<div class="offset2 span8">
 				<h3>Articles</h3>
 			</div>
-		</div>
+		</div> -->
 		
 	{% for i in results.items %}
+		<div class="span8 tab-pane {% if forloop.first %}active{% endif %}" id="{{ i.article_id }}_tab">
 		<form id='{{ i.article_id }}_form' method='POST' action='process/{{ i.article_id }}'>
 		{% csrf_token %}
 
 			<div class="row">
-				<div class="offset2 span8">
+				<div class="">
 		 			<div class="well" id="{{ i.article_id }}_title">
 						<strong>{{ i.title }}</strong> <small>(<em>{{ i.status }}</em>, {{ i.published_date }})</small><br/>
 						<a href="{{i.doi}}">{{i.doi}}</a> 
@@ -33,7 +51,7 @@
 			
 			<div id="{{ i.article_id }}_details" style="margin-top: 1em;">
 			<div class="row">
-				<div class="offset2 span6">
+				<div class="span6">
 					<div class="row">
 						<div class="span1"><strong>files</strong></div>
 						<div class="span5">
@@ -98,19 +116,17 @@
 					{% endif %}
 				</div>
 				<div class="span2">
+					<ul class="nav nav-list">
+					<li class="nav-header">Plugins</li>
 					{% for plugin in plugins %}
-						{% include "button.html" %}
+						<li>{% include "button.html" %}</li>
 					{% endfor %}
-					<br/>
-					<a class='btn btn-block' id="show_{{ i.article_id }}">Show Selection</a>
-					<input type='submit' name='task' value='Download RDF' class='btn btn-block' id="rdf_{{ i.article_id }}"/>
-					<input type='submit' name='task' value='Add to Figshare' class='btn btn-primary btn-block' id="figshare_{{ i.article_id }}"/>
+					<li class="nav-header">Actions</li>
+					<li><a id="show_{{ i.article_id }}">Show Selection</a>
+					</li><li><input type='submit' name='task' value='Download RDF' class='text-button' id="rdf_{{ i.article_id }}"/>
+					</li><li><input type='submit' name='task' value='Add to Figshare' class='text-button' id="figshare_{{ i.article_id }}"/>
+					</li></ul>
 				</div>			
-			</div>
-			<div class="row">
-				<div class="offset2 span8">
-					<hr/>
-				</div>
 			</div>
 			</div>
 			{% for plugin in plugins %}
@@ -132,10 +148,15 @@
 
 			
 		<script>
-			$("#{{ i.article_id }}_details").hide();
+		
+			/* 			
+ 			// This bit was used to show and hide article details
+ 
+ 			$("#{{ i.article_id }}_details").hide();
 			$("#{{ i.article_id }}_title").click(function(){
 					$("#{{ i.article_id }}_details").toggle('');
-			})
+			}) 
+			*/
 			
 			$.ajaxSetup ({  
 					        cache: false  
@@ -163,7 +184,9 @@
 			
 			$("#{{ i.article_id }}_updated_figshare").hide();
 			
-/*             $("#{{ i.article_id }}_form").submit( function () {    
+			/*             
+ 			// This bit was used to submit the form (without refreshing the page)
+ 			$("#{{ i.article_id }}_form").submit( function () {    
                 $.post(
                  'process/{{ i.article_id }}',
                   $(this).serialize(),
@@ -172,7 +195,18 @@
                   }
                 );
                 return false;   
-              });   */
+              });   
+			*/
 		</script>
+		</div>
 	{% endfor %}
+	<script>
+		// data-role functionality
+		$(function(){
+		    $("[data-role=submit]").click(function(){
+		        $(this).closest("form").submit();
+		    });
+		});
+	
+	</script>
 {% endblock %}

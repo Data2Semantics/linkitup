@@ -10,7 +10,7 @@
 				<form method='POST' action='validate' class='form-inline'>
 					{% csrf_token %}
 					<legend>Please enter your PIN</legend>
-					<span class='help-block'>Please <a target="_new" href="{{ authorize_url }}">go to Figshare</a> and allow LinkItUp to access and modify your Figshare articles.</span>
+					<span class='help-block'>Please <a target="_blank" href="{{ authorize_url }}">go to Figshare</a> and allow LinkItUp to access and modify your Figshare articles.</span>
 					<span class='help-block'>Figshare will provide you with a PIN number, that you should fill in the form below.</span>
 					<span class="badge badge-important">!</span> <input name='pin' id='pin' placeholder='PIN number' class='input-large'>
 					<button type="submit" class="btn">Submit</button>

@@ -22,8 +22,24 @@
 	</div>
 	
 	{% endblock %}
-
+	
     <div class="container" id="content">
+    	{% block navbar %}
+			<div class="navbar">
+			  <div class="navbar-inner">
+<!-- 			    <a class="brand" href="/">Menu</a> -->
+			    <ul class="nav pull-right">
+			    	{% block nav %}
+			    	  <li class="active"><a href="/">Home</a></li>
+				      <li><a href="/dashboard">Dashboard</a></li>
+				      <li class='divider-vertical'></li>
+				      <li><a href="http://www.data2semantics.org" target="_blank">Data2Semantics</a></li>
+			      	{% endblock %}
+			    </ul>
+			  </div>
+			</div>
+		{% endblock %}
+    	
         {% block content %}
         
         
