@@ -16,20 +16,14 @@
 
 
 {% block tabs %}
-	{% for i in results.items %}
+	{% for k,i in results.items %}
 		<li class="span3 {% if forloop.first %}active{% endif %}"><a href="#{{ i.article_id }}_tab" data-toggle="tab">{{ i.title }}</a></li>
 	{% endfor %}
 {% endblock %}
 
 
 {% block dbcontent %}
-<!-- 		<div class="row">
-			<div class="offset2 span8">
-				<h3>Articles</h3>
-			</div>
-		</div> -->
-		
-	{% for i in results.items %}
+	{% for k,i in results.items %}
 		<div class="span8 tab-pane {% if forloop.first %}active{% endif %}" id="{{ i.article_id }}_tab">
 		<form id='{{ i.article_id }}_form' method='POST' action='process/{{ i.article_id }}'>
 		{% csrf_token %}

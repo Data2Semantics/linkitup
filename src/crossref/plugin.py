@@ -21,18 +21,16 @@ import re
 def linkup(request, article_id):
     items = request.session.get('items',[])
     
-    for i in items :
-        if str(i['article_id']) == str(article_id) :
-            
-            # Only applicable to PDF files
-            files = [f for f in i['files'] if f['mime_type'] == 'application/pdf']
-            
-            if len(files) > 0:
-                return render_to_response('crossref.html',{'title':'Crossref','files': files, 'article_id': article_id})
-            
-                
     
-    return render_to_response('message.html',{'type': 'error', 'text': 'This dataset does not contain any PDF files'})
+    i = items[article_id]
+
+    # Only applicable to PDF files
+    files = [f for f in i['files'] if f['mime_type'] == 'application/pdf']
+            
+    if len(files) > 0:
+        return render_to_response('crossref.html',{'title':'Crossref','files': files, 'article_id': article_id})
+    else :        
+        return render_to_response('message.html',{'type': 'error', 'text': 'This dataset does not contain any PDF files'})
 
 
 def upload(request, article_id, file_id):

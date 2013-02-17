@@ -101,13 +101,12 @@ def get_articles(request):
                    resource_owner_secret=oauth_token_secret)
 
     
-    
-    accumulated_results = None
-    
+    # We'll start at page 0, will be updated at the start of the first loop.
     page = 0
     
     # Make sure to reset the items in the session (otherwise the session keeps on increasing with every call to this function)
-    request.session['items'] = []
+    # TODO: this currently happens for every page refresh on the dashboard, and that might be a bit overkill
+    request.session['items'] = {}
     request.session.modified = True
 
     while True:
@@ -127,19 +126,13 @@ def get_articles(request):
                 print "No more results"
                 break
             else :
-                request.session['items'].extend(results['items'])
-                
+                # Add all articles in results['items'] (a list) to the session['items'] dictionary, to improve lookup.
+                for article in results['items'] :
+                    request.session['items'][str(article['article_id'])] = article
+
                 request.session.modified = True
                 
-                if accumulated_results == None :
-                    accumulated_results = results
-                else :
-                    accumulated_results['items'].extend(results['items'])
-
-        
-    
-        
-    return accumulated_results
+    return request.session['items']
 
 
 def update_article(request, article_id, article_urls, checked_urls):
