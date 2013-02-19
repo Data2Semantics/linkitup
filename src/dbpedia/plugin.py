@@ -61,7 +61,7 @@ def linkup(request, article_id):
                     FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')).
                     FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). 
                 }
-            """
+            """        
         sparql.setQuery(q)
 
         results = sparql.query().convert()
@@ -79,9 +79,6 @@ def linkup(request, article_id):
             
             urls.append({'type': 'mapping', 'uri': match_uri, 'web': wikipedia_uri, 'show': show, 'short': short, 'original': t_qname})
             
-
-    
-    
     request.session.setdefault(article_id,[]).extend(urls)
     request.session.modified = True
     
