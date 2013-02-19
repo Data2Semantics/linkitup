@@ -37,11 +37,9 @@ def linkup(request, article_id):
             r = requests.get(request_uri, params=data)
             
             concepts = json.loads(r.text)
-        
             
             if len(concepts)>0 :
                 for c in concepts['concepts'] :
-                    pprint(c)
                     label = c['prefLabel']['label']['literalForm']['value']
                     uri = c['id']
                     
