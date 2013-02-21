@@ -27,15 +27,15 @@ from util.figshare import get_auth_url, validate_oauth_verifier, get_articles, u
 from util.rdf import get_rdf
 
 
-
 PLUGINS_FILE = "/Users/hoekstra/projects/data2semantics/linkitup/src/plugins.yaml"
 # PLUGINS_FILE = "/var/www/linkitup.data2semantics.org/src/plugins.yaml"
 
 def index(request):
     """This function generates the landing page for Linkitup (it is called for requests to the base URL of the application)"""
     
-    return render_to_response('landing.html')
-    
+    return render_to_response('landing.html',context_instance=RequestContext(request))
+
+
 def dashboard(request):
     """If this session has not yet been initialized (i.e. we don't yet have an oauth_token from Figshare), 
     it starts up the three-legged authentication procedure for OAuth v1.

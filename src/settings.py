@@ -19,13 +19,18 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = 'sqlite.db'    # Or path to database file if using sqlite3.
-# DATABASE_NAME = '/var/www/commit.data2semantics.org/linkitup/src/sqlite.db'            
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASES = {
+    'default': {
+        'ENGINE' : 'django.db.backends.sqlite3',    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
+        'NAME' : 'sqlite.db' ,   # Or path to database file if using sqlite3.
+        # DATABASE_NAME = '/var/www/commit.data2semantics.org/linkitup/src/sqlite.db'            
+        'USER' : '' ,            # Not used with sqlite3.
+        'PASSWORD' : '' ,        # Not used with sqlite3.
+        'HOST' : '' ,            # Set to empty string for localhost. Not used with sqlite3.
+        'PORT' : ''             # Set to empty string for default. Not used with sqlite3.
+        }
+}
+
 
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
@@ -56,15 +61,15 @@ MEDIA_URL = ''
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/static/media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '349587349857393847593847593847985798437'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.load_template_source',
 )
 
@@ -110,8 +115,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
-    # 'django.contrib.admin',
-    # 'django_openid_auth',
+    'django.contrib.sites',
+    'django.contrib.admin',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -121,5 +126,11 @@ AUTHENTICATION_BACKENDS = (
 FILE_UPLOAD_HANDLERS = (
     # "django.core.files.uploadhandler.MemoryFileUploadHandler",
     "django.core.files.uploadhandler.TemporaryFileUploadHandler",)
+
+
+TEMPLATE_CONTEXT_PROESSORS = (
+    'django.core.context_processors.request',
+)
+
 
 
