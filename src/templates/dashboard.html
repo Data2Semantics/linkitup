@@ -10,10 +10,8 @@
 {% endblock %}
 
 {% block nav %}
-	<li><a href="/">Home</a></li>
-	<li class="active"><a href="/dashboard">Dashboard</a></li>
-	<li class='divider-vertical'></li>
-	<li><a href="http://www.data2semantics.org" target="_blank"><i class='icon-share-alt'></i>Data2Semantics</a></li>
+ 	  {% set active = 'dashboard' %}
+ 	  {% include 'menu.html' %}
 {% endblock %}
 
 {% block content %}

@@ -1,5 +1,9 @@
 {% extends 'index.html' %}
 
+{% block nav %}
+ 	  {% set active = 'home' %}
+ 	  {% include 'menu.html' %}
+{% endblock %}
 
 
 {% block content %}
