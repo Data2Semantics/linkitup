@@ -112,15 +112,15 @@
 				<div class="span2">
 					<div class="well" style="padding: 8px 0;">
 					<ul class="nav nav-list">
-						<li class="nav-header">Plugins</li>
-						{% for plugin in plugins %}
-							<li>{% include "button.html" %}</li>
-						{% endfor %}
-						<li class="nav-header">Actions</li>
-						<li><a id="show_{{ i.article_id }}">Show Selection</a></li>
-						<li><input type='button' data-role='submit' name='task' value='Download RDF' class='text-button' id="rdf_{{ i.article_id }}"/></li>
-						<li><input type='button' data-role='submit' name='task' value='Add to Figshare' class='text-button' id="figshare_{{ i.article_id }}"/></li>
-					</ul>
+					<li class="nav-header">Plugins</li>
+					{% for plugin in plugins %}
+						<li>{% include "button.html" %}</li>
+					{% endfor %}
+					<li class="nav-header">Actions</li>
+					<li><a id="show_{{ i.article_id }}">Show Selection</a>
+					</li><li><input type='submit' name='task' value='Download RDF' class='text-button' id="rdf_{{ i.article_id }}"/>
+					</li><li><input type='submit' name='task' value='Add to Figshare' class='text-button' id="figshare_{{ i.article_id }}"/>
+					</li></ul>
 					</div>
 				</div>			
 			</div>
