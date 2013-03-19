@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     url(r'^validate', 'views.validate', name='validate'),
     url(r'^clear$', 'views.clear', name='clear'),
 #    url(r'^linkup/(?P<article_id>\d+)$', 'views.linkup', name='linkup'),
-    url(r'^process/(?P<article_id>\d+)$', 'views.process', name='process'),
+#    url(r'^process/(?P<article_id>\d+)$', 'views.process', name='process'),
     
     url(r'^dbpedia/(?P<article_id>\d+)$', 'dbpedia.plugin.linkup', name='dbpedia'),
     url(r'^dblp/(?P<article_id>\d+)$', 'dblp.plugin.linkup', name='dblp'),
