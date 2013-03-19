@@ -65,7 +65,9 @@ def dashboard(request):
             return render_to_response('error.html',{'message': e.message })
         
         try :
+            print "Retrieving article descriptions from Figshare.com"
             results = get_articles(request)
+            print "Done"
         except Exception as e :
             return render_to_response('error.html',{'message': e.message })
         
