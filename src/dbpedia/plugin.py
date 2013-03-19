@@ -24,6 +24,7 @@ def linkup(request, article_id):
     i = items[article_id]
     
     tags_and_categories = i['tags'] + i['categories']
+    
     for tag in tags_and_categories :
         
         t_id = tag['id']
@@ -62,11 +63,16 @@ def linkup(request, article_id):
                     FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). 
                 }
             """        
+            
+        print "Query set to "+q
         sparql.setQuery(q)
-
+        print "Calling endpoint"
         results = sparql.query().convert()
+        print "Done"
         for result in results["results"]["bindings"]:
             match_uri = result["s"]["value"]
+            
+            print match_uri
             
             wikipedia_uri = re.sub('dbpedia.org/resource','en.wikipedia.org/wiki',match_uri)
             
