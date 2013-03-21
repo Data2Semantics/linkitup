@@ -34,10 +34,6 @@
 						<strong>{{ i.title }}</strong> <small>(<em>{{ i.status }}</em>, {{ i.published_date }})</small><br/>
 						<a href="{{i.doi}}">{{i.doi}}</a> 
 	 				</div>
-	 				<div id='{{ i.article_id }}_updated_figshare' class="alert alert-success">
-					  <button type="button" class="close" data-dismiss="alert">&times;</button>
-					  <strong>Success!</strong> <strong>Linki</strong>tup data has been pushed back to Figshare.
-					</div>
 				</div>
 			</div>
 			
@@ -142,6 +138,19 @@
 		  </div>
 		</div>
 
+		<div id='{{ i.article_id }}_updated_figshare' tabindex="-1" class="modal hide fade" role="dialog" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		    	<h3>Figshare Updated</h3>
+			</div>
+			<div id="links_modalbody_{{ i.article_id }}" class="modal-body">
+		    	<p><strong>Success!</strong> <strong>Linki</strong>tup data has been pushed back to Figshare.</p>
+		  	</div>
+		  	<div class="modal-footer">
+		    	<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		  	</div>			  
+		</div>
+		
 			
 		<script>
 		
@@ -178,7 +187,7 @@
 		        $("#links_{{ i.article_id }}").modal('show');
 			});
 			
-			$("#{{ i.article_id }}_updated_figshare").hide();
+			// $("#{{ i.article_id }}_updated_figshare").hide();
 			
 			/*             
  			// This bit was used to submit the form (without refreshing the page)
@@ -200,7 +209,16 @@
 		// data-role functionality
 		$(function(){
 		    $("[data-role=submit]").click(function(){
-		        $(this).closest("form").submit();
+		        $(this).closest("form").submit(function () {    
+	                $.post(
+	                        'process/{{ i.article_id }}',
+	                         $(this).serialize(),
+	                         function(data){
+	                       	 	$("#{{ i.article_id }}_updated_figshare").modal('show');
+	                         }
+	                       );
+	                       return false;   
+	                });
 		    });
 		});
 	

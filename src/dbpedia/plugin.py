@@ -10,6 +10,8 @@ http://github.com/Data2Semantics/linkitup
 """
 from SPARQLWrapper import SPARQLWrapper, JSON
 from django.shortcuts import render_to_response
+from django.template.loader import render_to_string
+from django import template
 import re
 
 
@@ -24,6 +26,14 @@ def linkup(request, article_id):
     i = items[article_id]
     
     tags_and_categories = i['tags'] + i['categories']
+    
+#    labels = [tag['name'].strip() for tag in tags_and_categories ]
+#    # matches = [re.findall('^.*?\=(.*)$',tag['name'].strip())[0] if tag['name'].lower().startswith('inchikey=') else tag['name'].strip() for tag in tags_and_categories]
+#    matches = {re.findall('^.*?\=(.*)$',tag['name'].strip())[0] if tag['name'].lower().startswith('inchikey=') else tag['name'].strip(): 'dbpprop:inchikey' if tag['name'].strip().startswith('inchikey=') else 'rdfs:label' for tag in tags_and_categories}
+#    ids = {tag['name'].strip(): tag['id'] for tag in tags_and_categories }
+#    
+#    print matches
+#    print render_to_string('dbpedia/dbpedia.query',{'property': 'rdfs:label', 'matches': matches})
     
     for tag in tags_and_categories :
         

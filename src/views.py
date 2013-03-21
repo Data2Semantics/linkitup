@@ -138,7 +138,7 @@ def update(request, article_id):
     request.session[article_id] = []
     request.session.modified = True
     
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/dashboard')
 
 
 
