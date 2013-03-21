@@ -1,4 +1,4 @@
-{% extends 'index.html' %}
+{% extends 'base.html' %}
 
 {% block nav %}
  	  {% set active = 'home' %}
@@ -47,7 +47,13 @@
 		<div class='span3'>
 			<div class='well' style='text-align: center'>
 				<p class='lead'>Get started!</p>
+				{% if not g.user.is_authenticated() %}
+				<a class='btn btn-primary btn-warning' href="{{ url_for('login') }}"><strong>Login</strong> with OpenID</a><br/>
+				{% elif g.user.oauth_token == None or g.user.oauth_token == "" %}
+				<a class='btn btn-primary btn-warning' href="{{ url_for('figshare_authorize') }}"><strong>Authorize</strong> with Figshare</a><br/>
+				{% else %}
 				<a class='btn btn-primary' href='/dashboard'><strong>Linki</strong>tup Dashboard</a>
+				{% endif %}
 			</div>
 		</div>
 		<div class='span3'>

@@ -1,0 +1,54 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block nav %}
+ 	  {% set active = 'home' %}
+ 	  {% include 'menu.html' %}
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript">
+function set_openid(openid, pr)
+{
+    u = openid.search('<username>');
+    if (u != -1) {
+        // openid requires username
+        user = prompt('Enter your ' + pr + ' username:');
+        openid = openid.substr(0, u) + user;
+    }
+    form = document.forms['login'];
+    form.elements['openid'].value = openid;
+}
+</script>
+
+<div class="row">
+	<div class="offset4 span4">
+		<div class="well">
+		<form action="" method="post" name="login">
+			<fieldset>
+				<legend>Login</legend>
+		   	 	{{form.hidden_tag()}}
+		    	<label>
+		        Please enter your OpenID<br/><small>(or select one of the providers below)</small>
+		        </label>
+		        {{form.openid(size=100)}}
+		        {% for error in form.errors.openid %}
+		        <span class="text-error">[{{error}}]</span>
+		        {% endfor %}
+		    	<div class="help-block">
+		        |{% for pr in providers %}
+		        <a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');">{{pr.name}}</a> |
+		        {% endfor %}
+		    	</div>
+		    	<label class="checkbox">
+		    		{{form.remember_me}} Remember Me
+		    	</label>
+		    	<input class="btn btn-primary" type="submit" value="Sign In">
+		    </fieldset>
+		</form>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}

@@ -8,13 +8,13 @@ Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam
 http://github.com/Data2Semantics/linkitup
 
 """
+from flask import render_template, session
 from SPARQLWrapper import SPARQLWrapper, JSON
-from django.shortcuts import render_to_response
 import re
 
 
-def linkup(request, article_id):
-    items = request.session['items']
+def linkup(article_id):
+    items = session['items']
     
     sparql = SPARQLWrapper("http://live.dbpedia.org/sparql")
     sparql.setReturnFormat(JSON)
@@ -24,6 +24,9 @@ def linkup(request, article_id):
     i = items[article_id]
     
     tags_and_categories = i['tags'] + i['categories']
+    
+    print tags_and_categories
+    
     for tag in tags_and_categories :
         
         t_id = tag['id']
@@ -61,7 +64,9 @@ def linkup(request, article_id):
                     FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')).
                     FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). 
                 }
-            """        
+            """      
+            
+        print "Query set to ", q  
         sparql.setQuery(q)
 
         results = sparql.query().convert()
@@ -79,10 +84,10 @@ def linkup(request, article_id):
             
             urls.append({'type': 'mapping', 'uri': match_uri, 'web': wikipedia_uri, 'show': show, 'short': short, 'original': t_qname})
             
-    request.session.setdefault(article_id,[]).extend(urls)
-    request.session.modified = True
+    session.setdefault(article_id,[]).extend(urls)
+    session.modified = True
     
     if urls == [] :
         urls = None 
         
-    return render_to_response('urls.html',{'article_id': article_id, 'results':[{'title':'Wikipedia','urls': urls}]})
+    return render_template('urls.html',{'article_id': article_id, 'results':[{'title':'Wikipedia','urls': urls}]})

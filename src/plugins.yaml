@@ -1,20 +1,20 @@
-dbpedia.plugin:
+app.dbpedia.plugin:
   name: Wikipedia
   slug: dbpedia
   logo: static/img/wikipedia.png
-dblp.plugin:
+app.dblp.plugin:
   name: DBLP 
   slug: dblp 
   logo: static/img/dblp.png
-crossref.plugin:
-  name: CrossRef
-  slug: crossref
-  logo: static/img/crossref.png
-ldr.plugin:
-  name: Linked Data Repository
-  slug: ldr
-  logo: static/img/ldr.png
-orcid.plugin:
-  name: ORCID
-  slug: orcid
-  logo: static/img/orcid.png
+# app.crossref.plugin:
+#   name: CrossRef
+#   slug: crossref
+#   logo: static/img/crossref.png
+# app.ldr.plugin:
+#   name: Linked Data Repository
+#   slug: ldr
+#   logo: static/img/ldr.png
+# app.orcid.plugin:
+#   name: ORCID
+#   slug: orcid
+#   logo: static/img/orcid.png

@@ -9,3 +9,6 @@
 *.db
 
 src/sqlite.db
+src/app.db
+src/db_repository
+src/tmp

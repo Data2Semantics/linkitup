@@ -8,16 +8,28 @@ Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam
 http://github.com/Data2Semantics/linkitup
 
 """
+from flask import render_template, session, g
 from SPARQLWrapper import SPARQLWrapper, JSON
-from django.shortcuts import render_to_response
 import re
+from pprint import pprint
+
+from app import app
 
 
 
 
-
-def linkup(request, article_id):
-    items = request.session['items']
+@app.route('/dblp/<article_id>')
+def linkup(article_id):
+    app.logger.debug("Running plugin for article {}".format(article_id))
+    
+    app.logger.debug(pprint(session))
+    
+    if 'items' in session:
+        app.logger.debug("Items found")
+    else:
+        app.logger.debug("No items found")
+    
+    items = session['items']
 
     sparql = SPARQLWrapper("http://dblp.l3s.de/d2r/sparql")
     sparql.setReturnFormat(JSON)
@@ -45,6 +57,7 @@ def linkup(request, article_id):
             
             sparql.setQuery(q)
     
+            app.logger.debug(q)
             try :
                 results = sparql.query().convert()
     
@@ -59,15 +72,15 @@ def linkup(request, article_id):
                         show = match_uri
                     authors.append({'type': 'mapping', 'uri': match_uri, 'web': match_uri, 'show': show, 'short': short, 'original': a_qname})
             except :
-                return render_to_response('message.html',{'type': 'error', 'text':"DBLP endpoint {} produced unintelligible results. Maybe it's down?".format(sparql)})
+                return render_template('message.html',{'type': 'error', 'text':"DBLP endpoint {} produced unintelligible results. Maybe it's down?".format(sparql)})
         
             
-    request.session.setdefault(article_id,[]).extend(authors)
-    request.session.modified = True
+    session.setdefault(article_id,[]).extend(authors)
+    session.modified = True
     
     if authors == [] :
         authors = None
         
     
         
-    return render_to_response('urls.html',{'article_id': article_id, 'results':[{'title':'DBLP','urls': authors}]})
+    return render_template('urls.html',{'article_id': article_id, 'results':[{'title':'DBLP','urls': authors}]})

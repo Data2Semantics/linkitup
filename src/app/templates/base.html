@@ -38,10 +38,12 @@
     	{% block navbar %}
 			<div class="navbar">
 			  <div class="navbar-inner">
-<!-- 			    <a class="brand" href="/">Menu</a> -->
+			  	{% block loggedin %}
+			  		{% include 'loggedin.html' %}
+			    {% endblock %}
 			    <ul class="nav pull-right">
-			    	{% block nav %}
-			      	{% endblock %}
+				    	{% block nav %}
+				      	{% endblock %}
 			    </ul>
 			  </div>
 			</div>
@@ -60,6 +62,7 @@
 			</div>
 		</div>
     </div> 
+    
 	<script src="static/js/bootstrap.min.js"></script>
 </body>
 
