@@ -1,14 +1,30 @@
 import os
+import yaml
+import pickle
+
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
+
+from simplekv.fs import FilesystemStore
+from flaskext.kvsession import KVSessionExtension
+
 from config import basedir
 
-import yaml
+
+
+# Initialze a simplekv FileystemStore in the tmp directory 
+store = FilesystemStore('tmp')
+
 
 app = Flask(__name__)
+
+# this will replace the app's session handling
+KVSessionExtension(store, app)
+
 app.config.from_object('config')
+
 db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app)
