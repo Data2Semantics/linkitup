@@ -14,11 +14,13 @@ import re
 
 from app import app
 
+from flask.ext.login import login_required
 
 
 
 @app.route('/dblp/<article_id>')
-def linkup(article_id):
+@login_required
+def link_to_dblp(article_id):
     app.logger.debug("Running DBLP plugin for article {}".format(article_id))
     
     items = session['items']
@@ -64,7 +66,10 @@ def linkup(article_id):
                         show = match_uri
                     authors.append({'type': 'mapping', 'uri': match_uri, 'web': match_uri, 'show': show, 'short': short, 'original': a_qname})
             except :
-                return render_template('message.html',{'type': 'error', 'text':"DBLP endpoint {} produced unintelligible results. Maybe it's down?".format(sparql)})
+                return render_template('message.html',
+                                       type = 'error', 
+                                       text = "DBLP endpoint {} produced unintelligible results. Maybe it's down?".format(sparql)
+                                       )
         
             
     session.setdefault(article_id,[]).extend(authors)

@@ -9,17 +9,23 @@ http://github.com/Data2Semantics/linkitup
 
 """
 
-from django.shortcuts import render_to_response
+from flask import render_template, session
+from flask.ext.login import login_required
+
 import requests
 import json
 import re
 from pprint import pprint
 
+from app import app
 
 _known_vocabularies = ['SciValFunders']
 
-def linkup(request, article_id):
-    items = request.session['items']
+@app.route('/ldr/<article_id>')
+@login_required
+def link_to_ldr(article_id):
+    app.logger.debug("Running LDR plugin for article {}".format(article_id))
+    items = session['items']
     
     urls = []
     
@@ -48,10 +54,12 @@ def linkup(request, article_id):
                     urls.append({'type':'mapping', 'uri': uri, 'web': uri, 'show': label, 'short': short, 'original': label})
             
 
-    request.session.setdefault(article_id,[]).extend(urls)
-    request.session.modified = True
+    session.setdefault(article_id,[]).extend(urls)
+    session.modified = True
     
     if urls == [] :
         urls = None 
         
-    return render_to_response('urls.html',{'article_id': article_id, 'results':[{'title':'Linked Data Repository','urls': urls}]})  
+    return render_template('urls.html',
+                           article_id = article_id, 
+                           results = [{'title':'Linked Data Repository','urls': urls}])  

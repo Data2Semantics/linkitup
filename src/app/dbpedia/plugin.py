@@ -9,11 +9,20 @@ http://github.com/Data2Semantics/linkitup
 
 """
 from flask import render_template, session
+from flask.ext.login import login_required
+
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
 
 
-def linkup(article_id):
+
+from app import app
+
+@app.route('/dbpedia/<article_id>')
+@login_required
+def link_to_wikipedia(article_id):
+    app.logger.debug("Running DBPedia plugin for article {}".format(article_id))
+    
     items = session['items']
     
     sparql = SPARQLWrapper("http://live.dbpedia.org/sparql")
@@ -25,7 +34,7 @@ def linkup(article_id):
     
     tags_and_categories = i['tags'] + i['categories']
     
-    print tags_and_categories
+#    app.logger.debug(tags_and_categories)
     
     for tag in tags_and_categories :
         
@@ -90,4 +99,6 @@ def linkup(article_id):
     if urls == [] :
         urls = None 
         
-    return render_template('urls.html',{'article_id': article_id, 'results':[{'title':'Wikipedia','urls': urls}]})
+    return render_template('urls.html',
+                           article_id = article_id, 
+                           results = [{'title':'Wikipedia','urls': urls}])
