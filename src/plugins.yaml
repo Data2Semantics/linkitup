@@ -10,10 +10,10 @@ app.dblp.plugin:
 #   name: CrossRef
 #   slug: crossref
 #   logo: static/img/crossref.png
-# app.ldr.plugin:
-#   name: Linked Data Repository
-#   slug: ldr
-#   logo: static/img/ldr.png
+app.ldr.plugin:
+  name: Linked Data Repository
+  slug: ldr
+  logo: static/img/ldr.png
 # app.orcid.plugin:
 #   name: ORCID
 #   slug: orcid
