@@ -4,17 +4,6 @@
 </div> -->
 
 
-<!-- {% block articles %}
-
-<li class="dropdown">
-	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Articles <b class="caret"></b></a>
-	<ul class="dropdown-menu">
-
-	</ul>
-</li>
-{% endblock %} -->
-
-
 {% block tabs %}
 	{% for k,i in results.items() %}
 		<li class="span3 {% if loop.first %}active{% endif %}"><a href="#{{ i.article_id }}_tab" data-toggle="tab">{{ i.title }}</a></li>
@@ -25,7 +14,7 @@
 {% block dbcontent %}
 	{% for k,i in results.items() %}
 		<div class="span8 tab-pane {% if loop.first %}active{% endif %}" id="{{ i.article_id }}_tab">
-		<form id='{{ i.article_id }}_form' method='POST' action='process/{{ i.article_id }}'>
+		<form id='{{ i.article_id }}_form' method='POST'>
 
 			<div class="row">
 				<div class="">
@@ -117,8 +106,8 @@
 					{% endfor %}
 					<li class="nav-header">Actions</li>
 					<li><a id="show_{{ i.article_id }}">Show Selection</a>
-					</li><li><input type='submit' name='task' value='Download RDF' class='text-button' id="rdf_{{ i.article_id }}"/>
-					</li><li><input type='submit' name='task' value='Add to Figshare' class='text-button' id="figshare_{{ i.article_id }}"/>
+					</li><li><a id="rdf_{{ i.article_id }}">Download RDF</a>
+					</li><li><a id="figshare_{{ i.article_id }}">Add to Figshare</a>
 					</li></ul>
 					</div>
 				</div>			
@@ -143,65 +132,11 @@
 
 			
 		<script>
-		
-			/* 			
- 			// This bit was used to show and hide article details
- 
- 			$("#{{ i.article_id }}_details").hide();
-			$("#{{ i.article_id }}_title").click(function(){
-					$("#{{ i.article_id }}_details").toggle('');
-			}) 
-			*/
-			
-			$.ajaxSetup ({  
-					        cache: false  
-					    });
-					
-			$("#links_{{ i.article_id }}").hide();
-			
-			$("#show_{{ i.article_id }}").click(function(){
-
-		        $("#links_modalbody_{{ i.article_id }}").empty(); 
-		        
-		        var start = "<label class='checkbox alert alert-info'><a href='";
-		        var middle1 = "' target='_new'>";
-		        var end = "</a></label>";
-		        
-				$("#{{ i.article_id }}_form :input[type='checkbox']:checked").each( 
-						function(){
-				        	if ($(this).attr('name') != 'csrfmiddlewaretoken') {
-				          		$("#links_modalbody_{{ i.article_id }}").append(start + $(this).attr('web') + middle1 + $(this).attr('show') + end);
-				        	}
-		        });
-		        
-		        $("#links_{{ i.article_id }}").modal('show');
-			});
-			
-			$("#{{ i.article_id }}_updated_figshare").hide();
-			
-			/*             
- 			// This bit was used to submit the form (without refreshing the page)
- 			$("#{{ i.article_id }}_form").submit( function () {    
-                $.post(
-                 'process/{{ i.article_id }}',
-                  $(this).serialize(),
-                  function(data){
-                	 $("#{{ i.article_id }}_updated_figshare").show();
-                  }
-                );
-                return false;   
-              });   
-			*/
+			{% include 'article.js' %}
 		</script>
 		</div>
 	{% endfor %}
 	<script>
-		// data-role functionality
-		$(function(){
-		    $("[data-role=submit]").click(function(){
-		        $(this).closest("form").submit();
-		    });
-		});
-	
+		{% include 'articles.js' %}
 	</script>
 {% endblock %}

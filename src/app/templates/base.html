@@ -15,7 +15,10 @@
 			<div class="span12">
 				<div>
 					<a href='/'><img id='logo' src='static/img/linkitup-logo-150dpi.png' style="float:left; height:80px; margin-top: -15px; margin-left: 5px; margin-right: 15px;"/></a>
-		  			<h1 style="padding-top:12px;"><small>{% block pagetitle %}{% endblock %}</small>{% block logout %}{% endblock %}</h1>
+		  			<h1 style="padding-top:12px;">
+		  				<small>{% block pagetitle %}{% endblock %}</small>
+		  				{% block logout %}{% endblock %}
+		  			</h1>
 				</div>			
 			</div>
 		</div>
