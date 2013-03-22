@@ -8,16 +8,16 @@ Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam
 http://github.com/Data2Semantics/linkitup
 
 """
+from flask import session
 
-
-from rdflib import ConjunctiveGraph, Namespace, URIRef, Literal, BNode
+from rdflib import Graph, Namespace, URIRef, Literal, BNode
 from rdflib.namespace import RDF, RDFS, SKOS, OWL
 from urllib import quote
 from datetime import datetime
 import re
 
 
-def get_rdf(request, article_id, checked_urls):
+def get_rdf(article_id, checked_urls):
     """Takes everything we know about the article specified in article_id, and builds a simple RDF graph. 
     
     We only consider the URLs of checkboxes that were selected by the user.
@@ -32,7 +32,7 @@ def get_rdf(request, article_id, checked_urls):
     FOAF = Namespace('http://xmlns.com/foaf/0.1/')
     DCTERMS = Namespace('http://purl.org/dc/terms/')
     
-    g = ConjunctiveGraph()
+    g = Graph(identifier=URIRef('http://www.example.com'))
     g.bind('fsv',FSV)
     g.bind('fs',FS)
     g.bind('skos',SKOS)
@@ -40,9 +40,9 @@ def get_rdf(request, article_id, checked_urls):
     g.bind('foaf',FOAF)
     g.bind('dcterms',DCTERMS)
     
-    items = request.session.get('items',[])
+    items = session.get('items',[])
     
-    urls = request.session.get(article_id,[])
+    urls = session.get(article_id,[])
         
     i = items[article_id]
 

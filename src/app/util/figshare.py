@@ -173,9 +173,12 @@ def get_articles():
     return
 
 
-def update_article(request, article_id, article_urls, checked_urls):
-    oauth_token = request.session.get('oauth_token')
-    oauth_token_secret = request.session.get('oauth_token_secret')
+def update_article(article_id, checked_urls):
+    
+    article_urls = session.get(article_id,[])
+    
+    oauth_token = g.user.oauth_token
+    oauth_token_secret = g.user.oauth_token_secret
 
 
     oauth = OAuth1(client_key,
