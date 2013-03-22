@@ -170,12 +170,6 @@ def get_articles():
 
                 session.modified = True
     
-    if 'items' in session:
-        app.logger.debug("ARTICLES: Items found")
-    else:
-        app.logger.debug("ARTICLES: No items found")
-    
-                
     return
 
 

@@ -54,17 +54,7 @@ def dashboard():
         """
         
         try :
-            if 'items' in session:
-                app.logger.debug("Already found items! YAY")
-            else:
-                app.logger.debug("No items found bleh")
-                
             get_articles()
-
-            app.logger.debug(pprint(session))
-
-
-            session.modified = True
             
             return render_template('articles.html', 
                                raw = str(session['items']),
