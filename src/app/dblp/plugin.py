@@ -11,7 +11,6 @@ http://github.com/Data2Semantics/linkitup
 from flask import render_template, session, g
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
-from pprint import pprint
 
 from app import app
 
@@ -20,14 +19,7 @@ from app import app
 
 @app.route('/dblp/<article_id>')
 def linkup(article_id):
-    app.logger.debug("Running plugin for article {}".format(article_id))
-    
-    app.logger.debug(pprint(session))
-    
-    if 'items' in session:
-        app.logger.debug("Items found")
-    else:
-        app.logger.debug("No items found")
+    app.logger.debug("Running DBLP plugin for article {}".format(article_id))
     
     items = session['items']
 
@@ -76,6 +68,9 @@ def linkup(article_id):
         
             
     session.setdefault(article_id,[]).extend(authors)
+    
+    
+    
     session.modified = True
     
     if authors == [] :
@@ -83,4 +78,6 @@ def linkup(article_id):
         
     
         
-    return render_template('urls.html',{'article_id': article_id, 'results':[{'title':'DBLP','urls': authors}]})
+    return render_template('urls.html',
+                           article_id = article_id, 
+                           results = [{'title':'DBLP','urls': authors}])
