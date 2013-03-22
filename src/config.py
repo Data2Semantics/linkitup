@@ -1,8 +1,9 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-SERVER_NAME = "dev.localhost:5000"
-SESSION_COOKIE_DOMAIN = "dev.localhost"
+SERVER_NAME = "linkitup.dev:5000"
+SESSION_COOKIE_NAME = "linkitup_session"
+
 
 CSRF_ENABLED = True
 SECRET_KEY = '\x14%<`2\xecT*\xa7M\xd0\x90%\x8d\x9a\xdd\xdbCF\xec\x96\x0e\x0e\x96'
