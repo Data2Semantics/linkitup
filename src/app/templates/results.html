@@ -1,0 +1,17 @@
+
+			
+<div class="modal hide fade" id="{{ plugin.slug }}_result_{{ i.article_id }}" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3 id="{{ plugin.slug }}_modallabel_{{ i.article_id }}">{{ plugin.name }}</h3>
+  </div>
+  <div id="{{ plugin.slug }}_modalbody_{{ i.article_id }}" class="modal-body"></div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
+
+			
+<script type="text/javascript">
+	{% include 'results.js' %}
+</script>

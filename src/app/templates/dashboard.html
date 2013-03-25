@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+
+{% block pagetitle %}
+	Dashboard
+{% endblock %}
+
+{% block logout %}
+<a href='/clear' class='btn btn-mini' style='float: right; font-weight: normal;'>Logout</a>
+{% endblock %}
+
+{% block nav %}
+ 	  {% set active = 'dashboard' %}
+ 	  {% include 'menu.html' %}
+{% endblock %}
+
+{% block content %}
+	<div class="row">
+		<div class="span12">
+			<div class="tabbable tabs-left" style="float: right;">
+			  <ul class="nav nav-tabs">
+			    {% block tabs %}{% endblock %}
+			  </ul>
+			  <div class="tab-content">
+			    {% block dbcontent %}{% endblock %}
+			  </div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
