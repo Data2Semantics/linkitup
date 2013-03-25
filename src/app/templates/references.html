@@ -10,17 +10,14 @@
  				
  				
 				$("#{{ file_id }}_{{ r.id }}_results").html(html);
-				var rtext = escape("{{ r.text|escapejs }}");
-				$.get("/crossref/match/{{ article_id }}/{{ file_id }}", { text: rtext },
-						   function(data){
+				
+				var rtext = escape("{{ r.text|tojson }}");
+				
+				$.get("crossref/match/{{ article_id }}/{{ file_id }}", 
+							{ text: rtext },
+						    function(data){
 								$("#{{ file_id }}_{{ r.id }}_results").html(data);
-						   });
-/* 				var referenceText = "{{ r.text }}";
-				var d = { text: referenceText };
- 				$("#{{ file_id }}_{{ r.id }}_results").html(d);  */
- /* 				$.get("/crossref/match", function(data) {
-						$("#{{ file_id }}_{{ r.id }}_results").html(data);
-				});  */
+							});
 			});
 		</script>
 {% endfor %}

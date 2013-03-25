@@ -8,7 +8,7 @@ Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam
 http://github.com/Data2Semantics/linkitup
 
 """
-
+# -*- coding: utf-8 -*-
 
 from pdfminer.pdfinterp import PDFResourceManager, process_pdf
 from pdfminer.converter import TextConverter
@@ -139,7 +139,7 @@ def extract_references_from_text(document):
             
             for r in references :
                 if len(r)>5 :
-                    clean_reference_text = re.sub('\n',' ',r)
+                    clean_reference_text = re.sub('\n',' ',r).decode('utf-8')
                     clean_references.append({'id': index, 'text': clean_reference_text})
                     
                     index += 1

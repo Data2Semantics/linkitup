@@ -6,10 +6,10 @@ app.dblp.plugin:
   name: DBLP 
   slug: dblp 
   logo: static/img/dblp.png
-# app.crossref.plugin:
-#   name: CrossRef
-#   slug: crossref
-#   logo: static/img/crossref.png
+app.crossref.plugin:
+  name: CrossRef
+  slug: crossref
+  logo: static/img/crossref.png
 app.ldr.plugin:
   name: Linked Data Repository
   slug: ldr

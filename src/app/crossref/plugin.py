@@ -8,18 +8,31 @@ Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam
 http://github.com/Data2Semantics/linkitup
 
 """
+# -*- coding: utf-8 -*-
 
 
-from django.http import HttpResponse
-from django.shortcuts import render_to_response
+from flask import render_template, session, request, make_response
+from flask.ext.login import login_required
+from flaskext.uploads import UploadSet
+
 import json
 import requests
 import urllib
 from extract import extract_references
 import re
+from tempfile import NamedTemporaryFile
 
-def linkup(request, article_id):
-    items = request.session.get('items',[])
+from pprint import pprint
+
+from app import app, pdfs
+
+
+
+
+@app.route('/crossref/<article_id>')
+@login_required
+def link_to_DOI(article_id):
+    items = session.get('items',[])
     
     
     i = items[article_id]
@@ -28,63 +41,75 @@ def linkup(request, article_id):
     files = [f for f in i['files'] if f['mime_type'] == 'application/pdf']
             
     if len(files) > 0:
-        return render_to_response('crossref.html',{'title':'Crossref','files': files, 'article_id': article_id})
+        return render_template('crossref.html',
+                               title = 'Crossref',
+                               files = files, 
+                               article_id = article_id)
     else :        
-        return render_to_response('message.html',{'type': 'error', 'text': 'This dataset does not contain any PDF files'})
+        return render_template('message.html',
+                               type = 'error',
+                               text = 'This dataset does not contain any PDF files')
 
 
-def upload(request, article_id, file_id):
-    print article_id, file_id
-    print request.FILES
+@app.route('/crossref/upload/<article_id>/<file_id>', methods = ['POST'])
+@login_required
+def upload_to_crossref(article_id, file_id):
+    app.logger.debug("Article {}, File {}".format(article_id, file_id))
     
-    if 'files[]' in request.FILES :
-        result = [{'name': request.FILES['files[]'].name}]
+    app.logger.debug(pprint(request.files))
+    
+    if 'files[]' in request.files :
+        result = [{'name': request.files['files[]'].name}]
         
-        tempfile = request.FILES['files[]'].temporary_file_path()
-        print 'upload: tempfile', tempfile
+        app.logger.debug(request.files['files[]'])
         
-        request.session.setdefault('files',{})[file_id] = tempfile
-        request.session.modified = True
+#        tempfile = request.files['files[]'].temporary_file_path()
+
+
+        tempfile = pdfs.save(request.files['files[]'])
+
+        app.logger.debug('upload: tempfile {}'.format(tempfile))
         
-        print 'upload: files', request.session['files']
+        session.setdefault('files',{})[file_id] = tempfile
+        session.modified = True
+        
+        app.logger.debug('upload: files {}'.format(session['files']))
         
         result = [  {
             "name":"{}.pdf".format(file_id)
         }]
-        print result
+        app.logger.debug(result)
         
-        return HttpResponse(json.dumps(result))
+        return json.dumps(result)
     
     else :
         result = [{'name': 'Something went wrong ...'}]
-        return HttpResponse(json.dumps(result), mimetype="application/json")
-    
-def extract(request, article_id, file_id):
-    print 'extract: files', request.session.get('files')
+        return make_response(json.dumps(result), mimetype="application/json")
 
-    tempfile = request.session['files'][file_id]
-    print 'extract: files_file_id (tempfile)', tempfile
-    
-#### THE CODE BELOW IS FOR USE WITH CROSSREF PDF-EXTRACT (If you manage to get it running on your system)
-#    output = subprocess.check_output(['pdf-extract','extract','--references',tempfile])
-#    print output
-#    
-#    root = et.fromstring(output)
-#    
-#    references = []
-#    
-#    for child in root :
-#        references.append({'id': child.attrib['order'], 'text': child.text})
-####
 
-    # Use the custom reference extraction function from the bundled extract.py script
-    references = extract_references(tempfile)
+@app.route('/crossref/extract/<article_id>/<file_id>')
+@login_required
+def get_file_and_extract(article_id, file_id):
+    print 'extract: files', session.get('files')
+
+    tempfile = session['files'][file_id]
+    print 'extract: files_file_id (tempfile)', pdfs.path(tempfile)
+    
+    # TODO: Use a web-based PDF extraction service instead
+    
+    # Use the reference extraction function from the bundled extract.py script
+    references = extract_references(pdfs.path(tempfile))
         
-    return render_to_response('references.html',{'article_id': article_id, 'file_id': file_id, 'references': references})
+    return render_template('references.html',
+                           article_id = article_id, 
+                           file_id = file_id, 
+                           references = references )
 
-def match(request, article_id, file_id):
+@app.route('/crossref/match/<article_id>/<file_id>', methods = ['GET'])
+@login_required
+def match_references(article_id, file_id):
     # CrossRef search http://crossref.org/sigg/sigg/FindWorks?version=1&access=API_KEY&format=json&op=OR&expression=allen+renear
-    text = urllib.unquote(request.GET['text'])
+    text = urllib.unquote(request.args.get('text'))
 
     data = {'version': 1,
             'access': 'API_KEY',
@@ -95,25 +120,32 @@ def match(request, article_id, file_id):
     
     r = requests.get('http://crossref.org/sigg/sigg/FindWorks', params=data)
     
-    results = json.loads(r.text)
+    app.logger.debug(r.text)
     
-    
-    urls = []
-    for r in results[0:3]:
-        uri = 'http://dx.doi.org/{}'.format(r['doi'])
-        
-        short = re.sub('\.|/','_',r['doi'])
+    try :
+        results = json.loads(r.text)
         
         
-        urls.append({'type': 'reference', 'uri': uri, 'web': uri, 'show': r['fullCitation'], 'short': short, 'original': 'FS{}'.format(file_id)})
+        urls = []
+        for r in results[0:3]:
+            uri = 'http://dx.doi.org/{}'.format(r['doi'])
+            
+            short = re.sub('\.|/','_',r['doi'])
+            
+            
+            urls.append({'type': 'reference', 'uri': uri, 'web': uri, 'show': r['fullCitation'], 'short': short, 'original': 'FS{}'.format(file_id)})
+    except Exception as e:
+        urls = []
+        app.logger.warning("No results returned")
+        app.logger.debug(e.message)    
     
-    
-    request.session.setdefault(article_id,[]).extend(urls)
-    request.session.modified = True
+    session.setdefault(article_id,[]).extend(urls)
+    session.modified = True
     
     if urls == []:
         urls = None
     
-    return render_to_response('crossref_urls.html',{'urls': urls})
+    return render_template('crossref_urls.html',
+                           urls = urls)
     
     
