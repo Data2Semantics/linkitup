@@ -9,20 +9,26 @@ http://github.com/Data2Semantics/linkitup
 
 """
 
-from django.shortcuts import render_to_response
+from flask import render_template, session
+from flask.ext.login import login_required
+
 import requests
 import json
 import re
 import urllib
 from pprint import pprint
 
+from app import app
+
 
 
 orcid_url = 'http://pub.orcid.org/'
 credit_search_url = orcid_url + 'search/orcid-bio/?q=text:'
 
-def linkup(request, article_id):
-    items = request.session['items']
+@app.route('/orcid/<article_id>')
+@login_required
+def link_to_orcid(article_id):
+    items = session['items']
     
     urls = []
     
@@ -58,11 +64,16 @@ def linkup(request, article_id):
                     
                     if 'credit-name' in details:
                         name = details['credit-name']['value']
-                    else :
+                    elif 'given-names' in details and 'family-name' in details :
                         name = "{} {}".format(details['given-names']['value'].encode('utf-8'),details['family-name']['value'].encode('utf-8'))
+                    elif 'other-name' in details :
+                        name = details['other-name']['value'].encode('utf-8')
+                    else :
+                        app.logger.debug('No name found in ORCID entry')
+                        continue
                         
                     if score_double < 2 :
-#                        print "Score {} for {} is below 2, not including it in results.".format(sr['relevancy-score']['value'], name)
+                        app.logger.debug("Score {} for {} is below 2, not including it in results.".format(sr['relevancy-score']['value'], name))
                         continue   
                     
                     uri = "http://orcid.org/{}".format(orcid)
@@ -71,15 +82,18 @@ def linkup(request, article_id):
                 
                     urls.append({'type':'mapping', 'uri': uri, 'web': uri, 'show': name, 'short': short, 'original': a_qname, 'extra': orcid, 'subscript': score})
                 except Exception as e :
-                    return render_to_response('message.html',{'type': 'error', 'text': e.message })
+                    app.logger.debug("Exception in accessing ORCID entry: {}\n{}".format(e.message, pprint(sr)))
+                    return render_template('message.html',
+                                           type = 'error', 
+                                           text = e.message )
                     
 
-    print "eight"   
-    request.session.setdefault(article_id,[]).extend(urls)
-    request.session.modified = True
+    session.setdefault(article_id,[]).extend(urls)
+    session.modified = True
     
     if urls == [] :
         urls = None 
     
-    print "nine"
-    return render_to_response('urls.html',{'article_id': article_id, 'results':[{'title':'ORCID','urls': urls}]})  
+    return render_template('urls.html',
+                           article_id = article_id, 
+                           results = [{'title':'ORCID','urls': urls}] )  
