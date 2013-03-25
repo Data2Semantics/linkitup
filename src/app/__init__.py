@@ -9,6 +9,7 @@ from flask.ext.openid import OpenID
 
 from simplekv.fs import FilesystemStore
 from flaskext.kvsession import KVSessionExtension
+from flaskext.uploads import UploadSet, configure_uploads
 
 from config import basedir
 
@@ -30,6 +31,12 @@ lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'login'
 oid = OpenID(app, os.path.join(basedir, 'tmp'))
+
+
+# setup flask-uploads
+
+pdfs = UploadSet('pdfs', extensions=('pdf'))
+configure_uploads(app, (pdfs))
 
 
 try :
