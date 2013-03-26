@@ -18,3 +18,7 @@ app.orcid.plugin:
   name: ORCID
   slug: orcid
   logo: static/img/orcid.png
+app.neurolex.plugin:
+  name: NeuroLex
+  slug: neurolex
+  logo: static/img/neurolex.png
