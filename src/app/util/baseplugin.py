@@ -109,8 +109,9 @@ class SPARQLPlugin(object):
                 
                 # Append it to all matches
                 matches.append(match)
-        except :
-            raise Exception("Endpoint at {} produced unintelligible results. Maybe it's down?".format(self.endpoint)) 
+        except Exception as e:
+            app.logger.warning(e)
+            raise Exception("Endpoint at {} produced unintelligible results. Maybe it's down?<br/>{}".format(self.endpoint, e.message)) 
         
         return matches
         
