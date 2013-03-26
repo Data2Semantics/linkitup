@@ -1,0 +1,16 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX property:<http://neurolex.org/wiki/Special:URIResolver/Property-3A>
+
+SELECT DISTINCT ?match ?original_id ?original_label WHERE {
+	{% for item in items %}
+	{% if not loop.first %} UNION {% endif %} {
+	    ?match {{ property }} ?label .
+	    BIND('{{ item.id }}' AS ?original_id)
+	    BIND('{{ item.label }}' AS ?original_label)
+	    FILTER (regex(str(?label), '^{{ item.label }}$', 'i')).
+	} {% endfor %}
+  FILTER (!regex(str(?match), '^http://neurolex.org/wiki/Help-')).
+  FILTER (!regex(str(?match), '^http://neurolex.org/wiki/File-')).
+  FILTER (!regex(str(?match), '^http://neurolex.org/wiki/Special:')).
+} LIMIT 5

@@ -9,12 +9,13 @@ http://github.com/Data2Semantics/linkitup
 
 """
 from flask import render_template, session, g
-from SPARQLWrapper import SPARQLWrapper, JSON
-import re
+from flask.ext.login import login_required
+
 
 from app import app
+from app.util.baseplugin import SPARQLPlugin
 
-from flask.ext.login import login_required
+
 
 
 
@@ -23,61 +24,40 @@ from flask.ext.login import login_required
 def link_to_neurolex(article_id):
     app.logger.debug("Running Neurolex plugin for article {}".format(article_id))
     
-    items = session['items']
+    # Retrieve the article from the session
+    article = session['items'][article_id]
+    
+    # Rewrite the tags and categories of the article in a form understood by utils.baseplugin.SPARQLPlugin
+    article_items = article['tags'] + article['categories']
+    match_items = [{'id': item['id'], 'label': item['name']} for item in article_items]
+    
+    try :
+        # Initialize the plugin
+        plugin = SPARQLPlugin(endpoint = "http://rdf-stage.neuinfo.org/ds/query",
+                          template = "neurolex.query")
+        
+        # Run the plugin, and retrieve matches using the default label property (rdfs:label)
+        matches = plugin.match(match_items)
+        # Run the plugin with a NeuroLex specific property (namespace is defined in the neurolex.query template)
+        matches.extend(plugin.match(match_items, property="property:Label"))
+        
+        # Add the matches to the session
+        session.setdefault(article_id,[]).extend(matches)
+        session.modified = True
+    
+        if matches == [] :
+            matches = None
+        
+        # Return the matches
+        return render_template('urls.html',
+                               article_id = article_id, 
+                               results = [{'title':'NeuroLex','urls': matches}])
+        
+    except Exception as e:
+        return render_template( 'message.html',
+                                type = 'error', 
+                                text = e.message )
 
-    sparql = SPARQLWrapper("http://rdf-stage.neuinfo.org/ds/query")
-    sparql.setReturnFormat(JSON)
-    
-    urls = []
 
-    i = items[article_id]
-    
-    tags_and_categories = i['tags'] + i['categories']
-    
-    if len(tags_and_categories) > 0 :
-        
-        for tag in tags_and_categories :
-            t_id = tag['id']
-            t_label = tag['name'].strip()
-            t_qname = 'FS{}'.format(t_id)
             
-            q = render_template("neurolex/neurolex.query", 
-                                tag = t_label )
-            
-            sparql.setQuery(q)
-    
-            app.logger.debug(q)
-            try :
-                results = sparql.query().convert()
-    
-                for result in results["results"]["bindings"]:
-                    match_uri = result["s"]["value"]
-                    
-                    short = re.sub('\s','_',t_label)
-                    
-                    if len(match_uri) > 61 :
-                        show = match_uri[:29] + "..." + match_uri[-29:]
-                    else :
-                        show = match_uri
-                    urls.append({'type': 'mapping', 'uri': match_uri, 'web': match_uri, 'show': show, 'short': short, 'original': t_qname})
-            except :
-                return render_template('message.html',
-                                       type = 'error', 
-                                       text = "NeuroLex endpoint {} produced unintelligible results. Maybe it's down?".format(sparql)
-                                       )
-        
-            
-    session.setdefault(article_id,[]).extend(urls)
-    
-    
-    
-    session.modified = True
-    
-    if urls == [] :
-        urls = None
-        
-    
-        
-    return render_template('urls.html',
-                           article_id = article_id, 
-                           results = [{'title':'NeuroLex','urls': urls}])
+
