@@ -30,10 +30,12 @@ class SPARQLPlugin(object):
         # Path to the Jinja2 query template in the templates directory
         self.template = template
         
+        # The type of mapping that is produced (mapping for tags/terms/categories/authors, reference for citations)
         if match_type == 'mapping' or match_type == 'reference' :
             self.match_type = match_type
         else :
             raise Exception("The only valid values for 'mapping_type' are 'mapping' and 'reference'.")
+
 
         # Function that rewrites URIs into less scary ones
         self.rewrite_function = rewrite_function
@@ -49,6 +51,7 @@ class SPARQLPlugin(object):
         app.logger.debug("Done")
         
     def match(self, items, property = 'rdfs:label'):
+        app.logger.debug("Finding matches using a single query")
         
         query = render_template(self.template, 
                                 items=items, 
@@ -58,6 +61,8 @@ class SPARQLPlugin(object):
         
         self.sparql.setQuery(query)
         
+        matches = [] 
+        
         try :
             app.logger.debug("Calling endpoint")
             
@@ -65,53 +70,90 @@ class SPARQLPlugin(object):
             
             app.logger.debug("Done")
             
+            matches = self.process_matches(results)
             
-            matches = [] 
-            
-            for result in results["results"]["bindings"] :
-                match_uri = result["match"]["value"]
-                original_id = result["original_id"]["value"]
-                original_label = result["original_label"]["value"]
-                original_qname = "FS{}".format(original_id)
-                
-                
-                app.logger.debug("Match URI: {}".format(match_uri))
-                
-                # If we have a rewrite function, apply it to the match uri to obtain a web uri
-                # We use this e.g. for converting DBPedia URIs into less scary Wikipedia URIs
-                if self.rewrite_function :
-                    app.logger.debug("Rewrite function defined...")
-                    web_uri = self.rewrite_function(match_uri)
-                else :
-                    web_uri = match_uri
-                
-                # If the web URI is too long, we shorten it, otherwise the display URI is the same as the web URI
-                if len(web_uri) > 61 :
-                    display_uri = web_uri[:29] + "..." + web_uri[-29:]
-                else :
-                    display_uri = web_uri
-                
-                # Rewrite the original label or uri to something we can use as a basis for generating HTML identifiers
-                if self.id_base == 'label' :
-                    id_base = self.id_function(original_label)
-                else :
-                    id_base = self.id_function(original_id)
-                    
-    
-                    
-                # Create the match dictionary
-                match = {'type':    self.match_type,
-                         'uri':     match_uri,
-                         'web':     web_uri,
-                         'show':    display_uri,
-                         'short':   id_base,
-                         'original':original_qname}
-                
-                # Append it to all matches
-                matches.append(match)
         except Exception as e:
             app.logger.warning(e)
             raise Exception("Endpoint at {} produced unintelligible results. Maybe it's down?<br/>{}".format(self.endpoint, e.message)) 
         
+        return matches
+
+    
+    def match_separately(self, items, property = 'rdfs:label'):
+        app.logger.debug("Finding matches using a separate query for each item")
+        
+        matches = []
+        for item in items :
+            
+            query = render_template(self.template, 
+                                    item=item, 
+                                    property=property)
+            
+            app.logger.debug("Query set to:\n {}".format(query))
+            
+            self.sparql.setQuery(query)
+            
+            try :
+                app.logger.debug("Calling endpoint")
+                
+                results = self.sparql.query().convert()
+                
+                app.logger.debug("Done")
+                
+                matches.extend(self.process_matches(results))
+                
+            except Exception as e:
+                app.logger.warning(e)
+                raise Exception("Endpoint at {} produced unintelligible results. Maybe it's down?<br/>{}".format(self.endpoint, e.message)) 
+            
+        return matches
+    
+    
+    def process_matches(self, results):
+        app.logger.debug("Processing results...")
+        matches = []
+        
+        for result in results["results"]["bindings"] :
+            match_uri = result["match"]["value"]
+            original_id = result["original_id"]["value"]
+            original_label = result["original_label"]["value"]
+            original_qname = "FS{}".format(original_id)
+            
+            
+            app.logger.debug("Match URI: {}".format(match_uri))
+            
+            # If we have a rewrite function, apply it to the match uri to obtain a web uri
+            # We use this e.g. for converting DBPedia URIs into less scary Wikipedia URIs
+            if self.rewrite_function :
+                app.logger.debug("Rewrite function defined...")
+                web_uri = self.rewrite_function(match_uri)
+            else :
+                web_uri = match_uri
+            
+            # If the web URI is too long, we shorten it, otherwise the display URI is the same as the web URI
+            if len(web_uri) > 61 :
+                display_uri = web_uri[:29] + "..." + web_uri[-29:]
+            else :
+                display_uri = web_uri
+            
+            # Rewrite the original label or uri to something we can use as a basis for generating HTML identifiers
+            if self.id_base == 'label' :
+                id_base = self.id_function(original_label)
+            else :
+                id_base = self.id_function(original_id)
+                
+
+                
+            # Create the match dictionary
+            match = {'type':    self.match_type,
+                     'uri':     match_uri,
+                     'web':     web_uri,
+                     'show':    display_uri,
+                     'short':   id_base,
+                     'original':original_qname}
+            
+            # Append it to all matches
+            matches.append(match)
+            
         return matches
         
