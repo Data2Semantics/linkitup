@@ -13,4 +13,4 @@ SELECT DISTINCT ?match ?original_id ?original_label WHERE {
   FILTER (!regex(str(?match), '^http://neurolex.org/wiki/Help-')).
   FILTER (!regex(str(?match), '^http://neurolex.org/wiki/File-')).
   FILTER (!regex(str(?match), '^http://neurolex.org/wiki/Special:')).
-} LIMIT 5
+}
