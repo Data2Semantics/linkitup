@@ -23,6 +23,7 @@ class SPARQLPlugin(object):
         '''
         app.logger.debug("Initializing SPARQLPlugin...")
         
+        self.endpoint = endpoint
         self.sparql = SPARQLWrapper(endpoint)
         self.sparql.setReturnFormat(JSON)
         
@@ -109,7 +110,7 @@ class SPARQLPlugin(object):
                 # Append it to all matches
                 matches.append(match)
         except :
-            raise Exception("Endpoint at {} produced unintelligible results. Maybe it's down?".format(self.sparql)) 
+            raise Exception("Endpoint at {} produced unintelligible results. Maybe it's down?".format(self.endpoint)) 
         
         return matches
         
