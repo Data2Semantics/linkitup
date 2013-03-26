@@ -15,11 +15,13 @@ from config import basedir
 
 
 
-# Initialze a simplekv FileystemStore in the tmp directory 
+# Initialize a simplekv FileystemStore in the tmp directory 
 store = FilesystemStore('tmp')
 
+# Make sure we have an absolute path to the template dir
+tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder = tmpl_dir)
 
 # this will replace the app's session handling
 KVSessionExtension(store, app)
