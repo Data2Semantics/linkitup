@@ -20,7 +20,6 @@ import requests
 import urllib
 from extract import extract_references
 import re
-from tempfile import NamedTemporaryFile
 
 from pprint import pprint
 
@@ -63,9 +62,6 @@ def upload_to_crossref(article_id, file_id):
         
         app.logger.debug(request.files['files[]'])
         
-#        tempfile = request.files['files[]'].temporary_file_path()
-
-
         tempfile = pdfs.save(request.files['files[]'])
 
         app.logger.debug('upload: tempfile {}'.format(tempfile))
@@ -90,10 +86,10 @@ def upload_to_crossref(article_id, file_id):
 @app.route('/crossref/extract/<article_id>/<file_id>')
 @login_required
 def get_file_and_extract(article_id, file_id):
-    print 'extract: files', session.get('files')
+    app.logger.debug('extract: files', session.get('files'))
 
     tempfile = session['files'][file_id]
-    print 'extract: files_file_id (tempfile)', pdfs.path(tempfile)
+    app.logger.debug('extract: files_file_id (tempfile)', pdfs.path(tempfile))
     
     # TODO: Use a web-based PDF extraction service instead
     
