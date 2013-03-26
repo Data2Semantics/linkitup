@@ -22,3 +22,7 @@ app.neurolex.plugin:
   name: NeuroLex
   slug: neurolex
   logo: static/img/neurolex.png
+app.nifregistry.plugin:
+  name: NIF Registry
+  slug: nifregistry
+  logo: static/img/nifregistry.png
