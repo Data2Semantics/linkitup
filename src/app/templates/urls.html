@@ -8,9 +8,16 @@
 					({{ u.extra }})
 					{% endif %}
 					{% if u.subscript %}
-					<small style='float:right;'>{{ u.subscript }}</small>
+					<div><small>{{ u.subscript }}</small></div>
 					{% endif %}
 			</label>
+			{% if u.description %}
+				<div style="margin-top: -1em; margin-bottom: 1em;">
+					<small>
+						{{ u.description }} ...
+					</small>
+				</div>
+			{% endif %}
 			<script type="text/javascript">
 					$("#{{ u.short }}_checkbox").click(function(){  
 							$("#{{ u.short }}_label").toggleClass('alert-warning');
