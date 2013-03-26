@@ -26,7 +26,7 @@ def link_to_dblp(article_id):
     # Retrieve the article from the session
     article = session['items'][article_id]
     
-    # Rewrite the tags and categories of the article in a form understood by utils.baseplugin.SPARQLPlugin
+    # Rewrite the authors of the article in a form understood by utils.baseplugin.SPARQLPlugin
     article_items = article['authors']
     match_items = [{'id': item['id'], 'label': item['full_name'].strip()} for item in article_items]
     
