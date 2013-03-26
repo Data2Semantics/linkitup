@@ -31,10 +31,10 @@ class SPARQLPlugin(object):
         self.template = template
         
         # The type of mapping that is produced (mapping for tags/terms/categories/authors, reference for citations)
-        if match_type == 'mapping' or match_type == 'reference' :
+        if match_type == 'mapping' or match_type == 'reference' or match_type == 'link':
             self.match_type = match_type
         else :
-            raise Exception("The only valid values for 'mapping_type' are 'mapping' and 'reference'.")
+            raise Exception("The only valid values for 'mapping_type' are 'mapping', 'reference' and 'link'.")
 
 
         # Function that rewrites URIs into less scary ones

@@ -192,6 +192,8 @@ def get_rdf(article_id, checked_urls):
             g.add((FS[original_qname],SKOS.exactMatch,URIRef(uri) ))
         elif u['type'] == 'reference':
             g.add((FS[original_qname],DCTERMS['references'],URIRef(uri) ))
+        elif u['type'] == 'link' :
+            g.add((FS[original_qname],SKOS.related, URIRef(uri)))
         else :
             g.add((FS[original_qname],SKOS.related, URIRef(uri)))
 
