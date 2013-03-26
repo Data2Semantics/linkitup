@@ -46,8 +46,8 @@ try :
     
     map(__import__, plugins.keys())
 except Exception as e :
-    print "Error loading plugins from {}".format(app.config['PLUGINS_FILE']) 
-    print e.message
+    app.logger.error("Error loading plugins from {}".format(app.config['PLUGINS_FILE']))
+    app.logger.error(e.message)
     quit()
 
 
