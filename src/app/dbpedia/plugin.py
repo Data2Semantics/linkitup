@@ -25,7 +25,7 @@ def link_to_wikipedia(article_id):
     
     items = session['items']
     
-    sparql = SPARQLWrapper("http://live.dbpedia.org/sparql")
+    sparql = SPARQLWrapper("http://dbpedia.org/sparql")
     sparql.setReturnFormat(JSON)
     
     urls = []
