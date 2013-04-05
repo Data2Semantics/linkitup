@@ -26,3 +26,7 @@ app.nifregistry.plugin:
   name: NIF Registry
   slug: nifregistry
   logo: static/img/nifregistry.png
+app.danseasy.plugin:
+  name: DANS EASY
+  slug: danseasy
+  logo: static/img/danseasy.png
