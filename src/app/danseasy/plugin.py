@@ -7,7 +7,6 @@ Created on 26 Mar 2013
 from flask import render_template, session, g
 from flask.ext.login import login_required
 
-import xml.etree.ElementTree as ET
 import requests
 import re
 from bs4 import BeautifulSoup
