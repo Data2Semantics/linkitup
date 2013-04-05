@@ -27,4 +27,4 @@ UPLOADS_DEFAULT_DEST = os.path.join(tempdir, 'linkitup')
 
 # Setup Plugins
 
-PLUGINS_FILE = "/Users/hoekstra/projects/data2semantics/linkitup/src/plugins.yaml"
+PLUGINS_FILE = os.path.join(basedir, "plugins.yaml")
