@@ -30,3 +30,7 @@ app.danseasy.plugin:
   name: DANS EASY
   slug: danseasy
   logo: static/img/danseasy.png
+app.linkedlifedata.plugin:
+  name: LinkedLifeData
+  slug: linkedlifedata
+  logo: static/img/linkedlifedata.png
