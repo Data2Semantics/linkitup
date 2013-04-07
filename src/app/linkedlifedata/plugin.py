@@ -45,15 +45,20 @@ def link_to_lld(article_id):
                 
             id_base = h['uri']['localName']
             
-            if len(h['labels']) > 0 :
-                description = ", ".join(h['labels'])
-            else :
-                description = None
+#            if len(h['labels']) > 0 :
+#                description = ", ".join(h['labels'])
+#            else :
+#                description = None
                 
             if len(h['types']) > 0 :
                 types = ", ".join(h['types'])
             else :
                 types = None
+                
+            if h['definition'].strip() != "" :
+                description = h['definition']
+            else :
+                description = None
                 
             score = "Score: {}".format(h['score'])
             original_qname = "FS{}".format(article_id)
