@@ -24,22 +24,6 @@ def get_rdf(article_id, checked_urls):
     
     Returns the RDF graph as a ConjunctiveGraph"""
     
-
-    
-    FSV = Namespace('http://figshare.com/vocab/')
-    FS = Namespace('http://figshare.com/resource/')
-    DBPEDIA = Namespace('http://dbpedia.org/resource/')
-    FOAF = Namespace('http://xmlns.com/foaf/0.1/')
-    DCTERMS = Namespace('http://purl.org/dc/terms/')
-    
-    g = Graph(identifier=URIRef('http://www.example.com'))
-    g.bind('fsv',FSV)
-    g.bind('fs',FS)
-    g.bind('skos',SKOS)
-    g.bind('dbpedia',DBPEDIA)
-    g.bind('foaf',FOAF)
-    g.bind('dcterms',DCTERMS)
-    
     items = session.get('items',[])
     
     urls = session.get(article_id,[])
@@ -47,6 +31,22 @@ def get_rdf(article_id, checked_urls):
     i = items[article_id]
 
     article_id_qname = 'FS{}'.format(article_id)
+    
+    
+    FSV = Namespace('http://figshare.com/vocab/')
+    FS = Namespace('http://figshare.com/resource/')
+    DBPEDIA = Namespace('http://dbpedia.org/resource/')
+    FOAF = Namespace('http://xmlns.com/foaf/0.1/')
+    DCTERMS = Namespace('http://purl.org/dc/terms/')
+    
+    g = Graph(identifier=FS[article_id_qname])
+    g.bind('fsv',FSV)
+    g.bind('fs',FS)
+    g.bind('skos',SKOS)
+    g.bind('dbpedia',DBPEDIA)
+    g.bind('foaf',FOAF)
+    g.bind('dcterms',DCTERMS)
+
     
     if 'doi' in i:
         # If the article has a DOI assigned, we will use it in our RDF rendering

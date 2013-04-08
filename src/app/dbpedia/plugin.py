@@ -21,6 +21,7 @@ from app.util.baseplugin import SPARQLPlugin
 def link_to_wikipedia(article_id):
     app.logger.debug("Running DBPedia plugin for article {}".format(article_id))
 
+
     # Retrieve the article from the session
     article = session['items'][article_id]
     
