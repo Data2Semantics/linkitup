@@ -48,3 +48,4 @@ $("#figshare_{{ i.article_id }}").click(function(){
 
 	$("#{{ i.article_id }}_form").submit();
 })
+

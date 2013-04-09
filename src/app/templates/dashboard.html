@@ -16,16 +16,29 @@
 
 {% block content %}
 	<div class="row">
-		<div class="span12">
-			<div class="tabbable tabs-left" style="float: right;">
-			  <ul class="nav nav-tabs">
-			    {% block tabs %}{% endblock %}
-			  </ul>
-			  <div class="tab-content">
-			    {% block dbcontent %}{% endblock %}
-			  </div>
+		<div class="span3">
+			<div class="alert alert-info">
+				<div class="control-group">
+					<div class="controls">
+						<label for="articles">Select an article</label>
+						<select id="articles" style="width: 100%; ">
+							<option></option>
+							{% block tabs %}{% endblock %}
+						</select>
+					</div>
+				</div>
 			</div>
+			<div class="">
+				{% block plugins %}{% endblock %}
+			</div>
+		</div>
+		<div class="span9">
+			{% block articles %}{% endblock %}
 		</div>
 	</div>
 
+
+	<script>
+		$(document).ready(function() { $("#articles").select2({ placeholder: "Start typing..." , allowClear: true }); });
+	</script>
 {% endblock %}

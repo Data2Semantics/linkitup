@@ -6,33 +6,64 @@
 
 {% block tabs %}
 	{% for k,i in results.items() %}
-		<li class="span3 {% if loop.first %}active{% endif %}"><a href="#{{ i.article_id }}_tab" data-toggle="tab">{{ i.title }}</a></li>
+		<option tab="#{{ i.article_id }}_tab" id="{{ i.article_id }}_option" value="{{ i.article_id }}">{{ i.title }}</option>
 	{% endfor %}
 {% endblock %}
 
 
-{% block dbcontent %}
+
+
+{% block articles %}
 	{% for k,i in results.items() %}
-		<div class="span8 tab-pane {% if loop.first %}active{% endif %}" id="{{ i.article_id }}_tab">
+		<div class="details" style="{% if loop.first %}display: block;{% else %}display: none;{% endif %}" id="{{ i.article_id }}_tab">
 		<form id='{{ i.article_id }}_form' method='POST'>
 
 			<div class="row">
-				<div class="">
-		 			<div class="well" id="{{ i.article_id }}_title">
-						<strong>{{ i.title }}</strong> <small>(<em>{{ i.status }}</em>, {{ i.published_date }})</small><br/>
-						<a href="{{i.doi}}">{{i.doi}}</a> 
-	 				</div>
+				<div class="span9">
+					<p class="lead" id="{{ i.article_id }}_title">{{ i.title }}</p>
+					{% if i.doi %}<p><a href="{{i.doi}}">{{i.doi}}</a></p>{% endif %}
+					<hr/>
 				</div>
 			</div>
-			
-			
-			
-			<div id="{{ i.article_id }}_details" style="margin-top: 1em;">
 			<div class="row">
-				<div class="span6">
+				<div class="span4">
+					<div class="row">
+						<div class="span1"><strong>status</strong></div>
+						<div class="span3">
+							{{ i.status }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="span1"><strong>date</strong></div>
+						<div class="span3">
+							{{ i.published_date }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="span1"><strong>type</strong></div>
+						<div class="span3">
+							{{ i.defined_type }}
+						</div>
+					</div>
+					{% if i.total_size %}
+					<div class="row">
+						<div class="span1"><strong>size</strong></div>
+						<div class="span3">
+							{{ i.total_size }}
+						</div>
+					</div>
+					{% endif %}
+					{% if i.version %}
+						<div class="row">
+							<div class="span1"><strong>version</strong></div>
+							<div class="span3">
+								{{ i.version }}
+							</div>
+						</div>
+					{% endif %}
 					<div class="row">
 						<div class="span1"><strong>files</strong></div>
-						<div class="span5">
+						<div class="span3">
 							<ul class="unstyled">
 							{% for f in i.files %}
 								<li><i class='icon-file'></i> {{ f.name }}</li>
@@ -40,10 +71,24 @@
 							</ul>
 						</div>
 					</div>
+				</div>
+				<div class="span5">
+					{% if i.description_nohtml %}
+					<blockquote>
+						<p>
+							{{ i.description_nohtml }}
+						</p>
+					</blockquote>
+				{% endif %}
+				</div>
+				
+			</div>
+			<div class="row">
+				<div class="span4">
 					{% if i.authors %}
 					<div class="row">
 						<div class="span1"><strong>authors</strong></div>
-						<div class="span5">
+						<div class="span3">
 							<ul class="unstyled">
 							{% for a in i.authors %}
 								<li><i class='icon-user'></i> {{ a.full_name }}</li>
@@ -52,10 +97,13 @@
 						</div>
 					</div>
 					{% endif %}
+
+				</div>
+				<div class="span5">
 					{% if i.tags %}
 					<div class="row">
 						<div class="span1"><strong>tags</strong></div>
-						<div class="span5">
+						<div class="span3">
 							<ul class="unstyled">
 							{% for t in i.tags %}
 								<li><i class='icon-tag'></i> {{ t.name }}</li>
@@ -64,10 +112,29 @@
 						</div>
 					</div>
 					{% endif %}
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="span4">					
+					{% if i.categories %}
+					<div class="row">
+						<div class="span1"><strong>categories</strong></div>
+						<div class="span3">
+							<ul class="unstyled">
+								{% for c in i.categories %}
+								<li><i class='icon-th-list'></i> {{ c.name }}</a></li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+				<div class="span5">
 					{% if i.links %}
 					<div class="row">
 						<div class="span1"><strong>links</strong></div>
-						<div class="span5">
+						<div class="span3">
 							<ul class="unstyled">
 								{% for l in i.links %}
 									{% if l.link|length > 51 %}
@@ -80,35 +147,12 @@
 						</div>
 					</div>
 					{% endif %}
-					{% if i.categories %}
-					<div class="row">
-						<div class="span1"><strong>categories</strong></div>
-						<div class="span5">
-							<ul class="unstyled">
-								{% for c in i.categories %}
-								<li><i class='icon-th-list'></i> {{ c.name }}</a></li>
-								{% endfor %}
-							</ul>
-						</div>
-					</div>
-					{% endif %}
 				</div>
-				<div class="span2">
-					<div class="well" style="padding: 8px 0;">
-					<ul class="nav nav-list">
-					<li class="nav-header">Plugins</li>
-					{% for plugin in plugins %}
-						<li>{% include "button.html" %}</li>
-					{% endfor %}
-					<li class="nav-header">Actions</li>
-					<li><a id="show_{{ i.article_id }}">Show Selection</a>
-					</li><li><a id="rdf_{{ i.article_id }}">Download RDF</a>
-					</li><li><a id="figshare_{{ i.article_id }}">Add to Figshare</a>
-					</li></ul>
-					</div>
-				</div>			
 			</div>
-			</div>
+			
+
+			
+
 			{% for plugin in plugins %}
 				{% include "results.html" %}
 			{% endfor %}
@@ -149,3 +193,21 @@
 		{% include 'articles.js' %}
 	</script>
 {% endblock %}
+
+{% block plugins %}
+	{% for k,i in results.items() %}
+		<div class="well plugins" style="padding: 8px 0; {% if loop.first %}display: block;{% else %}display: none;{% endif %}" id="{{ i.article_id }}_plugins">
+			<ul class="nav nav-list">
+				<li class="nav-header">Plugins</li>
+				{% for plugin in plugins %}
+					<li>{% include "button.html" %}</li>
+				{% endfor %}
+				<li class="nav-header">Actions</li>
+				<li><a id="show_{{ i.article_id }}">Show Selection</a></li>
+				<li><a id="rdf_{{ i.article_id }}">Download RDF</a></li>
+				<li><a id="figshare_{{ i.article_id }}">Add to Figshare</a></li>
+			</ul>
+		</div>
+	{% endfor %}
+{% endblock %}
+
