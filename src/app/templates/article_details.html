@@ -46,7 +46,7 @@
                         <div class="span3">
                                 <ul class="unstyled">
                                 {% for f in i.files %}
-                                        <li><i class='icon-file'></i> {{ f.name }}</li>
+                                        <li><i class='icon-file'></i> <a target="_new" href='http://figshare.com/account/media/view?dw=1&file={{ f.id }}.pdf'>{{ f.name }}</a></li>
                                 {% endfor %}
                                 </ul>
                         </div>
