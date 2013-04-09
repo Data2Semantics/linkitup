@@ -10,7 +10,7 @@ from pprint import pprint
 
 import yaml
 
-from util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, update_article
+from util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, update_article, FigshareEmptyResponse, FigshareNoTokenError
 from util.rdf import get_rdf
 
 @lm.user_loader
@@ -62,8 +62,14 @@ def dashboard():
                                results = session['items'], 
                                plugins = plugins.values(),
                                user = g.user)
-            
+        except FigshareEmptyResponse as e :
+            app.logger.error(e)
+            return redirect(url_for('figshare_authorize'))
+        except FigshareNoTokenError as e :
+            app.logger.error(e)
+            return redirect(url_for('figshare_authorize'))
         except Exception as e :
+            app.logger.error(e)
             return render_template('error.html', 
                                    message = "Error retrieving articles!: " + e.message, 
                                    user=g.user)

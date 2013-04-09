@@ -12,3 +12,6 @@ src/sqlite.db
 src/app.db
 src/db_repository
 src/tmp
+*.xcodeproj
+linkitup/linkitup.xcodeproj/*
+*.komodoproject

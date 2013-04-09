@@ -58,7 +58,9 @@ def figshare_validate():
     and gets the oauth token and secret."""
     
     oauth_verifier = request.form['pin']
-     
+    
+    app.logger.debug("Retrieved PIN number: {}".format(oauth_verifier))
+    
     try:
         validate_oauth_verifier(oauth_verifier)
         return redirect(url_for('dashboard'))
@@ -83,12 +85,17 @@ def get_auth_url():
     if 'error' in qs:
         raise Exception(qs['error'])
     else :     
-        oauth_request_token = qs['oauth_token'][0]
-        oauth_request_token_secret = qs['oauth_token_secret'][0]
+        resource_owner_key = qs['oauth_token'][0]
+        resource_owner_secret = qs['oauth_token_secret'][0]
         oauth_request_auth_url = unquote(qs['oauth_request_auth_url'][0])
     
-        session['oauth_request_token'] = oauth_request_token
-        session['oauth_request_token_secret'] = oauth_request_token_secret
+        session['resource_owner_key'] = resource_owner_key
+        session['resource_owner_secret'] = resource_owner_secret
+        
+        app.logger.debug("get_auth_url(): resource_owner_key = {}".format(resource_owner_key))
+        app.logger.debug("get_auth_url(): resource_owner_secret = {}".format(resource_owner_secret))
+        
+        session.modified = True
         
         return oauth_request_auth_url
 
@@ -97,13 +104,19 @@ def validate_oauth_verifier(oauth_verifier):
     
     Adds the oauth token and secret to the session, or raises an exception if the response is empty or contains an error.
     """
-    oauth_request_token = session.get('oauth_request_token')
-    oauth_request_token_secret = session.get('oauth_request_token_secret')
+    
+    app.logger.debug("Validating OAuth verifier (PIN)")
+    
+    resource_owner_key = session.get('resource_owner_key')
+    resource_owner_secret = session.get('resource_owner_secret')
+    
+    app.logger.debug("validate_oauth_verifier(): resource_owner_key = {}".format(resource_owner_key))
+    app.logger.debug("validate_oauth_verifier(): resource_owner_secret = {}".format(resource_owner_secret))
     
     oauth = OAuth1(client_key,
                    client_secret=client_secret,
-                   resource_owner_key=oauth_request_token,
-                   resource_owner_secret=oauth_request_token_secret,
+                   resource_owner_key=resource_owner_key,
+                   resource_owner_secret=resource_owner_secret,
                    verifier=oauth_verifier)
     
 
@@ -111,15 +124,23 @@ def validate_oauth_verifier(oauth_verifier):
     response_content = parse_qs(response.content)
     
     if response_content == {} :
+        app.logger.error("Authorization failed")
         raise Exception('Authorization failed')
     elif 'error' in response_content :
+        app.logger.error(response_content['error'])
         raise Exception(response_content['error'])
     else :
+        app.logger.debug("OAuth verifier validated!")
+        
         # Here we make sure that the oauth token, secret and xoauth figshare id are stored with the user entry in the database.
         g.user.oauth_token = response_content['oauth_token'][0]
         g.user.oauth_token_secret = response_content['oauth_token_secret'][0]
         g.user.xoauth_figshare_id = response_content['xoauth_figshare_id'][0]
-
+        
+        app.logger.debug("Token : {}".format(response_content['oauth_token'][0]))
+        app.logger.debug("Secret: {}".format(response_content['oauth_token_secret'][0]))
+        app.logger.debug("ID    : {}".format(response_content['xoauth_figshare_id'][0]))
+        
         db.session.commit()
     return
 
@@ -129,9 +150,15 @@ def get_articles():
     
     Adds the results to the session under 'items', or raises an exception if the response contains an error.
     """
+    
+    app.logger.debug("Retrieving all articles owned by the user.")
+    
     oauth_token = g.user.oauth_token
     oauth_token_secret = g.user.oauth_token_secret
 
+
+    app.logger.debug("Token : {}".format(g.user.oauth_token))
+    app.logger.debug("Secret: {}".format(g.user.oauth_token_secret))
 
     oauth = OAuth1(client_key,
                    client_secret=client_secret,
@@ -152,14 +179,20 @@ def get_articles():
         params = {'page': page}
         
         response = requests.get(url='http://api.figshare.com/v1/my_data/articles',auth=oauth, params=params)
-        response_content = parse_qs(response.content)
+        app.logger.debug("Called: {}".format(response.url))
         
-        if 'error' in response_content :
-            raise Exception(response_content['error'])
-            break
+        results = json.loads(response.content)
+        
+        if 'error' in results:
+            app.logger.error(results)
+            if results['error'] == 'No valid token could be found' :
+                raise FigshareNoTokenError(results['error'])
+            else :
+                raise Exception(results['error'])
+        elif results == {} :
+            app.logger.error("No articles found, retrieved empty response. This probably means that we have an OAuth issue.")
+            raise FigshareEmptyResponse("No articles found, retrieved empty response. This probably means that we have an OAuth issue.")
         else :
-            results = json.loads(response.content)
-            
             if len(results['items']) == 0:
                 print "No more results"
                 break
@@ -207,18 +240,12 @@ def update_article(article_id, checked_urls):
     
     return
     
-    ## The below doesn't work as it replaces the files currently attached to the article!
-#    g = getRDF(request, article_id)
-#    graph = g.serialize(format='turtle')
-#    
-#    
-#    files = {'filedata':('metadata.ttl', graph)}
-#
-#    response = client.put('http://api.figshare.com/v1/my_data/articles/{}/files'.format(article_id),
-#                      files=files)
-#    results = json.loads(response.content)
-    # print results
 
 
+class FigshareEmptyResponse(Exception):
+    pass
+
+class FigshareNoTokenError(Exception):
+    pass
 
 
