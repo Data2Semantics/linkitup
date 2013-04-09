@@ -18,137 +18,7 @@
 		<div class="details" style="{% if loop.first %}display: block;{% else %}display: none;{% endif %}" id="{{ i.article_id }}_tab">
 		<form id='{{ i.article_id }}_form' method='POST'>
 
-			<div class="row">
-				<div class="span9">
-					<p class="lead" id="{{ i.article_id }}_title">{{ i.title }}</p>
-					{% if i.doi %}<p><a href="{{i.doi}}">{{i.doi}}</a></p>{% endif %}
-					<hr/>
-				</div>
-			</div>
-			<div class="row">
-				<div class="span4">
-					<div class="row">
-						<div class="span1"><strong>status</strong></div>
-						<div class="span3">
-							{{ i.status }}
-						</div>
-					</div>
-					<div class="row">
-						<div class="span1"><strong>date</strong></div>
-						<div class="span3">
-							{{ i.published_date }}
-						</div>
-					</div>
-					<div class="row">
-						<div class="span1"><strong>type</strong></div>
-						<div class="span3">
-							{{ i.defined_type }}
-						</div>
-					</div>
-					{% if i.total_size %}
-					<div class="row">
-						<div class="span1"><strong>size</strong></div>
-						<div class="span3">
-							{{ i.total_size }}
-						</div>
-					</div>
-					{% endif %}
-					{% if i.version %}
-						<div class="row">
-							<div class="span1"><strong>version</strong></div>
-							<div class="span3">
-								{{ i.version }}
-							</div>
-						</div>
-					{% endif %}
-					<div class="row">
-						<div class="span1"><strong>files</strong></div>
-						<div class="span3">
-							<ul class="unstyled">
-							{% for f in i.files %}
-								<li><i class='icon-file'></i> {{ f.name }}</li>
-							{% endfor %}
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="span5">
-					{% if i.description_nohtml %}
-					<blockquote>
-						<p>
-							{{ i.description_nohtml }}
-						</p>
-					</blockquote>
-				{% endif %}
-				</div>
-				
-			</div>
-			<div class="row">
-				<div class="span4">
-					{% if i.authors %}
-					<div class="row">
-						<div class="span1"><strong>authors</strong></div>
-						<div class="span3">
-							<ul class="unstyled">
-							{% for a in i.authors %}
-								<li><i class='icon-user'></i> {{ a.full_name }}</li>
-							{% endfor %}
-							</ul>
-						</div>
-					</div>
-					{% endif %}
-
-				</div>
-				<div class="span5">
-					{% if i.tags %}
-					<div class="row">
-						<div class="span1"><strong>tags</strong></div>
-						<div class="span3">
-							<ul class="unstyled">
-							{% for t in i.tags %}
-								<li><i class='icon-tag'></i> {{ t.name }}</li>
-							{% endfor %}
-							</ul>
-						</div>
-					</div>
-					{% endif %}
-
-				</div>
-			</div>
-			<div class="row">
-				<div class="span4">					
-					{% if i.categories %}
-					<div class="row">
-						<div class="span1"><strong>categories</strong></div>
-						<div class="span3">
-							<ul class="unstyled">
-								{% for c in i.categories %}
-								<li><i class='icon-th-list'></i> {{ c.name }}</a></li>
-								{% endfor %}
-							</ul>
-						</div>
-					</div>
-					{% endif %}
-				</div>
-				<div class="span5">
-					{% if i.links %}
-					<div class="row">
-						<div class="span1"><strong>links</strong></div>
-						<div class="span3">
-							<ul class="unstyled">
-								{% for l in i.links %}
-									{% if l.link|length > 51 %}
-										<li><i class='icon-share-alt'></i> <a href="{{ l.link }}">{{ l.link[:24] }}... {{ l.link[-24:] }}</a></li>
-									{% else %}
-										<li><i class='icon-share-alt'></i> <a href="{{ l.link }}">{{ l.link }}</a></li>
-									{% endif %}
-								{% endfor %}
-							</ul>
-						</div>
-					</div>
-					{% endif %}
-				</div>
-			</div>
+			{% include "article_details.html" %}
 			
 
 			
@@ -158,28 +28,28 @@
 			{% endfor %}
 		</form>
 		<div class="modal hide fade" id="links_{{ i.article_id }}" tabindex="-1" role="dialog" aria-hidden="true">
-		  <div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		    <h3>Selected Links</h3>
-		  </div>
-		  <div id="links_modalbody_{{ i.article_id }}" class="modal-body">
-		    <p>Loading...</p>
-		  </div>
-		  <div class="modal-footer">
-		    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		  </div>
+			<div class="modal-header">
+				  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				  <h3>Selected Links</h3>
+			</div>
+			<div id="links_modalbody_{{ i.article_id }}" class="modal-body">
+				  <p>Loading...</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			</div>
 		</div>
 
 		<div id='{{ i.article_id }}_updated_figshare' tabindex="-1" class="modal hide fade" role="dialog" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		    	<h3>Figshare Updated</h3>
+				<h3>Figshare Updated</h3>
 			</div>
 			<div id="links_modalbody_{{ i.article_id }}" class="modal-body">
-		    	<p><strong>Success!</strong> <strong>Linki</strong>tup data has been pushed back to Figshare.</p>
+				<p><strong>Success!</strong> <strong>Linki</strong>tup data has been pushed back to Figshare.</p>
 		  	</div>
 		  	<div class="modal-footer">
-		    	<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		  	</div>			  
 		</div>
 		
