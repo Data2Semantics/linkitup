@@ -82,12 +82,12 @@ def download_rdf(article_id):
     
     g = get_rdf(article_id, checked_urls)
 
-    graph = g.serialize(format='trig')
+    graph = g.serialize(format='trix')
     
     response = make_response(graph)
-    response.mimetype = "text/turtle"
-    response.contenttype = "text/turtle"
-    response.headers.add('Content-Disposition', 'attachment; filename={}.ttl'.format(article_id))
+    response.mimetype = "application/trix"
+    response.contenttype = "application/trix"
+    response.headers.add('Content-Disposition', 'attachment; filename={}.trix'.format(article_id))
 
     return response
 
