@@ -80,11 +80,11 @@ def dashboard():
 def download_rdf(article_id):
     checked_urls = request.form.getlist('url')
     
-    g = get_rdf(article_id, checked_urls)
+    graph = get_rdf(article_id, checked_urls)
 
-    graph = g.serialize(format='trix')
+    graphFile = graph.serialize(format='trix')
     
-    response = make_response(graph)
+    response = make_response(graphFile)
     response.mimetype = "application/trix"
     response.contenttype = "application/trix"
     response.headers.add('Content-Disposition', 'attachment; filename={}.trix'.format(article_id))
