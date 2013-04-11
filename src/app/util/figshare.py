@@ -43,21 +43,35 @@ def figshare_authorize():
     try:
         oauth_request_auth_url = get_auth_url()
     
-        return render_template('allow_application.html',
-                               authorize_url = oauth_request_auth_url,
-                               user = g.user)
+        app.logger.debug("Redirecting to {}".format(oauth_request_auth_url))
+        
+        return redirect(oauth_request_auth_url)
+    
+        
     except Exception as e:
         return render_template('error.html',
                                message = e.message,
                                user = g.user)
 
-@app.route('/validate', methods=['POST'])
+
+@app.route('/callback', methods=['GET'])
 @login_required
 def figshare_validate():
     """ Validates the PIN code provided by the user in the authorization web form,
     and gets the oauth token and secret."""
     
-    oauth_verifier = request.form['pin']
+    if request.method == 'GET':
+        oauth_verifier = request.args.get('oauth_verifier')
+        returned_oauth_token = request.args.get('oauth_token')
+        
+        if returned_oauth_token != session['resource_owner_key'] :
+            return render_template('error.html',
+                                   message = "The OAuth verifier returned by Figshare does not match the request token!",
+                                   user = g.user )
+    else :
+        return render_template('error.html',
+                               message = "Did not retrieve an OAuth verifier",
+                               user = g.user )
     
     app.logger.debug("Retrieved PIN number: {}".format(oauth_verifier))
     
@@ -68,6 +82,11 @@ def figshare_validate():
         return render_template('error.html',
                                message = e.message,
                                user = g.user )
+    
+
+
+
+
 
 
 def get_auth_url():
