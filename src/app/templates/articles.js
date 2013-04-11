@@ -59,3 +59,9 @@ function showSelectedLinks(articleid, element) {
 	    });	
 	}    
 }
+
+function refreshArticleDetails(articleid) {
+	$.get('/refresh/'+articleid, function(data){
+		$("#"+ articleid +"_details").html(data);
+	})
+}

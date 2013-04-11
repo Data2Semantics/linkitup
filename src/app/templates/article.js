@@ -37,6 +37,7 @@ $("#do_add_to_figshare_{{ i.article_id }}").click(function(){
 	    // Stop the progress bar from moving, and change the text to "Success!"
 	    $("#figshare_upload_progress_{{ i.article_id }}").toggleClass("active");
 	    $("#figshare_upload_progress_{{ i.article_id }} > div").text("Success!");
+	    refreshArticleDetails("{{ i.article_id }}");
 	  }
 	);
 	return false;   
@@ -45,3 +46,18 @@ $("#do_add_to_figshare_{{ i.article_id }}").click(function(){
     $("#{{ i.article_id }}_form").submit();
 })
 
+
+
+$("#refresh_{{ i.article_id }}").click( function() {
+    
+    refreshArticleDetails("{{ i.article_id }}");
+
+});
+  
+  
+  
+$("#uncheck_all_{{ i.article_id }}").click( function() {
+    $("#{{ i.article_id }}_form :input[type='checkbox']:checked").removeAttr('checked');
+    $("#{{ i.article_id }}_form :input[type='checkbox']:checked").parent().toggleClass('alert-warning');
+    $("#{{ i.article_id }}_form :input[type='checkbox']:checked").parent().toggleClass('alert-success');
+})
