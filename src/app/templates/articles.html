@@ -20,38 +20,12 @@
 
 			{% include "article_details.html" %}
 			
-
-			
-
 			{% for plugin in plugins %}
 				{% include "results.html" %}
 			{% endfor %}
 		</form>
-		<div class="modal hide fade" id="links_{{ i.article_id }}" tabindex="-1" role="dialog" aria-hidden="true">
-			<div class="modal-header">
-				  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				  <h3>Selected Links</h3>
-			</div>
-			<div id="links_modalbody_{{ i.article_id }}" class="modal-body">
-				  <p>Loading...</p>
-			</div>
-			<div class="modal-footer">
-				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-			</div>
-		</div>
 
-		<div id='{{ i.article_id }}_updated_figshare' tabindex="-1" class="modal hide fade" role="dialog" aria-hidden="true">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3>Figshare Updated</h3>
-			</div>
-			<div id="links_modalbody_{{ i.article_id }}" class="modal-body">
-				<p><strong>Success!</strong> <strong>Linki</strong>tup data has been pushed back to Figshare.</p>
-		  	</div>
-		  	<div class="modal-footer">
-				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		  	</div>			  
-		</div>
+		{% include "article_modals.html" %}
 		
 			
 		<script>
@@ -73,11 +47,13 @@
 					<li>{% include "button.html" %}</li>
 				{% endfor %}
 				<li class="nav-header">Actions</li>
-				<li><a id="show_{{ i.article_id }}">Show Selection</a></li>
-				<li><a id="rdf_{{ i.article_id }}">Download RDF</a></li>
-				<li><a id="figshare_{{ i.article_id }}">Add to Figshare</a></li>
+				<li><a id="show_{{ i.article_id }}">Preview Selection</a></li>
+				<li><a id="rdf_{{ i.article_id }}">Preview Nanopublication</a></li>
+				<li><a id="add_to_figshare_{{ i.article_id }}">Add to Figshare</a></li>
 			</ul>
 		</div>
+		
+		
 	{% endfor %}
 {% endblock %}
 

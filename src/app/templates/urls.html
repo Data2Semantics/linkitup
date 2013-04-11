@@ -20,8 +20,8 @@
 			{% endif %}
 			<script type="text/javascript">
 					$("#{{ u.short }}_checkbox").click(function(){  
-							$("#{{ u.short }}_label").toggleClass('alert-warning');
-					        $("#{{ u.short }}_label").toggleClass('alert-success');
+						$(this).parent().toggleClass('alert-warning');
+					        $(this).parent().toggleClass('alert-success');
 					    });
 			</script>
 		{% endfor %}
