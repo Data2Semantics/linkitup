@@ -117,8 +117,8 @@
                         <div class="span3">
                                 <ul class="unstyled">
                                         {% for l in i.links %}
-                                                {% if l.link|length > 51 %}
-                                                        <li><i class='icon-share-alt'></i> <a href="{{ l.link }}">{{ l.link[:24] }}... {{ l.link[-24:] }}</a></li>
+                                                {% if l.link|length > 30 %}
+                                                        <li><i class='icon-share-alt'></i> <a href="{{ l.link }}">{{ l.link[:15] }}...{{ l.link[-15:] }}</a></li>
                                                 {% else %}
                                                         <li><i class='icon-share-alt'></i> <a href="{{ l.link }}">{{ l.link }}</a></li>
                                                 {% endif %}
