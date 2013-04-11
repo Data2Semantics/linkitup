@@ -92,9 +92,9 @@ def refresh_article(article_id):
 def download_rdf(article_id):
     checked_urls = request.form.getlist('url')
     
-    graphFile = get_trix(article_id, checked_urls)
+    graphTrix = get_trix(article_id, checked_urls)
     
-    response = make_response(graphFile)
+    response = make_response(graphTrix)
     response.mimetype = "application/trix"
     response.contenttype = "application/trix"
     response.headers.add('Content-Disposition', 'attachment; filename={}.trix'.format(article_id))

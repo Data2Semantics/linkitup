@@ -19,8 +19,9 @@ from requests_oauthlib import OAuth1
 from urlparse import parse_qs
 from urllib import unquote
 import json
+import os
 
-from app import app, db, lm, oid
+from app import app, db, lm, oid, nanopubs_dir
 from rdf import get_trix
 
 ## NB: Code now depends on requests v1.0 and oauth_requests
@@ -218,6 +219,9 @@ def get_articles():
             else :
                 # Add all articles in results['items'] (a list) to the session['items'] dictionary, to improve lookup.
                 for article in results['items'] :
+                    
+                    app.logger.debug(article)
+                    
                     session['items'][str(article['article_id'])] = article
 
                 session.modified = True
@@ -296,11 +300,19 @@ def update_article(article_id, checked_urls):
         results = json.loads(response.content)
         app.logger.debug("Added {} with the following results:\n{}".format(u['uri'],results))
     
+    app.logger.debug("Tag with Linkitup")
     body = {'tag_name': 'Enriched with Linkitup'}
     headers = {'content-type':'application/json'}
         
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(article_id),
                                 data=json.dumps(body), headers=headers, auth=oauth)
+    
+    app.logger.debug("Add a link to Linkitup")    
+    body = {'link': "http://linkitup.data2semantics.org" }
+    headers = {'content-type':'application/json'}
+
+    response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(article_id),
+                        data=json.dumps(body), headers=headers, auth=oauth)
     
     app.logger.debug("Added enriched with Linkitup tag")
     
@@ -317,8 +329,7 @@ def publish_nanopublication(article_id, checked_urls, oauth):
     
     app.logger.debug("Create the new Figshare article for the Nanopublication")
     body = {'title': 'Nanopublication for "{}"'.format(source_article_title),
-                            'description': 'This dataset was automatically published through <a href="http://linkitup.data2semantics.org"><strong>Linki</strong>tup</a> by {}'.format(g.user.nickname),
-                            'description_nohtml': 'This dataset was automatically published through Linkitup by {}'.format(g.user.nickname),
+                            'description': 'This dataset was automatically published through Linkitup by {}'.format(g.user.nickname),
                             'defined_type': 'dataset'}
     headers = {'content-type': 'application/json' }
     
@@ -342,12 +353,34 @@ def publish_nanopublication(article_id, checked_urls, oauth):
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(nanopub_id),
                                 data=json.dumps(body), headers=headers, auth=oauth)    
     
+    app.logger.debug("Tag with Linkitup")
+    body = {'tag_name': 'Published by Linkitup'}
+    headers = {'content-type':'application/json'}
+        
+    response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(nanopub_id),
+                                data=json.dumps(body), headers=headers, auth=oauth)
+    
+    app.logger.debug("Add a link to Linkitup")    
+    body = {'link': "http://linkitup.data2semantics.org" }
+    headers = {'content-type':'application/json'}
+
+    response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(nanopub_id),
+                        data=json.dumps(body), headers=headers, auth=oauth)
     
     app.logger.debug("Upload the Nanopublication RDF to Figshare")
-    files = {'filedata': ('nanopublication_about_{}.trix'.format(article_id), nano_rdf)}
+    files = {'filedata': ('nanopublication_{}_about_{}.trix'.format(nanopub_id, article_id), nano_rdf)}
     
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/files'.format(nanopub_id),
                                 files=files, auth=oauth)    
+    
+    app.logger.debug("Write the Nanopublication to local disk")    
+    nanoFileName = os.path.join(nanopubs_dir, "nanopublication_{}_about_{}.trix".format(nanopub_id,article_id))
+    
+    app.logger.debug("Writing nanopublication to {}".format(nanoFileName))
+    nanoFile = open(nanoFileName, "w")
+    
+    nanoFile.write(nano_rdf)
+    app.logger.debug("Done writing")
     
     app.logger.debug("Done")
     

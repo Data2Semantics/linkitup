@@ -16,8 +16,9 @@ from rdflib.namespace import RDF, RDFS, SKOS, OWL
 from urllib import quote
 from datetime import datetime
 import re
+import os
 
-from app import app
+from app import app, nanopubs_dir
 
 LUV = Namespace('http://linkitup.data2semantics.org/vocab/')
 LU = Namespace('http://linkitup.data2semantics.org/resource/')
@@ -47,16 +48,16 @@ def associate_namespaces(graph):
 def get_trix(article_id, checked_urls):
     graph = get_rdf(article_id, checked_urls)
 
-    graphFile = graph.serialize(format='trix')
+    serializedGraph = graph.serialize(format='trix')
     
-    return graphFile
+    return serializedGraph
    
 def get_trig(article_id, checked_urls): 
     graph = get_rdf(article_id, checked_urls)
 
-    graphFile = graph.serialize(format='trix')
+    serializedGraph = graph.serialize(format='trig')
     
-    return graphFile
+    return serializedGraph
 
 
 def get_rdf(article_id, checked_urls):

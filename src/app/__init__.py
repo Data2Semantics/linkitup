@@ -72,6 +72,9 @@ except Exception as e :
     app.logger.error("Error loading plugins from {}".format(app.config['PLUGINS_FILE']))
     app.logger.error(e.message)
     quit()
+    
+app.logger.debug("Setting RDF Nanopublications storage location (temporary)")
+nanopubs_dir = os.path.join(basedir, 'nanopublications')
 
 app.logger.debug("Now importing views and models")
 from app import views, models
