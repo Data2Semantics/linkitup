@@ -10,7 +10,7 @@ from pprint import pprint
 
 import yaml
 
-from util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, update_article, FigshareEmptyResponse, FigshareNoTokenError
+from util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, get_article, update_article, FigshareEmptyResponse, FigshareNoTokenError
 from util.rdf import get_rdf, get_trix
 
 @lm.user_loader
@@ -75,6 +75,18 @@ def dashboard():
                                    user=g.user)
         
 
+@app.route('/refresh/<article_id>')
+@login_required
+def refresh_article(article_id):
+    article = get_article(article_id)
+    
+    app.logger.debug(article)
+    
+    return render_template('article_details.html',
+                           i = article,
+                           user = g.user )
+
+
 @app.route('/rdf/<article_id>', methods = ['POST'])
 @login_required
 def download_rdf(article_id):
@@ -106,10 +118,12 @@ def update_figshare(article_id):
 
 
 @app.route('/clear')
-@login_required
 def clear_session_data():
+    app.logger.debug("Logging out user")
     logout_user()
+    app.logger.debug("Clearing session data")
     session.clear()
+    app.logger.debug("Session data cleared")
     return render_template('warning.html', 
                            message = "Session data cleared!",
                            user = g.user)

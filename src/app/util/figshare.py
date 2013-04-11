@@ -225,6 +225,39 @@ def get_articles():
     return
 
 
+def get_article(article_id):
+    app.logger.debug("Refreshing information for article {}.".format(article_id))
+    
+    oauth_token = g.user.oauth_token
+    oauth_token_secret = g.user.oauth_token_secret
+
+    oauth = OAuth1(client_key,
+                   client_secret=client_secret,
+                   resource_owner_key=oauth_token,
+                   resource_owner_secret=oauth_token_secret)
+    
+    response = requests.get(url='http://api.figshare.com/v1/my_data/articles/{}'.format(article_id), auth=oauth)
+    
+    results = json.loads(response.content)
+    
+    app.logger.debug(results)
+    
+    if 'error' in results:
+        app.logger.error(results)
+        if results['error'] == 'No valid token could be found' :
+            raise FigshareNoTokenError(results['error'])
+        else :
+            raise Exception(results['error'])
+    elif results == {} :
+        app.logger.error("No article found, retrieved empty response. This probably means that we have an OAuth issue.")
+        raise FigshareEmptyResponse("No articles found, retrieved empty response. This probably means that we have an OAuth issue.")
+    else :
+        session['items'][article_id] = results['items'][0]
+
+        session.modified = True
+        
+    return results['items'][0]
+
 def update_article(article_id, checked_urls):
     
     article_urls = session.get(article_id,[])
