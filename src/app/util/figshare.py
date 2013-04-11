@@ -21,7 +21,7 @@ from urllib import unquote
 import json
 
 from app import app, db, lm, oid
-
+from rdf import get_trix
 
 ## NB: Code now depends on requests v1.0 and oauth_requests
 
@@ -240,25 +240,85 @@ def update_article(article_id, checked_urls):
         
     
     print "Checked urls: ", checked_urls
-    for u in article_urls :
-        if u['uri'] in checked_urls :
-            body = {'link': u['web']}
-            headers = {'content-type':'application/json'}
-        
-            response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(article_id),
-                                data=json.dumps(body), headers=headers, auth=oauth)
-            results = json.loads(response.content)
-            print "Added {} with the following results:\n".format(u['uri']), results
+
+    print "Article urls: {}".format(len(article_urls))
     
-    body = {'tag_name': 'Enriched with LinkItUp'}
+    relevant_urls = [ u for u in article_urls if u['uri'] in checked_urls ]
+    
+    print "Relevant urls ({}): ".format(len(relevant_urls))
+    
+    
+    processed_urls = []
+    for u in relevant_urls :
+        if u['uri'] in processed_urls:
+            continue
+        
+        processed_urls.append(u['uri'])
+        
+        body = {'link': u['web']}
+        headers = {'content-type':'application/json'}
+    
+        response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(article_id),
+                            data=json.dumps(body), headers=headers, auth=oauth)
+        results = json.loads(response.content)
+        app.logger.debug("Added {} with the following results:\n{}".format(u['uri'],results))
+    
+    body = {'tag_name': 'Enriched with Linkitup'}
     headers = {'content-type':'application/json'}
         
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(article_id),
                                 data=json.dumps(body), headers=headers, auth=oauth)
     
+    app.logger.debug("Added enriched with Linkitup tag")
+    
+    publish_nanopublication(article_id, checked_urls, oauth)
+
     
     return
     
+def publish_nanopublication(article_id, checked_urls, oauth):
+    # Get the original title
+    source_article_title = session.get('items')[article_id]['title']
+    
+    nano_rdf = get_trix(article_id, checked_urls)
+    
+    app.logger.debug("Create the new Figshare article for the Nanopublication")
+    body = {'title': 'Nanopublication for "{}"'.format(source_article_title),
+                            'description': 'This dataset was automatically published through <a href="http://linkitup.data2semantics.org"><strong>Linki</strong>tup</a> by {}'.format(g.user.nickname),
+                            'description_nohtml': 'This dataset was automatically published through Linkitup by {}'.format(g.user.nickname),
+                            'defined_type': 'dataset'}
+    headers = {'content-type': 'application/json' }
+    
+    response = requests.post("http://api.figshare.com/v1/my_data/articles", data=json.dumps(body), headers=headers, auth=oauth)
+    
+    nanopub = json.loads(response.content)
+    
+    nanopub_id = nanopub['article_id']
+    
+    app.logger.debug("Add a tag, linking the original article to the nanopublication")
+    body = {'tag_name': 'RDF={}'.format(nanopub_id)}
+    headers = {'content-type':'application/json'}
+        
+    response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(article_id),
+                                data=json.dumps(body), headers=headers, auth=oauth)
+    
+    app.logger.debug("Add a tag, linking the nanopublication to the original article")
+    body = {'tag_name': 'about={}'.format(article_id)}
+    headers = {'content-type':'application/json'}
+        
+    response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(nanopub_id),
+                                data=json.dumps(body), headers=headers, auth=oauth)    
+    
+    
+    app.logger.debug("Upload the Nanopublication RDF to Figshare")
+    files = {'filedata': ('nanopublication_about_{}.trix'.format(article_id), nano_rdf)}
+    
+    response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/files'.format(nanopub_id),
+                                files=files, auth=oauth)    
+    
+    app.logger.debug("Done")
+    
+    return
 
 
 class FigshareEmptyResponse(Exception):

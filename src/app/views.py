@@ -11,7 +11,7 @@ from pprint import pprint
 import yaml
 
 from util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, update_article, FigshareEmptyResponse, FigshareNoTokenError
-from util.rdf import get_rdf
+from util.rdf import get_rdf, get_trix
 
 @lm.user_loader
 def load_user(id):
@@ -80,9 +80,7 @@ def dashboard():
 def download_rdf(article_id):
     checked_urls = request.form.getlist('url')
     
-    graph = get_rdf(article_id, checked_urls)
-
-    graphFile = graph.serialize(format='trix')
+    graphFile = get_trix(article_id, checked_urls)
     
     response = make_response(graphFile)
     response.mimetype = "application/trix"
@@ -109,7 +107,7 @@ def update_figshare(article_id):
 
 @app.route('/clear')
 @login_required
-def clear():
+def clear_session_data():
     logout_user()
     session.clear()
     return render_template('warning.html', 

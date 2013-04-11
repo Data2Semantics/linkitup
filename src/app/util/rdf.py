@@ -43,6 +43,22 @@ def associate_namespaces(graph):
     return graph
 
 
+
+def get_trix(article_id, checked_urls):
+    graph = get_rdf(article_id, checked_urls)
+
+    graphFile = graph.serialize(format='trix')
+    
+    return graphFile
+   
+def get_trig(article_id, checked_urls): 
+    graph = get_rdf(article_id, checked_urls)
+
+    graphFile = graph.serialize(format='trix')
+    
+    return graphFile
+
+
 def get_rdf(article_id, checked_urls):
     """Takes everything we know about the article specified in article_id, and builds a simple RDF graph. 
     
