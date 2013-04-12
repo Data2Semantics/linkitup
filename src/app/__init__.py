@@ -27,17 +27,38 @@ TEMPLATE_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'temp
 
 # Intialize the Flask Appliation
 app = Flask(__name__, template_folder = TEMPLATE_FOLDER)
+app.config.from_object('config')
+
+app.debug = app.config['DEBUG']
+app.logger.info("Set app.debug={}".format(app.debug))
+
+if not app.debug:
+    import logging
+    from logging.handlers import TimedRotatingFileHandler
+    
+    log_folder = app.config['LOG_FOLDER']
+    
+    if not os.path.exists(log_folder) :
+        app.logger.warning("Log folder '{}' does not exist, creating".format(log_folder))
+        os.mkdir(log_folder)
+    
+    log_file = os.path.join(log_folder, 'linkitup.log')
+    
+    # Start a timed rotating filehandler, for the WARNING level, that rotates the logs every Sunday
+    file_handler = TimedRotatingFileHandler(log_file, when='W6')
+    file_handler.setLevel(logging.WARNING)
+    app.logger.addHandler(file_handler)
+
+
+
 app.logger.debug("Initializing Linkitup Flask Application")
 
 # Load the configuration file
-app.config.from_object('config')
+
 app.logger.debug("Loaded configuration")
 
 
 
-
-app.debug = True
-app.logger.debug("Set app.debug=True")
 
 # Setup the Nanopublication Store
 nanopubs_dir = app.config['NANOPUBLICATION_STORE']

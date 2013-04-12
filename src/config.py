@@ -37,4 +37,13 @@ SESSION_STORE = os.path.join(basedir, 'tmp')
 
 NANOPUBLICATION_STORE = os.path.join(basedir, 'nanopublications')
 
+# Logging folder
+
+LOG_FOLDER = os.path.join(basedir, 'log')
+
+
+# Logging at DEBUG level?
+
+DEBUG = False
+
 
