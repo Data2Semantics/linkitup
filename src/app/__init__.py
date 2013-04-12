@@ -35,6 +35,7 @@ app.logger.info("Set app.debug={}".format(app.debug))
 if not app.debug:
     import logging
     from logging.handlers import TimedRotatingFileHandler
+    from logging import Formatter
     
     log_folder = app.config['LOG_FOLDER']
     
@@ -47,6 +48,12 @@ if not app.debug:
     # Start a timed rotating filehandler, for the WARNING level, that rotates the logs every Sunday
     file_handler = TimedRotatingFileHandler(log_file, when='W6')
     file_handler.setLevel(logging.WARNING)
+    
+    file_handler.setFormatter(Formatter(
+        '%(asctime)s %(levelname)s: %(message)s '
+        '[in %(pathname)s:%(lineno)d]'
+    ))
+    
     app.logger.addHandler(file_handler)
 
 
