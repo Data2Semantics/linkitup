@@ -15,50 +15,80 @@ from flaskext.uploads import UploadSet, configure_uploads
 from config import basedir
 
 
+
+# Add the current dir to the Python path
 this_dir = os.path.dirname(__file__)
 sys.path.insert(0, this_dir)
 
-# Make sure we have an absolute path to the template dir
-tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 
-app = Flask(__name__, template_folder = tmpl_dir)
-app.logger.debug("Initializing Linkitup")
+# Make sure we have an absolute path to the template dir
+TEMPLATE_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+
+
+# Intialize the Flask Appliation
+app = Flask(__name__, template_folder = TEMPLATE_FOLDER)
+app.logger.debug("Initializing Linkitup Flask Application")
+
+# Load the configuration file
+app.config.from_object('config')
+app.logger.debug("Loaded configuration")
+
+
+
 
 app.debug = True
 app.logger.debug("Set app.debug=True")
 
+# Setup the Nanopublication Store
+nanopubs_dir = app.config['NANOPUBLICATION_STORE']
+app.logger.debug("Setting RDF Nanopublications storage location (temporary) to: {}".format(nanopubs_dir))
+
+if not os.path.exists(nanopubs_dir) :
+    app.logger.warning("Nanopublications folder '{}' does not yet exist: creating it!".format(nanopubs_dir))
+    os.mkdir(nanopubs_dir)
+
+
+
+# Setup the Session Store
+if not os.path.exists(app.config['SESSION_STORE']) :
+    app.logger.warning("Session store folder '{}' does not yet exist: creating it!".format(app.config['SESSION_STORE']))
+    os.mkdir(app.config['SESSION_STORE'])
+
 # Initialize a simplekv FileystemStore in the tmp directory 
-store = FilesystemStore(os.path.join(basedir, 'tmp'))
+store = FilesystemStore(app.config['SESSION_STORE'])
 # this will replace the app's session handling
 KVSessionExtension(store, app)
 
 app.logger.debug("Added KVSessionExtension file system store")
 
-app.config.from_object('config')
 
-app.logger.debug("Loaded configuration")
+# Setup SQLAlchemy
 
 db = SQLAlchemy(app)
 
 app.logger.debug("Intialized database")
 
+# Setup LoginManager
 lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'login'
 
 app.logger.debug("Initialized LoginManager")
 
+# Setup OpenID
 oid = OpenID(app, os.path.join(basedir, 'tmp'))
 
 app.logger.debug("Initialized OpenID module")
 
-# setup flask-uploads
+# Setup flask-uploads
 
 pdfs = UploadSet('pdfs', extensions=('pdf'))
 configure_uploads(app, (pdfs))
 
 app.logger.debug("Initialized UploadSet 'pdf'")
 
+
+# Load the plugins
 try :
     app.logger.debug("Loading plugins...")
     
@@ -73,8 +103,9 @@ except Exception as e :
     app.logger.error(e.message)
     quit()
     
-app.logger.debug("Setting RDF Nanopublications storage location (temporary)")
-nanopubs_dir = os.path.join(basedir, 'nanopublications')
+
+
+
 
 app.logger.debug("Now importing views and models")
 from app import views, models

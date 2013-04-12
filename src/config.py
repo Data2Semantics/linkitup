@@ -28,3 +28,13 @@ UPLOADS_DEFAULT_DEST = os.path.join(tempdir, 'linkitup')
 # Setup Plugins
 
 PLUGINS_FILE = os.path.join(basedir, "plugins.yaml")
+
+# Session store location
+
+SESSION_STORE = os.path.join(basedir, 'tmp')
+
+# Nanopublications store location
+
+NANOPUBLICATION_STORE = os.path.join(basedir, 'nanopublications')
+
+
