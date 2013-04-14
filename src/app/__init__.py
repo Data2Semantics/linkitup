@@ -51,7 +51,7 @@ if not app.debug:
     
     # Start a timed rotating filehandler, for the WARNING level, that rotates the logs every Sunday
     file_handler = TimedRotatingFileHandler(log_file, when='W6')
-    file_handler.setLevel(logging.WARNING)
+    file_handler.setLevel(logging.INFO)
     
     file_handler.setFormatter(Formatter(
         '%(asctime)s %(levelname)s: %(message)s '
