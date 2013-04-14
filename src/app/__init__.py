@@ -27,9 +27,13 @@ TEMPLATE_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'temp
 
 # Intialize the Flask Appliation
 app = Flask(__name__, template_folder = TEMPLATE_FOLDER)
-app.config.from_object('config')
 
+# Load the configuration file
+app.config.from_object('config')
 app.debug = app.config['DEBUG']
+
+app.logger.debug("Loaded configuration")
+
 app.logger.info("Set app.debug={}".format(app.debug))
 
 if not app.debug:
@@ -60,9 +64,7 @@ if not app.debug:
 
 app.logger.debug("Initializing Linkitup Flask Application")
 
-# Load the configuration file
 
-app.logger.debug("Loaded configuration")
 
 
 
@@ -95,6 +97,10 @@ app.logger.debug("Added KVSessionExtension file system store")
 db = SQLAlchemy(app)
 
 app.logger.debug("Intialized database")
+
+
+
+
 
 # Setup LoginManager
 lm = LoginManager()
@@ -132,10 +138,10 @@ except Exception as e :
     quit()
     
 
-
-
-
 app.logger.debug("Now importing views and models")
-from app import views, models
+import views, models
+
+
+
 
 app.logger.debug("Finalized initialization")
