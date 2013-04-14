@@ -19,20 +19,15 @@ def load_user(id):
 
 @app.before_request
 def before_request():
+    app.logger.debug(request.path)
     g.user = current_user
     
 
 @app.route('/')
 @app.route('/index')
 def index():
-#    if g.user:
-#        user = g.user
-#    else :
-#        user = "<none>"
-
-    
     return render_template('landing.html', 
-                           user=g.user)
+                          user=g.user)
     
 
 @app.route('/dashboard')
