@@ -15,3 +15,5 @@ src/tmp
 *.xcodeproj
 linkitup/linkitup.xcodeproj/*
 *.komodoproject
+
+*.log
