@@ -11,7 +11,7 @@ from pprint import pprint
 import yaml
 
 from util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, get_article, update_article, FigshareEmptyResponse, FigshareNoTokenError
-from util.rdf import get_rdf, get_trix
+from util.rdf import get_rdf, get_trig
 
 @lm.user_loader
 def load_user(id):
@@ -87,12 +87,12 @@ def refresh_article(article_id):
 def download_rdf(article_id):
     checked_urls = request.form.getlist('url')
     
-    graphTrix = get_trix(article_id, checked_urls)
+    graphTrix = get_trig(article_id, checked_urls)
     
     response = make_response(graphTrix)
-    response.mimetype = "application/trix"
-    response.contenttype = "application/trix"
-    response.headers.add('Content-Disposition', 'attachment; filename={}.trix'.format(article_id))
+    response.mimetype = "application/trig"
+    response.contenttype = "application/trig"
+    response.headers.add('Content-Disposition', 'attachment; filename={}.trig'.format(article_id))
 
     return response
 
