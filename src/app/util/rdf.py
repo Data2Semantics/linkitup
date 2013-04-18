@@ -154,7 +154,7 @@ def get_rdf(article_id, checked_urls):
 
 
     now = datetime.now()
-    nowstr = datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")
+    nowstr = datetime.now().strftime("%Y%m%dT%H%M%S%z")
 
     # Add the necessary provenance information
     
