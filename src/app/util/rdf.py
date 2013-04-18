@@ -17,6 +17,7 @@ from urllib import quote
 from datetime import datetime
 import re
 import os
+import string
 
 from app import app, nanopubs_dir
 
@@ -44,6 +45,28 @@ def associate_namespaces(graph):
     return graph
 
 
+def reindent(s, numSpaces):
+    s = s.split('\n')
+    s = [(numSpaces * ' ') + string.lstrip(line) for line in s]
+    s = "\n".join(s)
+    return s
+
+
+def serializeTrig(graph):
+    app.logger.info("Using custom Trig serializer")
+    
+    turtles = []
+    for c in graph.contexts():
+        turtle = "<{id}> = {{\n".format(id=c.identifier)
+        turtle += reindent(c.serialize(format='turtle'), 4)
+        turtle += "}\n\n"
+    
+        turtles.append(turtle)
+        
+    return "\n".join(turtles)
+
+
+
 
 def get_trix(article_id, checked_urls):
     graph = get_rdf(article_id, checked_urls)
@@ -55,9 +78,7 @@ def get_trix(article_id, checked_urls):
 def get_trig(article_id, checked_urls): 
     graph = get_rdf(article_id, checked_urls)
 
-    serializedGraph = graph.serialize(format='trig')
-    
-    return serializedGraph
+    return serializeTrig(graph)
 
 
 def get_rdf(article_id, checked_urls):
