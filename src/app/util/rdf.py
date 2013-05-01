@@ -165,6 +165,7 @@ def get_rdf(article_id, checked_urls):
    
     p_graph.add((nano, RDF.type, PROV['Entity']))
     
+    p_graph.add((nano, DCTERMS['license'], URIRef('http://creativecommons.org/publicdomain/zero/1.0/')))
     p_graph.add((nano, PROV['wasGeneratedBy'], activity_uri))
     p_graph.add((nano, PROV['wasGeneratedAt'], Literal(now)))
     p_graph.add((nano, PROV['wasAttributedTo'], user_uri))
