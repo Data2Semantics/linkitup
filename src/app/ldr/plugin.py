@@ -35,6 +35,9 @@ def link_to_ldr(article_id):
     tags_and_categories = i['tags'] + i['categories']
     
     for t in tags_and_categories:
+        
+        original_qname = "figshare_{}".format(t['id'])
+        
         for v in _known_vocabularies :
             data = {'conceptName': t['name']}
             
@@ -51,7 +54,7 @@ def link_to_ldr(article_id):
                     
                     short = re.sub(' |/|\|\.|-','_',label)
                     
-                    urls.append({'type':'mapping', 'uri': uri, 'web': uri, 'show': label, 'short': short, 'original': label})
+                    urls.append({'type':'mapping', 'uri': uri, 'web': uri, 'show': label, 'short': short, 'original': original_qname})
             
 
     session.setdefault(article_id,[]).extend(urls)

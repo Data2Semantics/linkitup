@@ -54,7 +54,7 @@ def link_to_nif_registry(article_id):
         description = result[0].text[:600]
         nifid = result.attrib['id']
         entry_type = result.attrib['type']
-        original_qname = "FS{}".format(article_id)
+        original_qname = "figshare_{}".format(article_id)
         
         # Create the match dictionary
         match = {'type':    "link",

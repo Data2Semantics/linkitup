@@ -129,7 +129,7 @@ def match_references(article_id, file_id):
             short = re.sub('\.|/','_',r['doi'])
             
             
-            urls.append({'type': 'reference', 'uri': uri, 'web': uri, 'show': r['fullCitation'], 'short': short, 'original': 'FS{}'.format(file_id)})
+            urls.append({'type': 'reference', 'uri': uri, 'web': uri, 'show': r['fullCitation'], 'short': short, 'original': 'figshare_{}'.format(file_id)})
     except Exception as e:
         urls = []
         app.logger.warning("No results returned")

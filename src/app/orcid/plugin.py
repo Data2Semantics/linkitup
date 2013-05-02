@@ -39,7 +39,7 @@ def link_to_orcid(article_id):
     
     for a in authors:
         a_id = a['id']
-        a_qname = 'FS{}'.format(a_id)
+        a_qname = 'figshare_{}'.format(a_id)
         full_name = a['full_name'].strip()
 
         request_uri = credit_search_url + urllib.quote_plus(full_name) + "&rows=3"

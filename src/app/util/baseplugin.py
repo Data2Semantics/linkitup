@@ -117,7 +117,7 @@ class SPARQLPlugin(object):
             match_uri = result["match"]["value"]
             original_id = result["original_id"]["value"]
             original_label = result["original_label"]["value"]
-            original_qname = "FS{}".format(original_id)
+            original_qname = "figshare_{}".format(original_id)
             
             
             app.logger.debug("Match URI: {}".format(match_uri))

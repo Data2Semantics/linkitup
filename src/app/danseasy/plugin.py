@@ -67,7 +67,7 @@ def link_to_dans_easy(article_id):
             description = None
         urn = hit['urn']
         score = "Score: {}%".format(hit['score'])
-        original_qname = "FS{}".format(article_id)
+        original_qname = "figshare_{}".format(article_id)
         
         # Create the match dictionary
         match = {'type':    "link",

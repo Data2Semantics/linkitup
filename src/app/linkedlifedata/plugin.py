@@ -33,6 +33,7 @@ def link_to_lld(article_id):
     for item in match_items :
         
         search_parameters['q'] = item['name']
+        original_qname = "figshare_{}".format(item['id'])
         
         response = requests.get(LLD_AUTOCOMPLETE_URL, params=search_parameters)
         
@@ -61,10 +62,12 @@ def link_to_lld(article_id):
                 description = None
                 
             score = "Score: {}".format(h['score'])
-            original_qname = "FS{}".format(article_id)
+            
+        
+            
             
             # Create the match dictionary
-            match = {'type':    "link",
+            match = {'type':    "mapping",
                      'uri':     match_uri,
                      'web':     web_uri,
                      'show':    display_uri,
