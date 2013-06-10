@@ -1,8 +1,11 @@
 from dropbox import session as db_session
 from dropbox import client
 from flask import request, session, render_template, redirect, url_for, g, jsonify
-from app import app, db, lm, oid, nanopubs_dir
+from app import app, db, lm, oid, nanopubs_dir, docxs
 import xlrd
+import nltk
+from docx import *
+import os
 
 
 
@@ -102,6 +105,23 @@ def dropbox_go():
     revisions = db_client.revisions(path)
     print revisions
     
+    folder = os.path.dirname(path)
+    
+    folder_metadata = db_client.metadata(folder)
+    print folder_metadata
+    
+    result = ""
+    for f in folder_metadata['contents']:
+        print f['path'], f['mime_type']
+        if not f['is_dir'] and f['mime_type'] == 'application/vnd.ms-excel' :
+            result += extractTextFromExcel(f['path'], db_client)
+        if not f['is_dir'] and f['mime_type'] == 'text/plain' :
+            result += extractText(f['path'], db_client)
+        if not f['is_dir'] and f['mime_type'] == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' :
+            result += extractWord(f['path'], db_client)
+            
+    
+
     currentRev = None
     for r in revisions:
         if currentRev == None:
@@ -111,20 +131,54 @@ def dropbox_go():
             currentRev = r
     
 
-    result = extractTextFromExcel(path, db_client)
-    
-    
-    from pytagcloud import create_tag_image, make_tags
-    from pytagcloud.lang.counter import get_tag_counts
-    
-    tags = make_tags(get_tag_counts(result), maxsize=80)
-    
-    create_tag_image(tags, 'cloud_large.png', size=(900, 600), fontname='Lobster')
-    
-    return result
+    import re
+    words = re.split('\W',result)
 
     
+    from nltk.corpus import stopwords
+    words2 = [w.lower() for w in words if (not w.lower() in stopwords.words('english')) and not w == u'']
+    
+    
+    # words2 = [w for w in words if not w in nltk.corpus.stopwords.words['english']]
+    # print words2
+    
+    from nltk.probability import FreqDist
+    
+    fd = FreqDist(words2)
+    print "FREQ"
+    print fd
+    
+    
+    return render_template('words.html', results=fd)
 
+    
+def extractWord(path, client):
+    f, metadata = client.get_file_and_metadata(path)
+    
+    out = open('/tmp/doc.docx', 'w')
+    out.write(f.read())
+    out.close()
+    
+    out = open('/tmp/doc.docx', 'rb')
+    document = opendocx(out)
+    
+    
+    
+    text = getdocumenttext(document)
+    
+    print text
+    
+    return '\n'.join(text)
+    
+
+def extractText(path, client):
+    f, metadata = client.get_file_and_metadata(path)
+    
+    text = f.read()
+    
+    
+    return text
+    
 
 
 #bits of code prov:wasAttributedTo  http://www.youlikeprogramming.com/2012/03/examples-reading-excel-xls-documents-using-pythons-xlrd/
@@ -143,10 +197,9 @@ def extractTextFromExcel(path, client):
         while curr_row < num_rows:
             curr_row += 1
             row = worksheet.row(curr_row)
-            print row
+
             curr_cell = -1
             num_cells = len(row) - 1
-            print num_cells
             while curr_cell < num_cells:
                 curr_cell += 1
                 #print curr_cell
@@ -155,7 +208,6 @@ def extractTextFromExcel(path, client):
                 cell_value = worksheet.cell_value(curr_row, curr_cell)
                 #print cell_value
                 if cell_type == 1:
-                    print cell_value
                     text += ' ' + cell_value
         #f.close();
     return text

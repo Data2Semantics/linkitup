@@ -122,6 +122,12 @@ configure_uploads(app, (pdfs))
 app.logger.debug("Initialized UploadSet 'pdf'")
 
 
+docxs = UploadSet('docxs', extensions=('docx'))
+configure_uploads(app, (docxs))
+
+app.logger.debug("Initialized UploadSet 'docxs'")
+
+
 # Load the plugins
 try :
     app.logger.debug("Loading plugins...")
