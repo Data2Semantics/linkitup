@@ -14,6 +14,9 @@ class User(db.Model):
     oauth_token_secret = db.Column(db.String(22))
     xoauth_figshare_id = db.Column(db.String(5))
     
+    dropbox_access_token_key = db.Column(db.String(66))
+    dropbox_access_token_secret = db.Column(db.String(22))
+    
     def is_authenticated(self):
         return True
 
