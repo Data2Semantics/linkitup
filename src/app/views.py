@@ -12,6 +12,7 @@ import yaml
 
 from util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, get_article, update_article, FigshareEmptyResponse, FigshareNoTokenError
 from util.rdf import get_rdf, get_trig
+from util.dropbox_client import dropbox_authorize, dropbox_callback
 
 @lm.user_loader
 def load_user(id):
@@ -122,6 +123,18 @@ def clear_session_data():
     return render_template('warning.html', 
                            message = "Session data cleared!",
                            user = g.user)
+
+
+@app.route('/dropbox')
+@login_required
+def select_from_dropbox():
+    if g.user.dropbox_access_token_key == None or g.user.dropbox_access_token_key == "" :
+        """This user does not yet have an oauth_token, so redirect to the dropbox authorization page"""
+        
+        return redirect(url_for('dropbox_authorize'))
+    
+    return render_template("dropbox.html", user = g.user)
+
 
 ## LOGIN Stuff below
 
