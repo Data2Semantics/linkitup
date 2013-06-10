@@ -15,11 +15,15 @@
             <img src="http://i1-news.softpedia-static.com/images/news2/Dropbox-Review-2.jpg" width="50px"> Dropbox
         </p>
         <div class="well" id="db-well">
+            <div id="db-progress" class="progress progress-striped active">
+                <div class="bar" style="width: 100%;">Loading...</div>
+            </div>
             <div id="db-files" style="height:400px; overflow: auto;">&nbsp;</div>
         </div>
         
         <script type="text/javascript">
             $(document).ready(function(){
+                $('#db-progress').hide();
                 getFiles('/Data2Semantics');
  
             
@@ -28,7 +32,9 @@
             function selectFile(path) {
                 console.log(path + ' clicked!');
                 
+                $('#db-progress').show();
                 $.get('/dropbox/go', {'path': path}, function(data){
+                    $('#db-progress').hide();
                     $('#db-well').html(data);
                 });
             }
@@ -36,7 +42,9 @@
             function getFiles(path) {
                 console.log("Getting files for path "+ path);
                 $('#db-files').empty();
+                $('#db-progress').show();
                 $.getJSON('/dropbox_files', { 'path' : path }, function(data){
+                    $('#db-progress').hide();
                     $.each(data, function(k, v) {
                         if (k == 'contents') {
                             $.each(v, function() {
