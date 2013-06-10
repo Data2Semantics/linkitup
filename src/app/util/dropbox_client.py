@@ -1,6 +1,6 @@
 from dropbox import session as db_session
 from dropbox import client
-from flask import request, session, render_template, redirect, url_for, g
+from flask import request, session, render_template, redirect, url_for, g, jsonify
 from app import app, db, lm, oid, nanopubs_dir
 
 
@@ -67,11 +67,29 @@ def dropbox_callback():
     
     return redirect(url_for('dropbox'))
 
-@app.route('/dropbox/list')
-def dropbox_list():
+
+
+
+
+@app.route('/dropbox_files', methods=['GET'])
+def dropbox_files():
+    print "Getting dropbox files ..."
     sess = get_session()
     sess.set_token(g.user.dropbox_access_token_key, g.user.dropbox_access_token_secret)
     
     db_client = client.DropboxClient(sess)
     
     print "linked account:", db_client.account_info()
+    
+    path = request.args.get('path', '/Data2Semantics')
+    
+    print "Dropbox path is ", path
+    files = db_client.metadata(path)
+    
+    print "... done"
+    return jsonify(files)
+
+@app.route('/dropbox/go', methods=['GET'])
+def dropbox_go():
+    return request.args.get('path', 'blaat')
+

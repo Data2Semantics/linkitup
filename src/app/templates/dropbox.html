@@ -11,34 +11,68 @@
 
 <div class="row">
     <div class="offset3 span6">
-        
-        <div class="well">
-            <p class="lead">
-                Select a file from your Dropbox
-            </p>
-            <div id="db-file-selected">&nbsp;</div>
-            <div id="db-buttons"><input type="dropbox-chooser" name="selected-file" id="db-chooser" data-multiselect='true' style="display: inline;"/><div id='db-upload-button' class="btn btn-primary disabled">Upload</div></div>
+        <p class="lead">
+            <img src="http://i1-news.softpedia-static.com/images/news2/Dropbox-Review-2.jpg" width="50px"> Dropbox
+        </p>
+        <div class="well" id="db-well">
+            <div id="db-files" style="height:400px; overflow: auto;">&nbsp;</div>
         </div>
         
         <script type="text/javascript">
-            document.getElementById("db-chooser").addEventListener("DbxChooserSuccess",
-                function(e) {
-                    console.log(e.files);
-                    $('#db-file-selected').append('<ul>');
-                    for (i=0; i < e.files.length ; i++) {
-                        $('#db-file-selected').append('<a href="'+e.files[0].link+'">'+e.files[0].name+'</a>');
-                    }
-                    
-                    $('#db-upload-button').toggleClass('disabled');
-                    
-                }, false);
+            $(document).ready(function(){
+                getFiles('/Data2Semantics');
+ 
             
-            
-            $('#db-upload-button').click(function(e) {
-                if(!$('#db-upload-button').hasClass('disabled')) {
-                    
-                }
             });
+            
+            function selectFile(path) {
+                console.log(path + ' clicked!');
+                
+                $.get('/dropbox/go', {'path': path}, function(data){
+                    $('#db-well').html(data);
+                });
+            }
+            
+            function getFiles(path) {
+                console.log("Getting files for path "+ path);
+                $('#db-files').empty();
+                $.getJSON('/dropbox_files', { 'path' : path }, function(data){
+                    $.each(data, function(k, v) {
+                        if (k == 'contents') {
+                            $.each(v, function() {
+                                var div = $('<div class="listitem"></div>');
+                                
+                                console.log(this.path + ' found!');
+                                
+                                if (this.is_dir) {
+                                    div.append('<i class="icon-folder-close"/> ');
+                                    
+                                    var p = this.path;
+                                    
+                                    div.click(function(){
+                                        console.log('adding event handler dir');
+                                        getFiles(p);
+                                    });
+                                } else {
+                                    div.append('<i class="icon-file"/> ');
+                                    
+                                    var p = this.path;
+                                    
+                                    div.click(function(){
+                                        console.log('adding event handler file');
+                                        selectFile(p);
+                                    });
+                                }
+                                
+                                div.append(this.path);
+                                
+                                
+                                $('#db-files').append(div);
+                            });
+                        }
+                    });
+                });
+            }
         </script>
         
     </div>
