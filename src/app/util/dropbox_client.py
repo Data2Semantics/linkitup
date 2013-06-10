@@ -1,4 +1,5 @@
 from dropbox import session as db_session
+from dropbox import client
 from flask import request, session, render_template, redirect, url_for, g
 from app import app, db, lm, oid, nanopubs_dir
 
@@ -11,7 +12,6 @@ ACCESS_TYPE = 'dropbox' # should be 'dropbox' or 'app_folder' as configured for 
 
 
 def get_session():
-    
     return db_session.DropboxSession(APP_KEY, APP_SECRET, ACCESS_TYPE)
 
 @app.route('/dropbox_authorize')
@@ -27,7 +27,7 @@ def dropbox_authorize():
     
     print request_token.key, request_token.secret
 
-    callback = "http://localhost:5000/dropbox_callback"
+    callback = "http://localhost:5000" + url_for(dropbox_callback)
     oauth_request_auth_url = sess.build_authorize_url(request_token, oauth_callback=callback)
     
     print oauth_request_auth_url
@@ -65,4 +65,13 @@ def dropbox_callback():
     db.session.commit()
     print "Good to go!"
     
-    return redirect('/dropbox')
+    return redirect(url_for('dropbox'))
+
+@app.route('/dropbox/list')
+def dropbox_list():
+    sess = get_session()
+    sess.set_token(g.user.dropbox_access_token_key, g.user.dropbox_access_token_secret)
+    
+    db_client = client.DropboxClient(sess)
+    
+    print "linked account:", db_client.account_info()

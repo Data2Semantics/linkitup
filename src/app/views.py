@@ -127,12 +127,13 @@ def clear_session_data():
 
 @app.route('/dropbox')
 @login_required
-def select_from_dropbox():
+def dropbox():
     if g.user.dropbox_access_token_key == None or g.user.dropbox_access_token_key == "" :
         """This user does not yet have an oauth_token, so redirect to the dropbox authorization page"""
         
         return redirect(url_for('dropbox_authorize'))
     
+    print url_for('dropbox_callback')
     return render_template("dropbox.html", user = g.user)
 
 
