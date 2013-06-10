@@ -2,7 +2,7 @@ from dropbox import session as db_session
 from dropbox import client
 from flask import request, session, render_template, redirect, url_for, g, jsonify
 from app import app, db, lm, oid, nanopubs_dir
-
+import xlrd
 
 
 
@@ -91,5 +91,71 @@ def dropbox_files():
 
 @app.route('/dropbox/go', methods=['GET'])
 def dropbox_go():
-    return request.args.get('path', 'blaat')
+    path = request.args.get('path', 'blaat')
+    
+    sess = get_session()
+    sess.set_token(g.user.dropbox_access_token_key, g.user.dropbox_access_token_secret)
+    
+    db_client = client.DropboxClient(sess)
+    
+    fileMeta = db_client.metadata(path)
+    revisions = db_client.revisions(path)
+    print revisions
+    
+    currentRev = None
+    for r in revisions:
+        if currentRev == None:
+            currentRev = r
+        else:
+            print str(currentRev['revision']) + 'wasRevisionOf' + str(r['revision'])
+            currentRev = r
+    
 
+    result = extractTextFromExcel(path, db_client)
+    
+    
+    from pytagcloud import create_tag_image, make_tags
+    from pytagcloud.lang.counter import get_tag_counts
+    
+    tags = make_tags(get_tag_counts(result), maxsize=80)
+    
+    create_tag_image(tags, 'cloud_large.png', size=(900, 600), fontname='Lobster')
+    
+    return result
+
+    
+
+
+
+#bits of code prov:wasAttributedTo  http://www.youlikeprogramming.com/2012/03/examples-reading-excel-xls-documents-using-pythons-xlrd/
+def extractTextFromExcel(path, client):
+    print path
+    text = ''
+    f, metadata = client.get_file_and_metadata(path)
+    workbook = xlrd.open_workbook(file_contents=f.read())
+    # workbook = xlrd.open_workbook(path);
+    worksheets = workbook.sheet_names()
+    for worksheet_name in worksheets:
+        worksheet = workbook.sheet_by_name(worksheet_name)
+        num_rows = worksheet.nrows - 1
+
+        curr_row = -1
+        while curr_row < num_rows:
+            curr_row += 1
+            row = worksheet.row(curr_row)
+            print row
+            curr_cell = -1
+            num_cells = len(row) - 1
+            print num_cells
+            while curr_cell < num_cells:
+                curr_cell += 1
+                #print curr_cell
+                # Cell Types: 0=Empty, 1=Text, 2=Number, 3=Date, 4=Boolean, 5=Error, 6=Blank
+                cell_type = worksheet.cell_type(curr_row, curr_cell)
+                cell_value = worksheet.cell_value(curr_row, curr_cell)
+                #print cell_value
+                if cell_type == 1:
+                    print cell_value
+                    text += ' ' + cell_value
+        #f.close();
+    return text
