@@ -98,8 +98,10 @@ db = SQLAlchemy(app)
 
 app.logger.debug("Intialized database")
 
+# Add Jinja2 loop controls
 
-
+app.jinja_env.add_extension('jinja2.ext.loopcontrols')
+app.logger.debug("Added Jinja2 loop controls")
 
 
 # Setup LoginManager

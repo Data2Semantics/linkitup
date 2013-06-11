@@ -1,3 +1,112 @@
-{% for k,i in results.items() %}
-    <p>{{ k }} ({{ i }})</p>
-{% endfor %}
+<div id="report">
+<link rel="stylesheet" href="http://twitter.github.io/bootstrap/assets/css/bootstrap.css" />
+
+<div class="row">
+    <div class="span6">
+        <h3 id='name' value='{{ name }}'>{{ name }}</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="span6">
+        <h4>Revisions</h4>
+        {% for r in revisions %}
+            <p class="alert alert-warning">{{ r.modified }}</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% if s_fd_length > 0 %}
+<div class="row">
+    <div class="span3">
+        <h4>Word Frequency</h4>
+        {% for k,i in s_fd.items() %}
+            {% if loop.index >= 10 %}{% break %}{% endif %}
+            <p value='{{ k }}' class='alert alert-info word'>{{ k }} ({{ i }})</p>
+        {% endfor %}
+    </div>
+    <div class="span3">
+        <h4>Context</h4>
+        {% for k,i in fd.items() %}
+            {% if loop.index >= 10 %}{% break %}{% endif %}
+            <p value='{{ k }}' class='alert alert-info word'>{{ k }} ({{ i }})</p>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+
+<div class="row">
+    <div class="span6">
+        {% if odspath %}
+        <h4>ODS Path</h4>
+        <p id='odspath' class='alert alert-warning'>{{ odspath }}</p>
+        {% endif %}
+        {% if rdfpath %}
+        <h4>RDF Path</h4>
+        <p id='rdfpath' class='alert alert-warning'>{{ rdfpath }}</p>
+        {% endif %}
+    </div>
+</div>
+
+
+{% if catreport %}
+<div class="row">
+    <div class="span6">
+        <iframe src="{{ catreport }}" style="width: 560px; overflow-x: hidden; overflow-y: auto; height: 600px;">
+            Oops! something went wrong
+        </iframe>
+    </div>
+</div>
+{% endif %}
+
+{% if nwa_url %}
+<div class="row">
+    <div class="span6">
+        <iframe src="{{ nwa_url }}" style="width: 560px; overflow-x: hidden; overflow-y: auto; height: 600px;">
+            Oops! something went wrong
+        </iframe>
+    </div>
+</div>
+{% endif %}
+
+
+
+</div>
+
+<div class="row">
+    <div class="offset2 span2">
+        <a id="submit" class="btn btn-primary">Publish</a>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.word').click(function(e){
+            $(this).toggleClass('alert-info');
+            $(this).toggleClass('alert-success');
+            $(this).toggleClass('selected');
+        });
+        
+        $('#submit').click(function(e){
+            var tags = new Array();
+            
+            
+            console.log($('#name').attr('value'));
+            console.log($('#report').html());
+            $('.selected').each(function(index){
+                console.log($(this).attr('value'));
+                tags.push($(this).attr('value'));
+            });
+            
+            var post_data = {'name': $('#name').attr('value'), 'report': $('#report').html(), 'tags[]': tags};
+            
+            $.post('/dropbox/publish', post_data, function(data){
+                $('#report').html(data);
+            })
+        })
+    });
+    
+</script>
+
+

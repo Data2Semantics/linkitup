@@ -26,8 +26,11 @@ from rdf import get_trix
 
 ## NB: Code now depends on requests v1.0 and oauth_requests
 
-client_key = 'K9qG70PgROIg8CpZGJlGRg'
-client_secret = '0JdZcz5pz0HwyWbeiwsviA'
+# client_key = 'K9qG70PgROIg8CpZGJlGRg'
+# client_secret = '0JdZcz5pz0HwyWbeiwsviA'
+
+client_key = app.config['FIGSHARE_CLIENT_KEY']
+client_secret = app.config['FIGSHARE_CLIENT_SECRET']
 
 request_token_url = "http://api.figshare.com/v1/pbl/oauth/request_token"
 access_token_url = "http://api.figshare.com/v1/pbl/oauth/access_token"
