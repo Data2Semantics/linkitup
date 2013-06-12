@@ -9,7 +9,7 @@
 {% block content %}
 <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropins.js" id="dropboxjs" data-app-key="0hxyetc9506mlm2"></script>
 
-<div class="row">
+<div class="row" id="db-content">
     <div class="offset3 span6">
         <p class="lead">
             <img src="http://i1-news.softpedia-static.com/images/news2/Dropbox-Review-2.jpg" width="50px"> Dropbox
@@ -31,11 +31,21 @@
             
             function selectFile(path) {
                 console.log(path + ' clicked!');
-                
+		$('#db-files').empty();
+		
+		var button = $('<div></div>');
+		button.html('Redo');
+		button.addClass('btn btn-warning');
+		button.click(function(){
+		    selectFile(path);
+		});
+		$('#db-files').append(button);
+		
+		$('#db-progress .bar').html('Running analyses on '+path);
                 $('#db-progress').show();
                 $.get('/dropbox/go', {'path': path}, function(data){
                     $('#db-progress').hide();
-                    $('#db-well').html(data);
+                    $('#db-content').html(data);
                 });
             }
             

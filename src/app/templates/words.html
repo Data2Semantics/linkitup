@@ -1,43 +1,45 @@
-<div id="report">
+<div id="report" class="offset1 span11">
 <link rel="stylesheet" href="http://twitter.github.io/bootstrap/assets/css/bootstrap.css" />
 
 <div class="row">
-    <div class="span6">
-        <h3 id='name' value='{{ name }}'>{{ name }}</h3>
+    <div class="span11">
+        <h3 id='name' value='{{ name }}'>Analysis Report <small>{{ name }}</small></h3>
+        <hr/>
     </div>
 </div>
 <div class="row">
-    <div class="span6">
+    <div class="span5">
         <h4>Revisions</h4>
         {% for r in revisions %}
             <p class="alert alert-warning">{{ r.modified }}</p>
         {% endfor %}
     </div>
+    {% if s_fd_length > 0 %}
+    <div class="row">
+        <div class="span3">
+            <h4>Word Frequency</h4>
+            {% for k,i in s_fd.items() %}
+                {% if loop.index >= 10 %}{% break %}{% endif %}
+                <p value='{{ k }}' class='alert alert-info word'>{{ k }} ({{ i }})</p>
+            {% endfor %}
+        </div>
+        <div class="span3">
+            <h4>Context</h4>
+            {% for k,i in fd.items() %}
+                {% if loop.index >= 10 %}{% break %}{% endif %}
+                <p value='{{ k }}' class='alert alert-info word'>{{ k }} ({{ i }})</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 
-{% if s_fd_length > 0 %}
-<div class="row">
-    <div class="span3">
-        <h4>Word Frequency</h4>
-        {% for k,i in s_fd.items() %}
-            {% if loop.index >= 10 %}{% break %}{% endif %}
-            <p value='{{ k }}' class='alert alert-info word'>{{ k }} ({{ i }})</p>
-        {% endfor %}
-    </div>
-    <div class="span3">
-        <h4>Context</h4>
-        {% for k,i in fd.items() %}
-            {% if loop.index >= 10 %}{% break %}{% endif %}
-            <p value='{{ k }}' class='alert alert-info word'>{{ k }} ({{ i }})</p>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
+
 
 
 <div class="row">
-    <div class="span6">
+    <div class="span11">
         {% if odspath %}
         <h4>ODS Path</h4>
         <p id='odspath' class='alert alert-warning'>{{ odspath }}</p>
@@ -52,8 +54,9 @@
 
 {% if catreport %}
 <div class="row">
-    <div class="span6">
-        <iframe src="{{ catreport }}" style="width: 560px; overflow-x: hidden; overflow-y: auto; height: 600px;">
+    <div class="span11">
+        <h4>Complexity Analysis <small><a class="btn btn-mini" href="{{ catreport}}" target="_new">View Separately</a></small></h4>
+        <iframe src="{{ catreport }}" style="width: 100%; overflow-x: hidden; overflow-y: auto; height: 600px;">
             Oops! something went wrong
         </iframe>
     </div>
@@ -62,8 +65,9 @@
 
 {% if nwa_url %}
 <div class="row">
-    <div class="span6">
-        <iframe src="{{ nwa_url }}" style="width: 560px; overflow-x: hidden; overflow-y: auto; height: 600px;">
+    <div class="span11">
+        <h4>Dependency Analysis <small><a class="btn btn-mini" href="{{ nwa_url }}" target="_new">View Separately</a></small></h4>
+        <iframe src="{{ nwa_url }}" style="width: 100%; overflow-x: hidden; overflow-y: auto; height: 600px;">
             Oops! something went wrong
         </iframe>
     </div>
@@ -75,7 +79,7 @@
 </div>
 
 <div class="row">
-    <div class="offset2 span2">
+    <div class="offset5 span2">
         <a id="submit" class="btn btn-primary">Publish</a>
     </div>
 </div>

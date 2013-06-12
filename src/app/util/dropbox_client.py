@@ -140,7 +140,7 @@ def dropbox_go():
             if f['path'] == path:
                 odspath = convertToODS(f['path'], db_client)
                 
-                tsvs,ttls,sheetdep_json = extractDependencies(odspath)
+                tsvs,ttls,jsons,sheetdep_json = extractDependencies(path, odspath)
                 
                 # Append all turtle files
                 outfile = NamedTemporaryFile(delete=False)
@@ -158,7 +158,7 @@ def dropbox_go():
                 catreport = cat(f['path'], db_client, _format='TURTLE', _file=outfile)
                 
                 print "Running Network analysis"
-                nwa_url = runNetworkAnalysis(path, tsvs, sheetdep_json)
+                nwa_url = runNetworkAnalysis(path, tsvs, jsons, sheetdep_json)
                 
                 
         elif f['mime_type'] == 'text/plain' :
@@ -275,7 +275,7 @@ def dropbox_publish():
 
     
     
-def runNetworkAnalysis(path, tsvs, sheetdep_json):
+def runNetworkAnalysis(path, tsvs, jsons, sheetdep_json):
     nwa_path = app.config['NWANALYSIS_PATH']
     nwa_base = app.config['NWANALYSIS_OUTPUT_PATH'] + path
     nwa_output = nwa_base + "/json"
@@ -296,25 +296,39 @@ def runNetworkAnalysis(path, tsvs, sheetdep_json):
         print "Processing {}".format(tsv)
         (tsvpath, tsvfn) = os.path.split(tsv)
         
+        # Remove the extension
         tsvfn = tsvfn[:-4]
         
-        tsvout = nwa_output + "/output_" + tsvfn
+        tsvout = nwa_output + "/" + tsvfn
         
         subprocess.call(['R','-f',nwa_path,'--args',"{}".format(tsv),"{}".format(tsvout)])
         print "Done"
         
-    
-    if not os.path.exists(nwa_explore+'/js') :
-        os.makedirs(nwa_explore+'/js')
-        print "Created "+nwa_explore+'/js'
-    if not os.path.exists(nwa_explore+'/css') :
-        os.makedirs(nwa_explore+'/css')
-        print "Created "+nwa_explore+'/css'
+    for json in jsons:
+        print "Moving {}".format(json)
+        (jsonpath, jsonfn) = os.path.split(json)
         
-    shutil.copy(nwa_explore+'/js/d3.min.js',nwa_base+'/js/d3.min.js')
-    shutil.copy(nwa_explore+'/css/bootstrap.min.css',nwa_base+'/css/bootstrap.min.css')
+        # Remove the extension
+        jsonfn = jsonfn[:-5]
+        
+        jsonout = nwa_output + "/" + jsonfn + "/graph.json"
+        
+        print "Copying to {}".format(jsonout)
+        shutil.copy(json,jsonout)
+    
+        
+    
+    if not os.path.exists(nwa_base+'/js') :
+        os.makedirs(nwa_base+'/js')
+        print "Created "+nwa_base+'/js'
+    if not os.path.exists(nwa_base+'/css') :
+        os.makedirs(nwa_base+'/css')
+        print "Created "+nwa_base+'/css'
+        
+    shutil.copy(nwa_explore+'/js/d3.min.js',nwa_base+'/js')
+    shutil.copy(nwa_explore+'/css/bootstrap.min.css',nwa_base+'/css')
     shutil.copy(nwa_explore+'/explore.html',nwa_base)
-    shutil.copy(sheetdep_json,nwa_output)
+    shutil.copy(sheetdep_json,nwa_output+'/dep.json')
     
     print "Done!"
     
@@ -325,13 +339,29 @@ def runNetworkAnalysis(path, tsvs, sheetdep_json):
     
 
 
-def extractDependencies(ods_filename):
+def extractDependencies(path, ods_filename):
     (ods_path, ods_file) = os.path.split(ods_filename)
     print "Changing working directory to {}".format(ods_path)
     os.chdir(ods_path)
     
     plsheet_path = app.config['PLSHEET_PATH']
 
+    print "Clearing folder of tsv, json and ttl files..."
+    
+    old = glob("{}/*.tsv".format(ods_path))
+    old.extend(glob("{}/*.ttl".format(ods_path)))
+    old.extend(glob("{}/*.json".format(ods_path)))
+    
+    for f in old :
+        try:
+            if os.path.isfile(f):
+                print "Deleting {}".format(f)
+                os.unlink(f)
+        except Exception as e:
+            print e
+        
+    
+    
     print "Calling ", ' '.join([plsheet_path,ods_file])
     subprocess.call([plsheet_path,ods_file])
     
@@ -340,10 +370,18 @@ def extractDependencies(ods_filename):
     print tsvs
     ttls = glob("{}/*.ttl".format(ods_path))
     print ttls
-    sheetdep_json = "{}/sheetdep.json".format(ods_path)
+    
+    
+    sheetdep = glob("{}/tmp*.json".format(ods_path))
+    print sheetdep
+
+    sheetdep_json = sheetdep[0]
     print sheetdep_json
     
-    return tsvs, ttls, sheetdep_json
+    jsons = glob("{}/*.json".format(ods_path))
+    jsons.remove(sheetdep_json)
+    
+    return tsvs, ttls, jsons, sheetdep_json
 
 
 
