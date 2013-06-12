@@ -1,5 +1,6 @@
 <li{% if active == 'home' %} class="active"{% endif %}><a href="/">Home</a></li>
 <li{% if active == 'dashboard' %} class="active"{% endif %}><a href="/dashboard">Dashboard</a></li>
+<li{% if active == 'dropbox' %} class="active"{% endif %}><a href="/dropbox">Dropbox</a></li>
 {% if g.user.is_authenticated() %}
 	<li><a href="{{ url_for('logout') }}">Logout</a></li>
 {% else %}
