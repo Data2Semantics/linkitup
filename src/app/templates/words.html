@@ -1,14 +1,14 @@
-<div id="report" class="offset1 span11">
+<div id="report" class="span12">
 <link rel="stylesheet" href="http://twitter.github.io/bootstrap/assets/css/bootstrap.css" />
 
 <div class="row">
-    <div class="span11">
+    <div class="span12">
         <h3 id='name' value='{{ name }}'>Analysis Report <small>{{ name }}</small></h3>
         <hr/>
     </div>
 </div>
 <div class="row">
-    <div class="span5">
+    <div class="span6">
         <h4>Revisions</h4>
         {% for r in revisions %}
             <p class="alert alert-warning">{{ r.modified }}</p>
@@ -37,7 +37,7 @@
 
 
 
-
+<!--
 <div class="row">
     <div class="span11">
         {% if odspath %}
@@ -50,11 +50,12 @@
         {% endif %}
     </div>
 </div>
+-->
 
 
 {% if catreport %}
 <div class="row">
-    <div class="span11">
+    <div class="span16">
         <h4>Complexity Analysis <small><a class="btn btn-mini" href="{{ catreport}}" target="_new">View Separately</a></small></h4>
         <iframe src="{{ catreport }}" style="width: 100%; overflow-x: hidden; overflow-y: auto; height: 600px;">
             Oops! something went wrong
@@ -65,7 +66,7 @@
 
 {% if nwa_url %}
 <div class="row">
-    <div class="span11">
+    <div class="span16">
         <h4>Dependency Analysis <small><a class="btn btn-mini" href="{{ nwa_url }}" target="_new">View Separately</a></small></h4>
         <iframe src="{{ nwa_url }}" style="width: 100%; overflow-x: hidden; overflow-y: auto; height: 600px;">
             Oops! something went wrong
