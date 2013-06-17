@@ -1,14 +1,21 @@
-![linkitup](https://raw.github.com/Data2Semantics/linkitup/master/src/static/img/linkitup-logo-72dpi.png) 
+![linkitup](https://raw.github.com/Data2Semantics/linkitup/master/src/app/static/img/linkitup-logo-72dpi.png) 
 
-Copyright © 2012, Rinke Hoekstra, VU University Amsterdam/Data2Semantics Project
+Copyright © 2012,2013, Rinke Hoekstra, Data2Semantics Team, VU University Amsterdam/University of Amsterdam/Data2Semantics Project
 
-<!--=**Author**=
-	Rinke Hoekstra
-=**Date**=
-	2012-10-15
-=**URL**=
-	[http://github.com/Data2Semantics/linkitup](https://github.com/Data2Semantics/linkitup/commit/21eb445d7d2da2b935de5219e4625b518900d121)-->
-	
+
+## Golden Demo Version
+
+This version of Linkitup was developed during a Hackathon. It has a number of additional dependencies:
+
+* [SWI-Prolog](http://www.swi-prolog.org), the latest development version.
+* Java 1.6 or up
+* LibreOffice (for translating MSOffice formats to OpenOffice)
+* The latest version of [CAT](https://dl.dropboxusercontent.com/s/2pdbggrtw9umcmh/cat.jar?token_hash=AAFxo7TPwkPCCgDCSef5soDr_lLn_jBFyK1CF89zXo_xlg&dl=1)
+* The latest version of [PLSheet](https://github.com/JanWielemaker/plsheet)
+ 
+
+
+
 ## About
 **Linki**tup is a Web-based dashboard for **enrichment** of research output published via the [Figshare.com](http://figshare.com) repository service. For license terms, see below.
 
