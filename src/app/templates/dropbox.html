@@ -55,37 +55,43 @@
                 $('#db-progress').show();
                 $.getJSON('/dropbox_files', { 'path' : path }, function(data){
                     $('#db-progress').hide();
+		    var ul = $('<ul class="nav nav-pills nav-stacked"></ul>');
+		    $('#db-files').append(ul);
+		    
                     $.each(data, function(k, v) {
                         if (k == 'contents') {
                             $.each(v, function() {
-                                var div = $('<div class="listitem"></div>');
-                                
+                                var li = $('<li></li>');
+                                var a = $('<a href="#"></a>')
+				
+				
                                 console.log(this.path + ' found!');
                                 
                                 if (this.is_dir) {
-                                    div.append('<i class="icon-folder-close"/> ');
+                                    a.append('<i class="icon-folder-close"/> ');
                                     
                                     var p = this.path;
                                     
-                                    div.click(function(){
+                                    a.click(function(){
                                         console.log('adding event handler dir');
                                         getFiles(p);
                                     });
                                 } else {
-                                    div.append('<i class="icon-file"/> ');
+                                    a.append('<i class="icon-file"/> ');
                                     
                                     var p = this.path;
                                     
-                                    div.click(function(){
+                                    a.click(function(){
                                         console.log('adding event handler file');
                                         selectFile(p);
                                     });
                                 }
                                 
-                                div.append(this.path);
+				
+                                a.append(this.path);
+                                li.append(a);
                                 
-                                
-                                $('#db-files').append(div);
+                                ul.append(li);
                             });
                         }
                     });

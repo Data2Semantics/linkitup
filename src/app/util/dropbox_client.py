@@ -7,15 +7,17 @@ import xlrd
 import nltk
 from docx import *
 import os
-from tempfile import TemporaryFile, NamedTemporaryFile
+from tempfile import TemporaryFile, NamedTemporaryFile, gettempdir
 import subprocess
 from nltk.probability import FreqDist
-from nltk.corpus import stopwords
+from nltk.corpus import stopwords, reuters
 import re
 import requests
 from requests_oauthlib import OAuth1
 from glob import glob
 import shutil
+import json
+from zipfile import ZipFile
 
 
 APP_KEY = 'r2mo1zdpeg0vnw3'
@@ -40,7 +42,7 @@ def dropbox_authorize():
     
     print request_token.key, request_token.secret
 
-    callback = "http://localhost:5000" + url_for(dropbox_callback)
+    callback = "http://localhost:5000/dropbox_callback"
     oauth_request_auth_url = sess.build_authorize_url(request_token, oauth_callback=callback)
     
     print oauth_request_auth_url
@@ -181,7 +183,7 @@ def dropbox_go():
         result += r
         # Store results for selected file separately
         if f['path'] == path :
-            s_result = r
+            selected_result = r
             
                 
             
@@ -199,34 +201,26 @@ def dropbox_go():
     
 
     words = re.split('\W',result)
-    s_words = re.split('\W',s_result)
+    selected_words = re.split('\W',selected_result)
     
 
-    words2 = [w.lower() for w in words if (not w.lower() in stopwords.words('english')) and not w == u'']
-    s_words2 = [w.lower() for w in s_words if (not w.lower() in stopwords.words('english')) and not w == u'']
+    words_clean = [w.lower() for w in words if (not w.lower() in stopwords.words('english')) and not w == u'']
+    selected_words_clean = [w.lower() for w in selected_words if (not w.lower() in stopwords.words('english')) and not w == u'']
     
-    # words2 = [w for w in words if not w in nltk.corpus.stopwords.words['english']]
-    # print words2
+    # Need to do something fancier, e.g. comparing to the reuters corpus in NLTK and then calculating TFIDF
     
-
-    
-    fd = FreqDist(words2)
-    s_fd = FreqDist(s_words2)
-    
-    
-    s_fd_length =  s_fd.N()
-    
-    print "FREQ"
-    print fd
-    
+    fd = FreqDist(words_clean)
+    selected_fd = FreqDist(selected_words_clean)
+    selected_fd_length =  selected_fd.N()
     
     return render_template('words.html',
                            name = f['path'].split('/')[-1],
-                           s_fd_length = s_fd_length,
-                           s_fd = s_fd,
+                           s_fd_length = selected_fd_length,
+                           s_fd = selected_fd,
                            fd=fd,
                            revisions = revisions,
                            catreport = catreport,
+                           path = path,
                            odspath = odspath,
                            rdfpath = rdfpath,
                            nwa_url = nwa_url)
@@ -255,24 +249,100 @@ def dropbox_publish():
                    resource_owner_key=oauth_token,
                    resource_owner_secret=oauth_token_secret)
     
+    fs_client = requests.session()
+    
     if request.method == 'POST':
-        print "Method is POST"
         # Data coming in
-        try:
-            report = request.form['report']
-            name = request.form['name']
-            tags = request.form['tags[]']
-            print description
-            print name, tags
+        report = request.form['report']
+        name = request.form['name']
+        tags = request.form.getlist('tags[]')
+        
+        print "Tags: ", tags
+        
+        path = request.form['path']
+        if 'rdfpath' in request.form :
+            rdfpath = request.form['rdfpath']
+        else :
+            rdfpath = None
+
+
+        # Create a new article
+        
+        body = {}
+        body['title'] = name
+        body['description'] = report
+        body['defined_type'] = 'dataset'
+        
+        
+        headers = {'content-type': 'application/json'}
+        
+        
+        response = fs_client.post('http://api.figshare.com/v1/my_data/articles', auth=oauth, data = json.dumps(body), headers=headers)
+        
+        article_results = json.loads(response.content)
+        
+        article_id = article_results['article_id']
+        
+        print "Created", article_id
+        
+
+        
+        # Get the file (again)
+        
+        print "Checking for {} in Dropbox".format(path)
+        f, metadata = db_client.get_file_and_metadata(path)
+    
+        dropboxfilename = "{}/{}".format(gettempdir(),name)
+        print "Creating dropbox file in {}".format(dropboxfilename)
+        
+        dropboxfile = open(dropboxfilename,'wb')
+        dropboxfile.write(f.read())
+        dropboxfile.close()
+        
+        print "Created", dropboxfilename
+        
+        
+        zipfilename = "{}/{}.zip".format(gettempdir(),name)
+        print "Creating {}.zip".format(zipfilename)
+        
+        zipfile = ZipFile(zipfilename, mode='w')
+        
+        print "Created", zipfilename
+        
+        zipfile.write(dropboxfilename,name)
+        print "Added {} to zip".format(dropboxfilename)
+        if rdfpath :
+            zipfile.write(rdfpath,'{}.ttl'.format(name))
+            print "Added {} to zip".format('{}.ttl'.format(name))
+        
+        zipfile.close()
+        
+        files = {'filedata': ('{}.zip'.format(name), open(zipfilename, 'rb'))}
+        
+        response = fs_client.put('http://api.figshare.com/v1/my_data/articles/{}/files'.format(article_id), auth=oauth,
+                  files=files)
+        
+        print response.content
+        
+        # Add tags
+        
+        for tag in tags:
             
-            return "Success ja"
-        except Exception as e:
-            print e
-            return "Bad request, I guess"
+            body = {'tag_name': tag}
+            print body
+            response = fs_client.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(article_id), auth=oauth, data=json.dumps(body), headers=headers)
+            print response.content
+            print "Added tag", tag
+        
+        return jsonify(article_results)
         
     else :
+        print "Oeh!"
         return "Failed!"
 
+    
+def figshare_upload(name, report, tags) :
+    pass
     
     
 def runNetworkAnalysis(path, tsvs, jsons, sheetdep_json):

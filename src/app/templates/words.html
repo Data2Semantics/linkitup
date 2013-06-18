@@ -3,7 +3,7 @@
 
 <div class="row">
     <div class="span12">
-        <h3 id='name' value='{{ name }}'>Analysis Report <small>{{ name }}</small></h3>
+        <h3 id='name' value='{{ name }}' path='{{ path }}' rdfpath='{{ rdfpath }}'>Analysis Report <small>{{ name }}</small></h3>
         <hr/>
     </div>
 </div>
@@ -15,20 +15,22 @@
         {% endfor %}
     </div>
     {% if s_fd_length > 0 %}
-    <div class="row">
-        <div class="span3">
-            <h4>Word Frequency</h4>
-            {% for k,i in s_fd.items() %}
-                {% if loop.index >= 10 %}{% break %}{% endif %}
-                <p value='{{ k }}' class='alert alert-info word'>{{ k }} ({{ i }})</p>
-            {% endfor %}
-        </div>
-        <div class="span3">
-            <h4>Context</h4>
-            {% for k,i in fd.items() %}
-                {% if loop.index >= 10 %}{% break %}{% endif %}
-                <p value='{{ k }}' class='alert alert-info word'>{{ k }} ({{ i }})</p>
-            {% endfor %}
+    <div class="span6">
+        <div class="row">
+            <div class="span3">
+                <h4>Word Frequency</h4>
+                {% for k,i in s_fd.items() %}
+                    {% if loop.index >= 10 %}{% break %}{% endif %}
+                    <p value='{{ k }}' class='alert alert-info word'>{{ k }} ({{ i }})</p>
+                {% endfor %}
+            </div>
+            <div class="span3">
+                <h4>Context</h4>
+                {% for k,i in fd.items() %}
+                    {% if loop.index >= 10 %}{% break %}{% endif %}
+                    <p value='{{ k }}' class='alert alert-info word'>{{ k }} ({{ i }})</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
     {% endif %}
@@ -55,9 +57,9 @@
 
 {% if catreport %}
 <div class="row">
-    <div class="span16">
+    <div class="span12">
         <h4>Complexity Analysis <small><a class="btn btn-mini" href="{{ catreport}}" target="_new">View Separately</a></small></h4>
-        <iframe src="{{ catreport }}" style="width: 100%; overflow-x: hidden; overflow-y: auto; height: 600px;">
+        <iframe src="{{ catreport }}" style="width: 600px; overflow-x: hidden; overflow-y: auto; height: 600px;">
             Oops! something went wrong
         </iframe>
     </div>
@@ -66,9 +68,9 @@
 
 {% if nwa_url %}
 <div class="row">
-    <div class="span16">
+    <div class="span12">
         <h4>Dependency Analysis <small><a class="btn btn-mini" href="{{ nwa_url }}" target="_new">View Separately</a></small></h4>
-        <iframe src="{{ nwa_url }}" style="width: 100%; overflow-x: hidden; overflow-y: auto; height: 600px;">
+        <iframe src="{{ nwa_url }}" style="width: 600px; overflow-x: hidden; overflow-y: auto; height: 600px;">
             Oops! something went wrong
         </iframe>
     </div>
@@ -98,16 +100,24 @@
             
             
             console.log($('#name').attr('value'));
+            console.log($('#name').attr('path'));
+            console.log($('#name').attr('rdfpath'));
             console.log($('#report').html());
             $('.selected').each(function(index){
                 console.log($(this).attr('value'));
                 tags.push($(this).attr('value'));
             });
             
-            var post_data = {'name': $('#name').attr('value'), 'report': $('#report').html(), 'tags[]': tags};
+            var post_data = {'name': $('#name').attr('value'),
+                                'path': $('#name').attr('path'),
+                                'rdfpath': $('#name').attr('rdfpath'),
+                                'report': $('#report').html(),
+                                'tags[]': tags};
             
             $.post('/dropbox/publish', post_data, function(data){
-                $('#report').html(data);
+                $('#report').html("<p>Created article <a href='http://figshare.com/preview/_preview/"+data.article_id+"'>"+data.article_id+"</p>");
+                console.log('Success!');
+                console.log(data);
             })
         })
     });

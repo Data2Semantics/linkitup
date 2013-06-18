@@ -12,7 +12,7 @@ This version of Linkitup was developed during a Hackathon. It has a number of ad
 * LibreOffice (for translating MSOffice formats to OpenOffice)
 * The latest version of [CAT](https://dl.dropboxusercontent.com/s/2pdbggrtw9umcmh/cat.jar?token_hash=AAFxo7TPwkPCCgDCSef5soDr_lLn_jBFyK1CF89zXo_xlg&dl=1)
 * The latest version of [PLSheet](https://github.com/JanWielemaker/plsheet)
- 
+* The NLTK stopwords corpus (`nltk.download()`) 
 
 
 

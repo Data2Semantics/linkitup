@@ -66,7 +66,7 @@ PLSHEET_PATH = "/Users/hoekstra/projects/data2semantics/plsheet/ods2rdf.pl"
 
 # RScripts
 
-NWANALYSIS_PATH = "/Users/hoekstra/projects/data2semantics/nwanalysis/runAllAlgs.R"
+NWANALYSIS_PATH = "/Users/hoekstra/Dropbox/Data2Semantics/hackathon/rScripts/runAllAlgs.R"
 NWANALYSIS_OUTPUT_PATH = "/Users/hoekstra/projects/data2semantics/cat/nwanalysis"
 NWANALYSIS_BASE_URL = "http://localhost:8000/nwanalysis"
 NWANALYSIS_EXPLORER_PATH = "/Users/hoekstra/Dropbox/data2semantics/hackathon/sheet_explore"
