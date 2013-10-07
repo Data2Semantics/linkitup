@@ -17,6 +17,7 @@ import json
 import re
 import urllib
 from pprint import pprint
+import traceback
 
 from app import app
 
@@ -52,6 +53,7 @@ def link_to_orcid(article_id):
 
         if len(search_results) >0 :
             for sr in search_results['orcid-search-results']['orcid-search-result']:
+                app.logger.debug(sr)
                 try :
                     orcid = sr['orcid-profile']['orcid']['value']
                     
@@ -85,6 +87,7 @@ def link_to_orcid(article_id):
                     urls.append({'type':'mapping', 'uri': uri, 'web': uri, 'show': name, 'short': short, 'original': a_qname, 'extra': orcid, 'subscript': score})
                 except Exception as e :
                     app.logger.debug("Exception in accessing ORCID entry: {}\n{}".format(e.message, pprint(sr)))
+                    app.logger.debug(traceback.format_exc())
                     return render_template('message.html',
                                            type = 'error', 
                                            text = e.message )
