@@ -40,6 +40,8 @@ def link_to_lld(article_id):
         hits = response.json()['results']
         
         for h in hits:
+            app.logger.debug(h)
+            
             match_uri = h['uri']['namespace'] + h['uri']['localName']
             web_uri = match_uri
             display_uri = h['label']
@@ -51,13 +53,24 @@ def link_to_lld(article_id):
 #            else :
 #                description = None
                 
-            if len(h['types']) > 0 :
-                types = ", ".join(h['types'])
+            if 'types' in h:
+                if len(h['types']) > 0 :
+                    types = ", ".join(h['types'])
+                else :
+                    types = None
+            elif 'type' in h:
+                types = h['type']
             else :
                 types = None
                 
-            if h['definition'].strip() != "" :
-                description = h['definition']
+            if 'definition' in h :
+                if h['definition'] != None :
+                    if h['definition'].strip() != "" :
+                        description = h['definition']
+                    else :
+                        description = None
+                else :
+                    description = None
             else :
                 description = None
                 
