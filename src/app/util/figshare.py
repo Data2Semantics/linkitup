@@ -220,9 +220,12 @@ def get_articles():
                 # Add all articles in results['items'] (a list) to the session['items'] dictionary, to improve lookup.
                 for article in results['items'] :
                     
-                    app.logger.debug(article)
+                    # app.logger.debug(article)
                     
-                    session['items'][str(article['article_id'])] = article
+                    if article['status'] != 'Drafts' :
+                        session['items'][str(article['article_id'])] = article
+                    else :
+                        app.logger.debug('Skipped article {} because it is still a draft'.format(article['article_id']))
 
                 session.modified = True
     
@@ -313,6 +316,8 @@ def update_article(article_id, checked_urls):
 
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(article_id),
                         data=json.dumps(body), headers=headers, auth=oauth)
+                        
+    
     
     app.logger.debug("Added enriched with Linkitup tag")
     
@@ -345,6 +350,15 @@ def publish_nanopublication(article_id, checked_urls, oauth):
         
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(article_id),
                                 data=json.dumps(body), headers=headers, auth=oauth)
+                                
+                                
+    app.logger.debug("Add a link to the Nanopublication")
+    body = {'link': "http://dx.doi.org/10.6084/m3.figshare.{}".format(nanopub_id)}
+    headers = {'content-type': 'application/json'}
+    
+    response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(article_id),
+                        data=json.dumps(body), headers=headers, auth=oauth)
+    
     
     app.logger.debug("Add a tag, linking the nanopublication to the original article")
     body = {'tag_name': 'about={}'.format(article_id)}
@@ -352,6 +366,13 @@ def publish_nanopublication(article_id, checked_urls, oauth):
         
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(nanopub_id),
                                 data=json.dumps(body), headers=headers, auth=oauth)    
+                                
+    app.logger.debug("Add a link to the original article")
+    body = {'link': "http://dx.doi.org/10.6084/m3.figshare.{}".format(article_id)}
+    headers = {'content-type': 'application/json'}
+    
+    response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(nanopub_id),
+                        data=json.dumps(body), headers=headers, auth=oauth)
     
     app.logger.debug("Tag with Linkitup")
     body = {'tag_name': 'Published by Linkitup'}
@@ -384,7 +405,7 @@ def publish_nanopublication(article_id, checked_urls, oauth):
     
     app.logger.debug("Done")
     
-    return
+    return 
 
 
 class FigshareEmptyResponse(Exception):
