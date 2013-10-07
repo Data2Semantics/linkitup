@@ -63,7 +63,7 @@ def link_to_orcid(article_id):
                     details = sr['orcid-profile']['orcid-bio']['personal-details']
                     
                     if 'credit-name' in details:
-                        name = details['credit-name']['value']
+                        name = details['credit-name']['value'].encode('utf-8')
                     elif 'given-names' in details and 'family-name' in details :
                         name = "{} {}".format(details['given-names']['value'].encode('utf-8'),details['family-name']['value'].encode('utf-8'))
                     elif 'other-name' in details :
