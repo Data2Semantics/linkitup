@@ -330,7 +330,7 @@ def publish_nanopublication(article_id, checked_urls, oauth):
     # Get the original title
     source_article_title = session.get('items')[article_id]['title']
     
-    nano_rdf = get_trix(article_id, checked_urls)
+    nano_rdf = get_trig(article_id, checked_urls)
     
     app.logger.debug("Create the new Figshare article for the Nanopublication")
     body = {'title': 'Nanopublication for "{}"'.format(source_article_title),
@@ -389,13 +389,13 @@ def publish_nanopublication(article_id, checked_urls, oauth):
                         data=json.dumps(body), headers=headers, auth=oauth)
     
     app.logger.debug("Upload the Nanopublication RDF to Figshare")
-    files = {'filedata': ('nanopublication_{}_about_{}.trix'.format(nanopub_id, article_id), nano_rdf)}
+    files = {'filedata': ('nanopublication_{}_about_{}.trig'.format(nanopub_id, article_id), nano_rdf)}
     
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/files'.format(nanopub_id),
                                 files=files, auth=oauth)    
     
     app.logger.debug("Write the Nanopublication to local disk")    
-    nanoFileName = os.path.join(nanopubs_dir, "nanopublication_{}_about_{}.trix".format(nanopub_id,article_id))
+    nanoFileName = os.path.join(nanopubs_dir, "nanopublication_{}_about_{}.trig".format(nanopub_id,article_id))
     
     app.logger.debug("Writing nanopublication to {}".format(nanoFileName))
     nanoFile = open(nanoFileName, "w")
