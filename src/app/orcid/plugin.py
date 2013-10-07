@@ -72,8 +72,10 @@ def link_to_orcid(article_id):
                         app.logger.debug('No name found in ORCID entry')
                         continue
                         
-                    if score_double < 2 :
-                        app.logger.debug("Score {} for {} is below 2, not including it in results.".format(sr['relevancy-score']['value'], name))
+                
+                        
+                    if score_double < 0.7 :
+                        app.logger.debug("Score {} for {} is below 0.7, not including it in results.".format(sr['relevancy-score']['value'], name))
                         continue   
                     
                     uri = "http://orcid.org/{}".format(orcid)
