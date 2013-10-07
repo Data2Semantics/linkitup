@@ -42,6 +42,6 @@ LOG_FOLDER = os.path.join(basedir, 'log')
 
 # Logging at DEBUG level?
 
-DEBUG = False
+DEBUG = True
 
 
