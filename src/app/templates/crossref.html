@@ -1,26 +1,21 @@
-{% for f in files %}
 <div class='alert alert-warning'>
 	<button type="button" class="close" data-dismiss="alert">x</button>
 	This is an experimental feature that may not work very well for all PDF files (e.g. multi-column ones).<br/>
-	Due to limitations of the Figshare API, LinkItUp cannot download files directly from Figshare. 
-	If you want to run a file through CrossRef, please download the file (by clicking the link), and upload it using the file upload form.<br/>
-	<strong>NB:</strong> Please be sure to be logged in to Figshare (not just the API).</div>
-	<label class='checkbox' id='{{ f.id }}_label'> <i
-		class='icon-file'></i>&nbsp;<a target="_new"
-		href='http://figshare.com/account/media/view?dw=1&file={{ f.id }}.pdf'>{{ f.name }}</a>
-		<div id='{{ f.id }}_progress' class="progress progress-striped active">
-			<div id='{{ f.id }}_bar' class='bar' style='width: 10%;'>Test</div>
-		</div>
-		<div>
-			<input id="fileupload" type="file" name="files[]"
-				data-url="crossref/upload/{{ article_id }}/{{ f.id }}" multiple>
-		</div>
-		<div id='{{ f.id }}_results'></div> 
-		<script>
-			{% include('crossref.js') %}
-		</script>
-	</label>
+</div>
+{% for f in files %}
 
+<div>
+	<i class='icon-file'></i>&nbsp;<a id='{{ f.id }}_button' class='btn btn-default' >{{ f.name }}</a>
+</div>
+<div id='{{ f.id }}_progress' class="progress progress-striped active">
+	<div id='{{ f.id }}_bar' class='bar' style='width: 10%;'>Test</div>
+</div>
+<div id='{{ f.id }}_results'></div> 
+
+<script>
+	{% include('crossref.js') %}
+</script>
 {% endfor %}
+
 
 

@@ -1,22 +1,22 @@
 {% for r in references %}
-	<p class='small' id='{{ file_id }}_{{ r.id }}'><i class='icon-list'></i>&nbsp;{{ r.text }}</p>
-	<div id='{{ file_id }}_{{ r.id }}_results'></div>
+	<p class='small' id='ref{{ file_id }}_{{ r.id }}'><i class='icon-list'></i>&nbsp;{{ r.text }}</p>
+	<div id='ref{{ file_id }}_{{ r.id }}_results'></div>
 	
 		<script>
- 			$("#{{ file_id }}_{{ r.id }}").click(function(){  
+ 			$("#ref{{ file_id }}_{{ r.id }}").click(function(){  
  				var html = "<div class='progress progress-striped active'>" +
 						   "<div class='bar' style='width: 100%;'>Matching reference text #{{ r.id }}</div> " +
 						   "</div>";
  				
  				
-				$("#{{ file_id }}_{{ r.id }}_results").html(html);
+				$("#ref{{ file_id }}_{{ r.id }}_results").html(html);
 				
-				var rtext = escape("{{ r.text|tojson }}");
+				var rtext = escape({{ r.text|tojson }});
 				
 				$.get("crossref/match/{{ article_id }}/{{ file_id }}", 
 							{ text: rtext },
 						    function(data){
-								$("#{{ file_id }}_{{ r.id }}_results").html(data);
+								$("#ref{{ file_id }}_{{ r.id }}_results").html(data);
 							});
 			});
 		</script>
