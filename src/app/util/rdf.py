@@ -78,7 +78,9 @@ def get_trix(article_id, checked_urls):
 def get_trig(article_id, checked_urls): 
     graph = get_rdf(article_id, checked_urls)
 
-    return serializeTrig(graph)
+    serializedGraph = graph.serialize(format='trig')
+    
+    return serializedGraph
 
 
 def get_rdf(article_id, checked_urls):
