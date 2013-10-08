@@ -21,6 +21,9 @@ import string
 
 from app import app, nanopubs_dir
 
+
+## NB: Code now depends on rdflib v4.1-dev and higher
+
 LUV = Namespace('http://linkitup.data2semantics.org/vocab/')
 LU = Namespace('http://linkitup.data2semantics.org/resource/')
 DBPEDIA = Namespace('http://dbpedia.org/resource/')
@@ -57,7 +60,7 @@ def serializeTrig(graph):
     
     turtles = []
     for c in graph.contexts():
-        turtle = "<{id}> = {{\n".format(id=c.identifier)
+        turtle = "<{id}> {{\n".format(id=c.identifier)
         turtle += reindent(c.serialize(format='turtle'), 4)
         turtle += "}\n\n"
     
@@ -78,8 +81,11 @@ def get_trix(article_id, checked_urls):
 def get_trig(article_id, checked_urls): 
     graph = get_rdf(article_id, checked_urls)
 
-    serializedGraph = graph.serialize(format='trig')
-    
+    # Switch comments to not use the RDFLib serializer (still uses the deprecated '=' between graph URI and graph contents)
+    # serializedGraph = graph.serialize(format='trig')
+    # The custom serializer serializes namespace definitions within the graph portion, instead of at the beginning of the document.
+    # Although this is valid TriG/Turtle practice, some parsers will fall flat on their face.
+    serializedGraph = serializeTrig(graph)
     return serializedGraph
 
 
