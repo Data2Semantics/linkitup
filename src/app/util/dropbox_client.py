@@ -131,6 +131,9 @@ def dropbox_go():
     rdfpath = None
     nwa_url = None
     for f in folder_metadata['contents']:
+        if not 'mime_type' in f:
+            continue
+            
         print f['path'], f['mime_type']
         
         if f['is_dir']:
