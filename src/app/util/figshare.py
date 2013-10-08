@@ -22,7 +22,7 @@ import json
 import os
 
 from app import app, db, lm, oid, nanopubs_dir
-from rdf import get_trix
+from rdf import get_and_publish_trig
 
 ## NB: Code now depends on requests v1.0 and oauth_requests
 
@@ -330,7 +330,7 @@ def publish_nanopublication(article_id, checked_urls, oauth):
     # Get the original title
     source_article_title = session.get('items')[article_id]['title']
     
-    nano_rdf = get_trig(article_id, checked_urls)
+    nano_rdf = get_and_publish_trig(article_id, checked_urls)
     
     app.logger.debug("Create the new Figshare article for the Nanopublication")
     body = {'title': 'Nanopublication for "{}"'.format(source_article_title),

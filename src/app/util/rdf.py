@@ -18,6 +18,7 @@ from datetime import datetime
 import re
 import os
 import string
+import requests
 
 from app import app, nanopubs_dir
 
@@ -87,6 +88,34 @@ def get_trig(article_id, checked_urls):
     # Although this is valid TriG/Turtle practice, some parsers will fall flat on their face.
     serializedGraph = serializeTrig(graph)
     return serializedGraph
+
+
+SESAME_UPDATE_URL = "http://semweb.cs.vu.nl:8080/openrdf-sesame/repositories/goldendemo/statements"
+
+def get_and_publish_trig(article_id, checked_urls):
+    graph = get_rdf(article_id, checked_urls)
+    
+    for c in graph.contexts() :
+        app.logger.debug("Preparing graph {}".format(c.identifier))
+        headers =  {'content-type':'text/turtle;charset=UTF-8'}
+        params = {'context': "<{}>".format(c.identifier)}
+        data = c.serialize(format='turtle')
+        app.logger.debug("Uploading graph {} to {}".format(c.identifier, SESAME_UPDATE_URL))
+        r = requests.put(SESAME_UPDATE_URL,
+                         data = data,
+                         params = params,
+                         headers = headers)
+                         
+        if r.ok :
+            app.logger.debug("Success!")
+        else :
+            app.logger.warning("Something went wrong: couldn't upload {} to {}".format(c.identifier, SESAME_UPDATE_URL))
+            app.logger.debug(r.content)
+            
+    return serializeTrig(graph)
+    
+
+    
 
 
 def get_rdf(article_id, checked_urls):
