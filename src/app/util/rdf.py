@@ -72,14 +72,14 @@ def serializeTrig(graph):
 
 
 
-def get_trix(article_id, checked_urls):
+def get_trix(nanopub_id, article_id, checked_urls):
     graph = get_rdf(article_id, checked_urls)
 
     serializedGraph = graph.serialize(format='trix')
     
     return serializedGraph
    
-def get_trig(article_id, checked_urls): 
+def get_trig(nanopub_id, article_id, checked_urls): 
     graph = get_rdf(article_id, checked_urls)
 
     # Switch comments to not use the RDFLib serializer (still uses the deprecated '=' between graph URI and graph contents)
@@ -92,8 +92,8 @@ def get_trig(article_id, checked_urls):
 
 SESAME_UPDATE_URL = "http://semweb.cs.vu.nl:8080/openrdf-sesame/repositories/goldendemo/statements"
 
-def get_and_publish_trig(article_id, checked_urls):
-    graph = get_rdf(article_id, checked_urls)
+def get_and_publish_trig(nanopub_id, article_id, checked_urls):
+    graph = get_rdf(nanopub_id, article_id, checked_urls)
     
     for c in graph.contexts() :
         app.logger.debug("Preparing graph {}".format(c.identifier))
@@ -118,7 +118,7 @@ def get_and_publish_trig(article_id, checked_urls):
     
 
 
-def get_rdf(article_id, checked_urls):
+def get_rdf(nanopub_id, article_id, checked_urls):
     """Takes everything we know about the article specified in article_id, and builds a simple RDF graph. 
     
     We only consider the URLs of checkboxes that were selected by the user.
@@ -132,9 +132,9 @@ def get_rdf(article_id, checked_urls):
     i = items[article_id]
 
     article_id_qname = 'figshare_{}'.format(article_id)
+    nanopub_id_qname = 'figshare_{}'.format(nanopub_id)
     
     
-
     
     nano = LU["nanopublication/{}".format(article_id_qname)]
     assertion = LU["assertion/{}".format(article_id_qname)]
@@ -159,11 +159,17 @@ def get_rdf(article_id, checked_urls):
         doi = i['doi']
         
         article_uri = URIRef(doi)
-        a_graph.add((article_uri,OWL.sameAs,LU[article_id_qname]))
-        a_graph.add((article_uri,LUV['doi'],URIRef(doi)))
     else :
-        # If it doesn't, we'll use a URI of our own making
-        article_uri = LU[article_id_qname]    
+        # If it doesn't, we'll gues the DOI URI of our own making
+        
+        doi = "http://dx.doi.org/10.6084/m9.figshare.{}".format(article_id)        
+        article_uri = URIRef(doi)
+        
+    a_graph.add((article_uri,OWL.sameAs,LU[article_id_qname]))
+    a_graph.add((article_uri,LUV['doi'],URIRef(doi)))
+    
+    
+    
 
     # print "Processing owner..."
     if 'owner' in i:
@@ -187,6 +193,12 @@ def get_rdf(article_id, checked_urls):
     np_graph.add((nano, NANOPUB['hasAssertion'], assertion))
     np_graph.add((nano, NANOPUB['hasProvenance'], provenance))
     
+    nanopub_doi = "http://dx.doi.org/10.6084/m9.figshare.{}".format(nanopub_id)    
+    nanopub_uri = URIRef(nanopub_doi)
+
+    np_graph.add((nanopub_uri, OWL.sameAs, LU[nanopub_id_qname]))
+    np_graph.add((nano, RDFS['seeAlso'], nanopub_uri))
+    
 
 
 
@@ -207,7 +219,7 @@ def get_rdf(article_id, checked_urls):
     p_graph.add((nano, PROV['wasGeneratedAt'], Literal(now)))
     p_graph.add((nano, PROV['wasAttributedTo'], user_uri))
     
-    p.graph.add((activity_uri, RDF.type, PROV['Activity']))
+    p_graph.add((activity_uri, RDF.type, PROV['Activity']))
     p_graph.add((activity_uri, PROV['used'], article_uri))
     p_graph.add((activity_uri, PROV['generated'], nano))
     p_graph.add((activity_uri, PROV['endedAtTime'], Literal(now)))
