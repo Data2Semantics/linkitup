@@ -178,6 +178,7 @@ def get_rdf(article_id, checked_urls):
     p_graph.add((nano, PROV['wasGeneratedAt'], Literal(now)))
     p_graph.add((nano, PROV['wasAttributedTo'], user_uri))
     
+    p.graph.add((activity_uri, RDF.type, PROV['Activity']))
     p_graph.add((activity_uri, PROV['used'], article_uri))
     p_graph.add((activity_uri, PROV['generated'], nano))
     p_graph.add((activity_uri, PROV['endedAtTime'], Literal(now)))
