@@ -1,6 +1,9 @@
 ![linkitup](https://raw.github.com/Data2Semantics/linkitup/master/src/app/static/img/linkitup-logo-72dpi.png) 
 
-Copyright © 2012,2013, Rinke Hoekstra, Data2Semantics Team, VU University Amsterdam/University of Amsterdam/Data2Semantics Project
+Copyright © 2012,2013, Data2Semantics Team
+VU University Amsterdam/University of Amsterdam/Data2Semantics Project
+
+![COMMIT/](https://raw.github.com/Data2Semantics/linkitup/master/src/app/static/img/COMMIT_logo_subtitle_small_RGB.jpg)
 
 
 ## Golden Demo Version
