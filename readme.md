@@ -30,9 +30,7 @@ Compared to Linkitup, it has a number of additional dependencies:
 
 The **Golden Demo** adds in-place conversion, analysis, enrichment and publication of datasets and documents directly from the popular Dropbox cloud service.
 
-The video below shows how this works:
-
-<iframe width="480" height="360" src="http://www.youtube.com/embed/EGpcHPz1VBw?rel=0" frameborder="0" allowfullscreen></iframe>
+Have a look at our [screencast](http://www.youtube.com/embed/EGpcHPz1VBw?rel=0) to see what it does!
 
 **Linki**tup is developed within the COMMIT [Data2Semantics](http://www.data2semantics.org) project, a research project that develops technology for adding semantics to research data.  
 	
