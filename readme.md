@@ -32,7 +32,7 @@ The **Golden Demo** adds in-place conversion, analysis, enrichment and publicati
 
 The video below shows how this works:
 
-<iframe width="480" height="360" src="//www.youtube.com/embed/EGpcHPz1VBw?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="480" height="360" src="http://www.youtube.com/embed/EGpcHPz1VBw?rel=0" frameborder="0" allowfullscreen></iframe>
 
 **Linki**tup is developed within the COMMIT [Data2Semantics](http://www.data2semantics.org) project, a research project that develops technology for adding semantics to research data.  
 	
