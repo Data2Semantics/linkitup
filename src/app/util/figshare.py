@@ -22,7 +22,7 @@ import json
 import os
 
 from app import app, db, lm, oid, nanopubs_dir
-from rdf import get_trix
+from rdf import get_trig
 
 ## NB: Code now depends on requests v1.0 and oauth_requests
 
