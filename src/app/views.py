@@ -85,9 +85,11 @@ def load_plugins():
 @login_required
 def article_details():
     app.logger.debug(request)
+    try :
         article = request.get_json()
         app.logger.debug(article)
     except Exception as e:
+        app.logger.error(e)
         app.logger.debug("Something went wrong!")
     
     if article == None :
