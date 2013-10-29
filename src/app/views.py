@@ -1,4 +1,3 @@
-from flask import render_template, flash, redirect, session, url_for, request, g, make_response
 from flask import render_template, flash, redirect, session, url_for, request, g, make_response, jsonify
 from flask.ext.login import login_user, logout_user, current_user, login_required
 
@@ -81,6 +80,22 @@ def load_articles():
 def load_plugins():
     return jsonify({'result': plugins.values()})
     
+    
+@app.route('/details', methods=['POST'])
+@login_required
+def article_details():
+    app.logger.debug(request)
+        article = request.get_json()
+        app.logger.debug(article)
+    except Exception as e:
+        app.logger.debug("Something went wrong!")
+    
+    if article == None :
+        article = request.get_json(force=True)
+        app.logger.debug("Forced parsing")
+        app.logger.debug(article)
+    
+    return render_template('article_details.html', article=article)
     
 
 @app.route('/refresh/<article_id>')
