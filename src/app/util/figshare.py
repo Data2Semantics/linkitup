@@ -22,7 +22,7 @@ import json
 import os
 
 from app import app, db, lm, oid, nanopubs_dir
-from rdf import get_trig
+from rdf import get_and_publish_trig
 
 ## NB: Code now depends on requests v1.0 and oauth_requests
 
@@ -330,7 +330,6 @@ def publish_nanopublication(article_id, checked_urls, oauth):
     # Get the original title
     source_article_title = session.get('items')[article_id]['title']
     
-    nano_rdf = get_trig(article_id, checked_urls)
     
     app.logger.debug("Create the new Figshare article for the Nanopublication")
     body = {'title': 'Nanopublication for "{}"'.format(source_article_title),
@@ -342,7 +341,11 @@ def publish_nanopublication(article_id, checked_urls, oauth):
     
     nanopub = json.loads(response.content)
     
+    
     nanopub_id = nanopub['article_id']
+    
+    
+    nano_rdf = get_and_publish_trig(nanopub_id, article_id, checked_urls)
     
     app.logger.debug("Add a tag, linking the original article to the nanopublication")
     body = {'tag_name': 'RDF={}'.format(nanopub_id)}

@@ -11,7 +11,7 @@
  				
 				$("#ref{{ file_id }}_{{ r.id }}_results").html(html);
 				
-				var rtext = escape({{ r.text|tojson }});
+				var rtext = {{ r.text|tojson|safe }};
 				
 				$.get("crossref/match/{{ article_id }}/{{ file_id }}", 
 							{ text: rtext },
