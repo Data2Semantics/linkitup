@@ -188,12 +188,12 @@ def get_articles():
     
     # We'll start at page 0, will be updated at the start of the first loop.
     page = 0
-    
-    # Make sure to reset the items in the session (otherwise the session keeps on increasing with every call to this function)
-    # TODO: this currently happens for every page refresh on the dashboard, and that might be a bit overkill
-    session['items'] = {}
-    session.modified = True
 
+    # The list of articles + titles we will return later.
+    articles = []
+    # The dictionary of article details that we'll return later.
+    details = {}
+    
     while True:
         page += 1
         params = {'page': page}
@@ -220,16 +220,17 @@ def get_articles():
                 # Add all articles in results['items'] (a list) to the session['items'] dictionary, to improve lookup.
                 for article in results['items'] :
                     
-                    # app.logger.debug(article)
-                    
+                    # Filter out those articles that have Drafts status
                     if article['status'] != 'Drafts' :
-                        session['items'][str(article['article_id'])] = article
+                        
+                        articles.append({'id': article['article_id'], 'text': article['title']})
+                        
+                        details[str(article['article_id'])] = article
                     else :
                         app.logger.debug('Skipped article {} because it is still a draft'.format(article['article_id']))
 
-                session.modified = True
     
-    return
+    return articles, details
 
 
 def get_article(article_id):
