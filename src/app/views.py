@@ -76,6 +76,12 @@ def load_articles():
                                    message = "Error retrieving articles!: " + e.message, 
                                    user=g.user)
         
+@app.route('/plugins')
+@login_required
+def load_plugins():
+    return jsonify({'result': plugins.values()})
+    
+    
 
 @app.route('/refresh/<article_id>')
 @login_required
