@@ -20,11 +20,7 @@
 			<div class="alert alert-info">
 				<div class="control-group">
 					<div class="controls">
-						<label for="articles"><i class="icon-search"></i> Select an article</label>
-						<select id="articles" style="width: 100%; ">
-							<option></option>
-							{% block tabs %}{% endblock %}
-						</select>
+						{% block tabs %}{% endblock %}
 					</div>
 				</div>
 			</div>
@@ -37,8 +33,9 @@
 		</div>
 	</div>
 
-
-	<script>
-		$(document).ready(function() { $("#articles").select2({ placeholder: "Start typing..." , allowClear: true }); });
-	</script>
 {% endblock %}
+
+
+{% block scripts %}
+
+{% endblock scripts %}
