@@ -33,6 +33,11 @@ def index():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    return render_template('articles.html', user = g.user, results = {}, plugins = plugins.values())
+    
+@app.route('/articles')
+@login_required
+def load_articles():
     """If this session has not yet been initialized (i.e. we don't yet have an oauth_token from Figshare), 
     it starts up the three-legged authentication procedure for OAuth v1.
     
@@ -50,13 +55,14 @@ def dashboard():
         """
         
         try :
-            get_articles()
+            articles, details = get_articles()
             
-            return render_template('articles.html', 
-                               raw = str(session['items']),
-                               results = session['items'], 
-                               plugins = plugins.values(),
-                               user = g.user)
+            return jsonify({'articles': articles, 'details': details})
+            
+            # return render_template('articles.html', 
+            #                    results = articles, 
+            #                    plugins = plugins.values(),
+            #                    user = g.user)
         except FigshareEmptyResponse as e :
             app.logger.error(e)
             return redirect(url_for('figshare_authorize'))
