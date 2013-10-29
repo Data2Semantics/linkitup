@@ -1,7 +1,7 @@
 <div class="row">
         <div class="span9">
-                <p class="lead" id="{{ i.article_id }}_title">{{ i.title }}</p>
-                {% if i.doi %}<p><a href="{{i.doi}}">{{i.doi}}</a></p>{% endif %}
+                <p class="lead" id="{{ article.article_id }}_title">{{ article.title }}</p>
+                {% if article.doi %}<p><a href="{{article.doi}}">{{article.doi}}</a></p>{% endif %}
                 <hr/>
         </div>
 </div>
@@ -10,34 +10,34 @@
                 <div class="row">
                         <div class="span1"><strong>status</strong></div>
                         <div class="span3">
-                                {{ i.status }}
+                                {{ article.status }}
                         </div>
                 </div>
                 <div class="row">
                         <div class="span1"><strong>date</strong></div>
                         <div class="span3">
-                                {{ i.published_date }}
+                                {{ article.published_date }}
                         </div>
                 </div>
                 <div class="row">
                         <div class="span1"><strong>type</strong></div>
                         <div class="span3">
-                                {{ i.defined_type }}
+                                {{ article.defined_type }}
                         </div>
                 </div>
-                {% if i.total_size %}
+                {% if article.total_size %}
                 <div class="row">
                         <div class="span1"><strong>size</strong></div>
                         <div class="span3">
-                                {{ i.total_size }}
+                                {{ article.total_size }}
                         </div>
                 </div>
                 {% endif %}
-                {% if i.version %}
+                {% if article.version %}
                         <div class="row">
                                 <div class="span1"><strong>version</strong></div>
                                 <div class="span3">
-                                        {{ i.version }}
+                                        {{ article.version }}
                                 </div>
                         </div>
                 {% endif %}
@@ -45,7 +45,7 @@
                         <div class="span1"><strong>files</strong></div>
                         <div class="span3">
                                 <ul class="unstyled">
-                                {% for f in i.files %}
+                                {% for f in article.files %}
                                         <li><i class='icon-file'></i> <a target="_new" href='http://figshare.com/account/media/view?dw=1&file={{ f.id }}.pdf'>{{ f.name }}</a></li>
                                 {% endfor %}
                                 </ul>
@@ -53,10 +53,10 @@
                 </div>
         </div>
         <div class="span5">
-                {% if i.description_nohtml %}
+                {% if article.description_nohtml %}
                 <blockquote>
                         <p>
-                                {{ i.description_nohtml }}
+                                {{ article.description_nohtml }}
                         </p>
                 </blockquote>
         {% endif %}
@@ -65,12 +65,12 @@
 </div>
 <div class="row">
         <div class="span4">
-                {% if i.authors %}
+                {% if article.authors %}
                 <div class="row">
                         <div class="span1"><strong>authors</strong></div>
                         <div class="span3">
                                 <ul class="unstyled">
-                                {% for a in i.authors %}
+                                {% for a in article.authors %}
                                         <li><i class='icon-user'></i> {{ a.full_name }}</li>
                                 {% endfor %}
                                 </ul>
@@ -80,12 +80,12 @@
 
         </div>
         <div class="span5">
-                {% if i.tags %}
+                {% if article.tags %}
                 <div class="row">
                         <div class="span1"><strong>tags</strong></div>
                         <div class="span3">
                                 <ul class="unstyled">
-                                {% for t in i.tags %}
+                                {% for t in article.tags %}
                                         <li><i class='icon-tag'></i> {{ t.name }}</li>
                                 {% endfor %}
                                 </ul>
@@ -97,13 +97,13 @@
 </div>
 <div class="row">
         <div class="span4">					
-                {% if i.categories %}
+                {% if article.categories %}
                 <div class="row">
                         <div class="span1"><strong>categories</strong></div>
                         <div class="span3">
                                 <ul class="unstyled">
-                                        {% for c in i.categories %}
-                                        <li><i class='icon-th-list'></i> {{ c.name }}</a></li>
+                                        {% for c in article.categories %}
+                                        <li><i class='icon-th-list'></i> {{ c.name }}</li>
                                         {% endfor %}
                                 </ul>
                         </div>
@@ -111,12 +111,12 @@
                 {% endif %}
         </div>
         <div class="span5">
-                {% if i.links %}
+                {% if article.links %}
                 <div class="row">
                         <div class="span1"><strong>links</strong></div>
                         <div class="span3">
                                 <ul class="unstyled">
-                                        {% for l in i.links %}
+                                        {% for l in article.links %}
                                                 {% if l.link|length > 30 %}
                                                         <li><i class='icon-share-alt'></i> <a href="{{ l.link }}">{{ l.link[:15] }}...{{ l.link[-15:] }}</a></li>
                                                 {% else %}
