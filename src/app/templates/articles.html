@@ -17,6 +17,8 @@
 
 	$(document).ready(function() { 
 		$.localStorage('ready', false);
+		$.localStorage('selected', {});
+		$.localStorage('results', {});
 		
 		// Get the list of plugins, and render the plugin menu.
 		$.get("{{ url_for('load_plugins') }}", function(data) {
@@ -40,7 +42,7 @@
 				
 				$.localStorage( 'current', article_id );
 				
-				render_article_details(article_id, data.details);
+				render_article_details();
 			} else {
 				$("#article_details").html("Warning: no published or private articles found in your figshare account!")
 			}
@@ -60,20 +62,42 @@
 		}); 
 	}
 	
-	function render_article_details(article_id, details) {
-		var payload = JSON.stringify(details[article_id]);
-		
+	function render_article_details() {
 		$('#article_details').html('Loading...');
+		
+		var url = "{{ url_for('article_details')}}";
+		
+		var callback = function(html) {
+			$('#article_details').html(html);
+		};
+		
+		post_article_html(url, callback);
+	}
+	
+	function post_article_html(url, callback){
+		var details = get_details();
+		var payload = JSON.stringify(details);
+			
+		$.ajax({
+			type: "POST",
+			contentType: "application/json; charset=utf-8",
+			url: url,
+			data: payload,
+			dataType: "html",
+		}).success(callback);
+	}
+	
+	function post_article_json(url, callback){
+		var details = get_details();
+		var payload = JSON.stringify(details);
 		
 		$.ajax({
 			type: "POST",
 			contentType: "application/json; charset=utf-8",
-			url: "{{ url_for('article_details')}}",
+			url: url,
 			data: payload,
-			dataType: "html",
-		}).success(function(html) {
-			$('#article_details').html(html);
-		});
+			dataType: "json",
+		}).success(callback);
 	}
 
 	function render_plugins(plugins){
@@ -85,48 +109,210 @@
 			
 			plugin_link.on('click',function(e){
 				console.log(value.name + " clicked");
-				run_plugin(value.slug, value.name);
+				run_plugin(value.slug, value.name, value.type);
 			});
 		});	
 	}
 	
-	function run_plugin(slug, name){
+	function run_plugin(plugin, name, type){
 		var ready = $.localStorage('ready');
 		
 		if (ready) {
 			var article_id = $.localStorage('current');
 			
-			var loading = "<div class='progress progress-striped active'>" +
-				"<div class='bar' style='width: 100%;'>Loading links from " + 
-				name 
-				+ "...</div> " +
-				"</div>";
+			/// Check whether the results are already in!
 			
-			var url = "/" + slug + "/" + article_id;
+			var results = get_results(plugin);
+			if (results != null && type == 'json') {
+				render_plugin_results(plugin, results);
+				$('#plugin_modal').modal('show');
+			} else {
+				var loading = "<div class='progress progress-striped active'>" +
+					"<div class='bar' style='width: 100%;'>Loading links from " + 
+					name 
+					+ "...</div> " +
+					"</div>";
 			
-			$('#plugin_modal_name').html(name);
-			$('#plugin_modal').modal('show');
+				$('#plugin_modal_name').html(name);
+				$('#plugin_modal_body').html(loading);
+				$('#plugin_modal').modal('show');
 			
-			var items = get_items();
+				var url = "/" + plugin ;
 			
+				if (type == 'json') {
+					var callback = function(data){
+						
+						if (data.urls != null){
+							add_results(plugin, data.urls);
+						
+							render_plugin_results(plugin, data.urls);
+							$('#'+plugin).toggleClass('active');
+						} else {
+							$('#plugin_modal_body').html('No results...');
+						}
+					};
 			
-			// THIS IS WHERE I AM...
-			
-			$('#plugin_modal_body').html(loading).load(url, function(response, status, xhr) {
-				if (status == "success") {
-					$('#'+slug).toggleClass('active');
+					post_article_json(url, callback);
+				} else if (type == 'html') {
+					var callback = function(html){
+						$('#plugin_modal_body').html(html);
+						$('#'+plugin).toggleClass('active');
+					};
+				
+					post_article_html(url, callback);
+				} else {
+					alert('Plugin has unknown type!');
 				}
-			})
+			}
+			
 		}
 		
 	}
+	/*
+	{% for r in results %}
+		{% if r.urls %}
+		{% for u in r.urls %}
+			<label class='checkbox alert alert-warning' id='{{ u.short }}_label'>
+					<input type='checkbox' name='url' web='{{ u.web }}' show='{{ u.show }}' value='{{ u.uri }}' id='{{ u.short }}_checkbox'>
+					<a target="_new" href="{{ u.uri }}"><i class="icon-globe"></i></a>&nbsp;<a target="_new" href='{{ u.web }}'>{{ u.show }}</a> 
+					{% if u.extra %}
+					({{ u.extra }})
+					{% endif %}
+					{% if u.subscript %}
+					<div><small>{{ u.subscript }}</small></div>
+					{% endif %}
+			</label>
+			{% if u.description %}
+				<div style="margin-top: -1em; margin-bottom: 1em;">
+					<small>
+						{{ u.description }} ...
+					</small>
+				</div>
+			{% endif %}
+					$("#{{ u.short }}_checkbox").click(function(){  
+						$(this).parent().toggleClass('alert-warning');
+					        $(this).parent().toggleClass('alert-success');
+					    });
 
+		{% endfor %}
+		{% else %}
+			<p>No links found to {{ r.title }}</p>
+		{% endif %}
+{% endfor %}
+
+	*/
+	function render_plugin_results(plugin, urls) {
+		var body = $('#plugin_modal_body');
+		console.log(urls);
+		body.empty();
+		
+
+		
+		$.each(urls, function(uindex, url) {
+			var label = $('<label></label>');
+			label.addClass('checkbox');
+			label.addClass('alert');
+			
+			var input = $('<input type="checkbox"></input>');
+			label.append(input);
+			
+			var selected = get_selected();
+			if (url.uri in selected) {
+				label.addClass('alert-success');
+				input.attr('checked',true);
+			} else {
+				label.addClass('alert-warning');
+			}
+			
+			input.on('click', function(){
+				label.toggleClass('alert-warning');
+				label.toggleClass('alert-success');
+				
+				if (input.is(':checked')) {
+
+					add_selected(url.uri, url);
+
+				} else {
+
+					remove_selected(url.uri);
+
+				}
+				
+				console.log(get_selected());
+			});
+			
+			
+			var uri = $('<a href="' + url.uri + '"><i class="icon-globe"></i></a>');
+			label.append(uri);
+			
+			var web = $('<a href="' + url.web + '">' + url.show + '</a>');
+			label.append(web);
+			
+			if (url.extra != null){ 
+				var extra = $('<span/>').text('('+ url.extra + ')');
+				label.append(extra);
+			}
+			
+			if (url.subscript != null) {
+				var subscript = $('<div><small>' + url.subscript + '</small></div>');
+				label.append(subscript);
+			}
+			
+			body.append(label);
+			
+			if (url.description != null) {
+				var description_div = $('<div style="margin-top: -1em; margin-bottom: 1em;"></div>');
+				var description = $('<small>' + url.description + '</small>');
+				description_div.append(description);
+				
+				body.append(description_div);
+			}
+		});
+	}
+	
 	function get_details(){
 		var article_id = $.localStorage('current');
 		
 		return $.localStorage('details')[article_id];		
 	}
 	
+	function get_selected(){
+		return $.localStorage('selected');
+	}
+	
+	function add_selected(key, value){
+		var selected = $.localStorage('selected');
+		
+		selected[key] = value;
+		
+		$.localStorage('selected', selected);
+	}
+	
+	function remove_selected(key){
+		var selected = $.localStorage('selected');
+		
+		delete selected[key]
+		
+		$.localStorage('selected', selected);
+	}
+	
+	function get_results(plugin) {
+		var results = $.localStorage('results');
+		
+		if (plugin in results) {
+			return results[plugin];
+		} else {
+			return null;
+		}
+	}
+	
+	function add_results(plugin, urls){
+		var results = $.localStorage('results');
+		
+		results[plugin] = urls;
+		
+		$.localStorage('results', results);
+	}
 	
 
 </script>

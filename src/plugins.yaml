@@ -2,35 +2,44 @@ app.dbpedia.plugin:
   name: Wikipedia
   slug: dbpedia
   logo: static/img/wikipedia.png
+  type: json
 app.dblp.plugin:
   name: DBLP 
   slug: dblp 
   logo: static/img/dblp.png
+  type: json
 app.crossref.plugin:
   name: CrossRef
   slug: crossref
   logo: static/img/crossref.png
+  type: html
 app.ldr.plugin:
   name: Linked Data Repository
   slug: ldr
   logo: static/img/ldr.png
+  type: json
 app.orcid.plugin:
   name: ORCID
   slug: orcid
   logo: static/img/orcid.png
+  type: json
 app.neurolex.plugin:
   name: NeuroLex
   slug: neurolex
   logo: static/img/neurolex.png
+  type: json
 app.nifregistry.plugin:
   name: NIF Registry
   slug: nifregistry
   logo: static/img/nifregistry.png
+  type: json
 app.danseasy.plugin:
   name: DANS EASY
   slug: danseasy
   logo: static/img/danseasy.png
+  type: json
 app.linkedlifedata.plugin:
   name: LinkedLifeData
   slug: linkedlifedata
   logo: static/img/linkedlifedata.png
+  type: json

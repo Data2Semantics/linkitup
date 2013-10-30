@@ -4,7 +4,7 @@ Created on 26 Mar 2013
 @author: hoekstra
 '''
 
-from flask import render_template, session, g
+from flask import render_template, g, request, jsonify
 from flask.ext.login import login_required
 
 import xml.etree.ElementTree as ET
@@ -17,13 +17,15 @@ from app import app
 NIF_REGISTRY_URL = "http://nif-services.neuinfo.org/nif/services/registry/search?q="
 
 
-@app.route('/nifregistry/<article_id>')
+@app.route('/nifregistry', methods=['POST'])
 @login_required
-def link_to_nif_registry(article_id):
+def link_to_nif_registry():
+    # Retrieve the article from the post
+    article = request.get_json()
+    article_id = article['article_id']
+    
     app.logger.debug("Running NIF Registry plugin for article {}".format(article_id))
     
-    # Retrieve the article from the session
-    article = session['items'][article_id]
     
     # Rewrite the tags and categories of the article in a form understood by the NIF Registry
     match_items = article['tags'] + article['categories']
@@ -69,19 +71,12 @@ def link_to_nif_registry(article_id):
         
         # Append it to all matches
         matches.append(match)
-        
-
-    # Add the matches to the session
-    session.setdefault(article_id,[]).extend(matches)
-    session.modified = True
 
     if matches == [] :
         matches = None
     
     # Return the matches
-    return render_template('urls.html',
-                           article_id = article_id, 
-                           results = [{'title':'NIF Registry','urls': matches}])
+    return jsonify({'title':'NIF Registry','urls': matches})
     
         
         
