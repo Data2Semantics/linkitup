@@ -11,7 +11,7 @@ http://github.com/Data2Semantics/linkitup
 # -*- coding: utf-8 -*-
 
 
-from flask import render_template, session, request, make_response, jsonify
+from flask import render_template, request, make_response, jsonify
 from flask.ext.login import login_required
 from flaskext.uploads import UploadSet
 
@@ -32,17 +32,18 @@ from app import app, pdfs
 
 
 
-@app.route('/crossref/<article_id>')
+@app.route('/crossref', methods=['POST'])
 @login_required
-def link_to_DOI(article_id):
-	items = session.get('items',[])
-	
-	
-	i = items[article_id]
+def link_to_DOI():
+	# Retrieve the article from the post
+	article = request.get_json()
+	article_id = article['article_id']
+
 
 	# Only applicable to PDF files
-	files = [f for f in i['files'] if f['mime_type'] == 'application/pdf']
-			
+	files = [f for f in article['files'] if f['mime_type'] == 'application/pdf']
+
+
 	if len(files) > 0:
 		return render_template('crossref.html',
 							   title = 'Crossref',
@@ -77,14 +78,11 @@ def upload_to_crossref(article_id, file_id, file_name):
 		tempfile.close()
 		
 		app.logger.debug('upload: tempfile {}'.format(tempfile.name))
-		
-		session.setdefault('files',{})[file_id] = tempfile.name
-		session.modified = True
-		
-		app.logger.debug('upload: files {}'.format(session['files']))
+
 		
 		result = {
-			"name":"{}.pdf".format(file_id)
+			"name":"{}.pdf".format(file_id),
+			"tempfile": tempfile.name
 		}
 		app.logger.debug(result)
 		
@@ -98,12 +96,10 @@ def upload_to_crossref(article_id, file_id, file_name):
 		return jsonify(result)
 
 
-@app.route('/crossref/extract/<article_id>/<file_id>')
+@app.route('/crossref/extract/<article_id>/<file_id>/<tempfile>')
 @login_required
-def get_file_and_extract(article_id, file_id):
-	app.logger.debug('extract: files', session.get('files'))
+def get_file_and_extract(article_id, file_id, tempfile):
 
-	tempfile = session['files'][file_id]
 	app.logger.debug('extract: files_file_id (tempfile)', pdfs.path(tempfile))
 	
 	# TODO: Use a web-based PDF extraction service instead
@@ -149,9 +145,6 @@ def match_references(article_id, file_id):
 		urls = []
 		app.logger.warning("No results returned")
 		app.logger.debug(e.message)	   
-	
-	session.setdefault(article_id,[]).extend(urls)
-	session.modified = True
 	
 	if urls == []:
 		urls = None
