@@ -259,16 +259,13 @@ def get_article(article_id):
     elif results == {} :
         app.logger.error("No article found, retrieved empty response. This probably means that we have an OAuth issue.")
         raise FigshareEmptyResponse("No articles found, retrieved empty response. This probably means that we have an OAuth issue.")
-    else :
-        session['items'][article_id] = results['items'][0]
 
-        session.modified = True
         
     return results['items'][0]
 
-def update_article(article_id, checked_urls):
+def update_article(article, checked_urls):
     
-    article_urls = session.get(article_id,[])
+    article_id = article['article_id']
     
     oauth_token = g.user.oauth_token
     oauth_token_secret = g.user.oauth_token_secret
@@ -279,18 +276,8 @@ def update_article(article_id, checked_urls):
                    resource_owner_key=oauth_token,
                    resource_owner_secret=oauth_token_secret)
         
-    
-    print "Checked urls: ", checked_urls
-
-    print "Article urls: {}".format(len(article_urls))
-    
-    relevant_urls = [ u for u in article_urls if u['uri'] in checked_urls ]
-    
-    print "Relevant urls ({}): ".format(len(relevant_urls))
-    
-    
     processed_urls = []
-    for u in relevant_urls :
+    for k,u in checked_urls.items() :
         if u['uri'] in processed_urls:
             continue
         
@@ -322,14 +309,15 @@ def update_article(article_id, checked_urls):
     
     app.logger.debug("Added enriched with Linkitup tag")
     
-    publish_nanopublication(article_id, checked_urls, oauth)
+    publish_nanopublication(article, checked_urls, oauth)
 
     
     return
     
-def publish_nanopublication(article_id, checked_urls, oauth):
+def publish_nanopublication(article, checked_urls, oauth):
     # Get the original title
-    source_article_title = session.get('items')[article_id]['title']
+    source_article_title = article['title']
+    article_id = article['article_id']
     
     
     app.logger.debug("Create the new Figshare article for the Nanopublication")
@@ -345,8 +333,7 @@ def publish_nanopublication(article_id, checked_urls, oauth):
     
     nanopub_id = nanopub['article_id']
     
-    
-    nano_rdf = get_and_publish_trig(nanopub_id, article_id, checked_urls)
+    nano_rdf = get_and_publish_trig(nanopub_id, article, checked_urls)
     
     app.logger.debug("Add a tag, linking the original article to the nanopublication")
     body = {'tag_name': 'RDF={}'.format(nanopub_id)}

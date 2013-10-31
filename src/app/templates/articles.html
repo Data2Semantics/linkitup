@@ -21,6 +21,9 @@
 	*/
 	$(document).ready(function() { 
 		$.localStorage('ready', false);
+		$.localStorage('details', {});
+		$.localStorage('articles', {});
+		
 		$.localStorage('selected', {});
 		$.localStorage('results', {});
 		
@@ -31,11 +34,19 @@
 		})
 		
 		$('#preview_nanopublication').on('click', function(e){
-			preview_nanopublicaiton();
+			preview_nanopublication();
 		})
 		
 		$('#publish_to_figshare').on('click', function(e){
 			publish_to_figshare();
+		});
+		
+		$('#refresh').on('click', function(e){
+			update_article_details();
+		});
+		
+		$('#uncheck_all').on('click', function(e){
+			$.localStorage('selected', {});
 		});
 		
 		initialize_plugins();
@@ -112,6 +123,17 @@
 			allowClear: true,
 			data: articles 
 		}); 
+		
+		$("#articles").on('change', function(e){
+			console.log("Different article selected");
+			var article_id = $("#articles").val();
+			$.localStorage('current', article_id);
+			
+			$.localStorage('selected', {});
+			$.localStorage('results', {});
+			
+			render_article_details();
+		});
 	}
 	
 	/*
@@ -136,15 +158,9 @@
 	*/
 	function post_article_html(url, callback){
 		var details = get_details();
-		var payload = JSON.stringify(details);
+		
 			
-		$.ajax({
-			type: "POST",
-			contentType: "application/json; charset=utf-8",
-			url: url,
-			data: payload,
-			dataType: "html",
-		}).success(callback);
+		post(url, details, "html", callback);
 	}
 	
 	/*
@@ -152,14 +168,23 @@
 	*/
 	function post_article_json(url, callback){
 		var details = get_details();
-		var payload = JSON.stringify(details);
+		
+		post(url, details, "json", callback);
+	}
+	
+	
+	/*
+	// Generic function for POSTing JSON to the backend
+	*/
+	function post(url, data, type, callback) {
+		var payload = JSON.stringify(data);
 		
 		$.ajax({
 			type: "POST",
 			contentType: "application/json; charset=utf-8",
 			url: url,
 			data: payload,
-			dataType: "json",
+			dataType: type,
 		}).success(callback);
 	}
 	
@@ -179,7 +204,7 @@
 			
 			var results = get_results(plugin);
 			if (results != null && type == 'json') {
-				render_plugin_results(plugin, results);
+				render_urls($('#plugin_modal_body'), results);
 				$('#plugin_modal').modal('show');
 			} else {
 				var loading = get_progress_bar("Retrieving links from " + name);
@@ -222,6 +247,9 @@
 		
 	}
 
+	/*
+	// Gets the list of selected urls, and shows them in the modal.
+	*/
 	function preview_selection(){
 		var loading = get_progress_bar("Retrieving selections");
 	
@@ -235,6 +263,141 @@
 		render_urls(body, selected);
 	}
 
+	function preview_nanopublication(){
+		var loading = get_progress_bar("Retrieving nanopublication");
+	
+		$('#plugin_modal_name').html("Nanopublication Preview");
+		$('#plugin_modal_body').html(loading);
+		$('#plugin_modal').modal('show');
+		
+		var callback = function(data){
+			var pre = $('<pre/>');
+			var code = $('<code/>');
+			
+			pre.text(data);
+			code.append(pre);
+			
+			$('#plugin_modal_body').html(code);
+		}
+		
+		var details = get_details();
+		var selected = get_selected();
+		
+		var payload = {'details' :  details, 'selected' : selected};
+		
+		post('{{ url_for("nanopublication")}}', payload, 'html', callback);
+	}
+	
+	function publish_to_figshare(){
+		$('#plugin_modal_name').html("Publish to Figshare");
+		
+		var body = $('#plugin_modal_body');
+		body.empty();
+		
+		body.append('<p>This is where you can update your Figshare article with the links you selected through the various <strong>Linki</strong>tup plugins.</p>');
+		
+		var info = $('<div class="alert alert-info alert-block"/>');
+		info.append('<button type="button" class="close" data-dismiss="alert">&times;</button>');
+		var info_header = $('<p><strong>What will happen...</strong></p>');
+		var info_text = $('<p>When you click the \'Add to Figshare\' button below, Linkitup will do the following:</p>'
+		+ '<ul>'
+            + '<li>The \'links\' section of your article will list all the URIs of the links you selected in Linkitup (see below).</li>'
+            + '<li>A nanopublication with enriched metadata for your article will be published on Figshare.</li>'
+            + '<li>A tag of the form "<code>RDF=[some number]</code>" will be added to your article. This tag <strong>links your article to the corresponding nanopublication</strong>.</li>'
+            + '<li>The URI of the nanopublication will be added to the \'links\' section of your article.</li>'
+        + '</ul>');
+		info.on('click', function(e){
+			info_text.toggle();
+		})
+		
+		info.append(info_header);
+		info.append(info_text);
+
+		body.append(info);
+		
+		var warning = $('<div class="alert alert-warning alert-block">');
+		warning.append('<button type="button" class="close" data-dismiss="alert">&times;</button>');
+		var warning_header = $('<p><strong>What will not happen...</strong></p>');
+		var warning_text = $('<ul>'
+            + '<li>Unfortunately <strong>Linki</strong>tup can not (yet) publish the nanopublication together with the original article.</li>'
+            + '<li><strong>Linki</strong>tup also can not (yet) reconstruct your links from the nanopublication when you revisit your article in Linkitup.</li>'
+        + '</ul>');
+
+		warning.on('click', function(e){
+			warning_text.toggle();
+		})
+		
+		warning.append(warning_header);
+		warning.append(warning_text);
+
+		body.append(warning);
+		
+		var links_header = $('<h4>Selected Links <small>(you can still remove them)</small></h4>');
+		
+		body.append(links_header);
+		
+		var links_body = $('<div/>');
+		var selected = get_selected();
+		
+		// Render the list of selected URLs
+		render_urls(links_body, selected);
+		body.append(links_body);
+		
+		var publish_button_div = $('<div style="text-align: center;"></div>');
+		var publish_button = $('<a class="btn-large btn-primary">Add to Figshare!</a>');
+		// <a id="show_yasgui" class="btn-large btn-default"></a>'
+		
+		publish_button.on('click', function(e){
+			var progress = get_progress_bar("Publishing to Figshare");
+			publish_button_div.html(progress);
+			
+			var details = get_details();
+			var selected = get_selected();
+			
+			var payload = {'details': details, 'selected': selected};
+			
+			var callback = function(data){
+				if (data.success) {
+					publish_button_div.html(get_info_box('success','Succesfully updated your Figshare publication'));
+					links_body.toggle();
+					// update_article_details();
+				} else {
+					publish_button_div.html(get_info_box('error','Something went wrong!'));
+				}
+			};
+			
+			post('{{ url_for("publish") }}', payload, "json", callback);
+		});
+		
+		
+		publish_button_div.append(publish_button);
+		body.append(publish_button_div);
+		
+		$('#plugin_modal').modal('show');
+		
+		info_text.toggle();
+		warning_text.toggle();
+	}
+	
+	function update_article_details(){
+		var article_id = $.localStorage('current');
+		
+		var payload = {'article_id': article_id}
+		
+		var callback = function(data){
+			var all_details = $.localStorage('details');
+			
+			all_details[article_id] = data.details
+			
+			$.localStorage('details', all_details);
+			
+			render_article_details();
+		};
+		
+		post('{{ url_for("refresh_article") }}', payload, 'json', callback);
+	}
+	
+	
 	/*
 	// For JSON-style plugins or the selected URLs, this function renders the body of the modal that shows the list of urls.
 	*/
@@ -374,6 +537,7 @@
 		$.localStorage('results', results);
 	}
 	
+	
 	/*
 	// Renders a progress bar with the 'label' as label
 	*/
@@ -383,6 +547,13 @@
 			label 
 			+ "...</div> " +
 			"</div>";
+	}
+	
+	/*
+	// Renders an info box of type 'type', with text 'text'
+	*/
+	function get_info_box(type, text){
+		return '<div class="alert alert-' + type + '">' + text + '</div>';
 	}
 
 </script>
@@ -409,7 +580,7 @@
 	  </div>
 	  <div id="plugin_modal_body" class="modal-body"></div>
 	  <div class="modal-footer">
-	    <button id="plugin_modal_close" class="btn" data-dismiss="modal" aria-hidden="true">Save &amp; Close</button>
+	    <button id="plugin_modal_close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 	  </div>
 	</div>
 {% endblock %}
