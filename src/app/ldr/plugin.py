@@ -9,7 +9,7 @@ http://github.com/Data2Semantics/linkitup
 
 """
 
-from flask import render_template, session
+from flask import render_template, request, jsonify
 from flask.ext.login import login_required
 
 import requests
@@ -21,18 +21,20 @@ from app import app
 
 _known_vocabularies = ['SciValFunders']
 
-@app.route('/ldr/<article_id>')
+@app.route('/ldr', methods=['POST'])
 @login_required
-def link_to_ldr(article_id):
+def link_to_ldr():
+    # Retrieve the article from the post
+    article = request.get_json()
+    article_id = article['article_id']
+    
     app.logger.debug("Running LDR plugin for article {}".format(article_id))
-    items = session['items']
     
     urls = []
     
-    i = items[article_id]
     
       
-    tags_and_categories = i['tags'] + i['categories']
+    tags_and_categories = article['tags'] + article['categories']
     
     for t in tags_and_categories:
         
@@ -56,13 +58,7 @@ def link_to_ldr(article_id):
                     
                     urls.append({'type':'mapping', 'uri': uri, 'web': uri, 'show': label, 'short': short, 'original': original_qname})
             
-
-    session.setdefault(article_id,[]).extend(urls)
-    session.modified = True
-    
     if urls == [] :
         urls = None 
         
-    return render_template('urls.html',
-                           article_id = article_id, 
-                           results = [{'title':'Linked Data Repository','urls': urls}])  
+    return jsonify({'title':'Linked Data Repository','urls': urls})  

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="stylesheet" href="static/css/commit.css" />
 	<link rel="stylesheet" href="static/css/bootstrap.css" />
 	<link rel="stylesheet" href="static/css/bootstrap-responsive.css" />
 	<link rel="stylesheet" href="static/css/select2.css" />
 	<link rel="stylesheet" href="static/css/select2-bootstrap.css" />
+	<link rel="stylesheet" href="static/css/commit.css" />
 	<title>{% block title %}LinkItUp!{% endblock %}</title>
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
 </head>
@@ -70,11 +70,18 @@
 		</div>
     </div> 
     
+
+	{% block scripts %}
+
+	{% endblock scripts %}
+
+	
 	<script src="static/js/bootstrap.js"></script>
 	<script src="static/js/select2.js"></script>
 	<script src="static/js/vendor/jquery.ui.widget.js"></script> 
 	<script src="static/js/jquery.iframe-transport.js"></script> 
 	<script src="static/js/jquery.fileupload.js"></script> 
+	<script src="static/js/jquery.storage.js">
 </body>
 
 <script type="text/javascript">

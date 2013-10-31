@@ -17,3 +17,5 @@ linkitup/linkitup.xcodeproj/*
 *.komodoproject
 
 *.log
+
+*.tmproj

@@ -8,7 +8,7 @@ Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam
 http://github.com/Data2Semantics/linkitup
 
 """
-from flask import session, g
+from flask import g
 
 from rdflib import Graph, ConjunctiveGraph, Namespace, URIRef, Literal, BNode, plugin
 from rdflib.store import Store
@@ -72,17 +72,19 @@ def serializeTrig(graph):
 
 
 
-def get_trix(nanopub_id, article_id, checked_urls):
-    graph = get_rdf(article_id, checked_urls)
+def get_trix(article, checked_urls):
+    ## Generate the graph with a dummy id for the nanopublication
+    graph = get_rdf('dummy', article, checked_urls)
 
     serializedGraph = graph.serialize(format='trix')
     
     return serializedGraph
    
-def get_trig(nanopub_id, article_id, checked_urls): 
-    graph = get_rdf(article_id, checked_urls)
+def get_trig(article, checked_urls): 
+    ## Generate the graph with a dummy id for the nanopublication
+    graph = get_rdf('dummy', article, checked_urls)
 
-    # Switch comments to not use the RDFLib serializer (still uses the deprecated '=' between graph URI and graph contents)
+    # Switch comments to use the RDFLib serializer (still uses the deprecated '=' between graph URI and graph contents)
     # serializedGraph = graph.serialize(format='trig')
     # The custom serializer serializes namespace definitions within the graph portion, instead of at the beginning of the document.
     # Although this is valid TriG/Turtle practice, some parsers will fall flat on their face.
@@ -92,8 +94,8 @@ def get_trig(nanopub_id, article_id, checked_urls):
 
 SESAME_UPDATE_URL = "http://semweb.cs.vu.nl:8080/openrdf-sesame/repositories/goldendemo/statements"
 
-def get_and_publish_trig(nanopub_id, article_id, checked_urls):
-    graph = get_rdf(nanopub_id, article_id, checked_urls)
+def get_and_publish_trig(nanopub_id, article, checked_urls):
+    graph = get_rdf(nanopub_id, article, checked_urls)
     
     for c in graph.contexts() :
         app.logger.debug("Preparing graph {}".format(c.identifier))
@@ -118,18 +120,15 @@ def get_and_publish_trig(nanopub_id, article_id, checked_urls):
     
 
 
-def get_rdf(nanopub_id, article_id, checked_urls):
+def get_rdf(nanopub_id, article, urls):
     """Takes everything we know about the article specified in article_id, and builds a simple RDF graph. 
     
     We only consider the URLs of checkboxes that were selected by the user.
     
     Returns the RDF graph as a ConjunctiveGraph"""
     
-    items = session.get('items',[])
-    
-    urls = session.get(article_id,[])
-        
-    i = items[article_id]
+    article_id = article['article_id']
+    i = article
 
     article_id_qname = 'figshare_{}'.format(article_id)
     nanopub_id_qname = 'figshare_{}'.format(nanopub_id)
@@ -359,10 +358,7 @@ def get_rdf(nanopub_id, article_id, checked_urls):
         a_graph.add((LU[c_qname],RDF.type,LUV['Category']))
     
     
-    selected_urls = [u for u in urls if u['uri'] in checked_urls]
-    
-    
-    for u in selected_urls :      
+    for k,u in urls.items() :      
         original_qname = u['original']
         uri = u['uri']
                     

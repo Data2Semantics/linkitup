@@ -8,7 +8,7 @@ Copyright (c) 2012,2013 Rinke Hoekstra, VU University Amsterdam
 http://github.com/Data2Semantics/linkitup
 
 """
-from flask import render_template, session, g
+from flask import render_template, g, request, jsonify
 from flask.ext.login import login_required
 
 
@@ -19,13 +19,14 @@ from app.util.baseplugin import SPARQLPlugin
 
 
 
-@app.route('/neurolex/<article_id>')
+@app.route('/neurolex', methods=['POST'])
 @login_required
-def link_to_neurolex(article_id):
-    app.logger.debug("Running Neurolex plugin for article {}".format(article_id))
+def link_to_neurolex():
+    # Retrieve the article from the post
+    article = request.get_json()
+    article_id = article['article_id']
     
-    # Retrieve the article from the session
-    article = session['items'][article_id]
+    app.logger.debug("Running Neurolex plugin for article {}".format(article_id))
     
     # Rewrite the tags and categories of the article in a form understood by utils.baseplugin.SPARQLPlugin
     article_items = article['tags'] + article['categories']
@@ -40,18 +41,12 @@ def link_to_neurolex(article_id):
         matches = plugin.match(match_items)
         # Run the plugin with a NeuroLex specific property (namespace is defined in the neurolex.query template)
         matches.extend(plugin.match(match_items, property="property:Label"))
-        
-        # Add the matches to the session
-        session.setdefault(article_id,[]).extend(matches)
-        session.modified = True
     
         if matches == [] :
             matches = None
         
         # Return the matches
-        return render_template('urls.html',
-                               article_id = article_id, 
-                               results = [{'title':'NeuroLex','urls': matches}])
+        return jsonify({'title':'NeuroLex','urls': matches})
         
     except Exception as e:
         return render_template( 'message.html',

@@ -4,7 +4,7 @@ Created on 26 Mar 2013
 @author: hoekstra
 '''
 
-from flask import render_template, session, g
+from flask import render_template, g, request, jsonify
 from flask.ext.login import login_required
 
 import requests
@@ -20,13 +20,14 @@ EASY_SEARCH_URL = "https://easy.dans.knaw.nl/ui/"
 
 
 
-@app.route('/danseasy/<article_id>')
+@app.route('/danseasy', methods=['POST'])
 @login_required
-def link_to_dans_easy(article_id):
-    app.logger.debug("Running DANS EASY plugin for article {}".format(article_id))
+def link_to_dans_easy():
+    # Retrieve the article from the post
+    article = request.get_json()
+    article_id = article['article_id']
     
-    # Retrieve the article from the session
-    article = session['items'][article_id]
+    app.logger.debug("Running DANS EASY plugin for article {}".format(article_id))
     
     # Rewrite the tags and categories of the article in a form understood by the NIF Registry
     match_items = article['tags'] + article['categories']
@@ -48,7 +49,7 @@ def link_to_dans_easy(article_id):
     
     soup = BeautifulSoup(response.content)
         
-    matches = []
+    matches = {}
     
     hits = soup.find_all('div','searchHit2')
 
@@ -81,21 +82,15 @@ def link_to_dans_easy(article_id):
                  'original':original_qname}
         
         # Append it to all matches
-        matches.append(match)
+        matches[match_uri] = match
 
-        
 
-    # Add the matches to the session
-    session.setdefault(article_id,[]).extend(matches)
-    session.modified = True
 
-    if matches == [] :
+    if matches == {} :
         matches = None
     
     # Return the matches
-    return render_template('urls.html',
-                           article_id = article_id, 
-                           results = [{'title':'DANS EASY Archive','urls': matches}])
+    return jsonify({'title':'DANS EASY Archive','urls': matches})
     
         
         

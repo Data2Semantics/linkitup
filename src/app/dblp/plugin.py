@@ -8,7 +8,7 @@ Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam
 http://github.com/Data2Semantics/linkitup
 
 """
-from flask import render_template, session, g
+from flask import render_template, g, request, jsonify
 from flask.ext.login import login_required
 
 
@@ -18,13 +18,14 @@ from app.util.baseplugin import SPARQLPlugin
 
 
 
-@app.route('/dblp/<article_id>')
+@app.route('/dblp', methods=['POST'])
 @login_required
-def link_to_dblp(article_id):
+def link_to_dblp():
+    # Retrieve the article from the post
+    article = request.get_json()
+    article_id = article['article_id']
+
     app.logger.debug("Running DBLP plugin for article {}".format(article_id))
-    
-    # Retrieve the article from the session
-    article = session['items'][article_id]
     
     # Rewrite the authors of the article in a form understood by utils.baseplugin.SPARQLPlugin
     article_items = article['authors']
@@ -38,17 +39,12 @@ def link_to_dblp(article_id):
         # Run the plugin, and retrieve matches using the FOAF name property
         matches = plugin.match_separately(match_items, property="foaf:name")
         
-        # Add the matches to the session
-        session.setdefault(article_id,[]).extend(matches)
-        session.modified = True
     
         if matches == [] :
             matches = None
         
         # Return the matches
-        return render_template('urls.html',
-                               article_id = article_id, 
-                               results = [{'title':'DBLP','urls': matches}])
+        return jsonify({'title':'DBLP','urls': matches})
         
     except Exception as e:
         return render_template( 'message.html',

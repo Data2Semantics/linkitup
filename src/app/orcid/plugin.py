@@ -9,7 +9,7 @@ http://github.com/Data2Semantics/linkitup
 
 """
 
-from flask import render_template, session
+from flask import render_template, request, jsonify
 from flask.ext.login import login_required
 
 import requests
@@ -26,17 +26,18 @@ from app import app
 orcid_url = 'http://pub.orcid.org/'
 credit_search_url = orcid_url + 'search/orcid-bio/?q=text:'
 
-@app.route('/orcid/<article_id>')
+@app.route('/orcid', methods=['POST'])
 @login_required
-def link_to_orcid(article_id):
-    items = session['items']
+def link_to_orcid():
+    # Retrieve the article from the post
+    article = request.get_json()
+    article_id = article['article_id']
+    
+    app.logger.debug("Running ORCID plugin for article {}".format(article_id))
     
     urls = []
     
-    
-    i = items[article_id]
-
-    authors = i['authors']
+    authors = article['authors']
     
     for a in authors:
         a_id = a['id']
@@ -92,13 +93,8 @@ def link_to_orcid(article_id):
                                            type = 'error', 
                                            text = e.message )
                     
-
-    session.setdefault(article_id,[]).extend(urls)
-    session.modified = True
     
     if urls == [] :
         urls = None 
     
-    return render_template('urls.html',
-                           article_id = article_id, 
-                           results = [{'title':'ORCID','urls': urls}] )  
+    return jsonify({'title':'ORCID','urls': urls})  
