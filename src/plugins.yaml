@@ -13,6 +13,7 @@ app.crossref.plugin:
   slug: crossref
   logo: static/img/crossref.png
   type: html
+  script: crossref.js
 app.ldr.plugin:
   name: Linked Data Repository
   slug: ldr

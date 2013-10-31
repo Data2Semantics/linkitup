@@ -5,7 +5,17 @@
 {% block scripts %}
 
 <script>
+
+
+{% for plugin in plugins %}
+	{% if plugin.script %}
+		// Custom javascript for {{ plugin.slug }} plugin
+		{% include plugin.script %}
+	{% endif %}
+{% endfor %}
+
 {% include 'articles.js' %}
+
 </script>
 
 {% endblock scripts %}

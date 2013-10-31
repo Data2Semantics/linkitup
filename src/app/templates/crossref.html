@@ -2,20 +2,13 @@
 	<button type="button" class="close" data-dismiss="alert">x</button>
 	This is an experimental feature that may not work very well for all PDF files (e.g. multi-column ones).<br/>
 </div>
-{% for f in files %}
-
-<div>
-	<i class='icon-file'></i>&nbsp;<a id='{{ f.id }}_button' class='btn btn-default' >{{ f.name }}</a>
-</div>
-<div id='{{ f.id }}_progress' class="progress progress-striped active">
-	<div id='{{ f.id }}_bar' class='bar' style='width: 10%;'>Test</div>
-</div>
-<div id='{{ f.id }}_results'></div> 
 
 <script>
-	{% include('crossref.js') %}
+$(function(){
+	initialize_crossref();
+});
 </script>
-{% endfor %}
+
 
 
 

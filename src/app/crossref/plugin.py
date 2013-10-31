@@ -55,20 +55,19 @@ def link_to_DOI():
 							   text = 'This dataset does not contain any PDF files')
 
 
-@app.route('/crossref/upload/<article_id>/<file_id>/<file_name>', methods = ['GET'])
+@app.route('/crossref/upload', methods = ['POST'])
 @login_required
-def upload_to_crossref(article_id, file_id, file_name):
-	app.logger.debug("Article {}, File {} ({})".format(article_id, file_name, file_id))
+def upload_to_crossref():
+	# Retrieve the file from the post
+	figshare_file = request.get_json()
 	
-	app.logger.debug("Replacing hyphens with underscores in filename")
-	file_name = file_name.replace('-','_')
+	file_name = figshare_file['name'].replace('-','_')
+	file_id = figshare_file['id']
 	
 	url = "http://files.figshare.com/{}/{}".format(file_id, file_name)
 	
 	app.logger.debug("Getting file from {}".format(url))
 	r = requests.get(url)
-	
-
 	
 	if r.ok :
 		app.logger.debug("Response ok")
@@ -77,52 +76,47 @@ def upload_to_crossref(article_id, file_id, file_name):
 		tempfile.write(r.content)
 		tempfile.close()
 		
-		app.logger.debug('upload: tempfile {}'.format(tempfile.name))
+		figshare_file['tempfile'] =  tempfile.name
 
-		
-		result = {
-			"name":"{}.pdf".format(file_id),
-			"tempfile": tempfile.name
-		}
-		app.logger.debug(result)
-		
+		result = {'success': True, 'file': figshare_file }
 		return jsonify(result)
 	
 	else :
 		app.logger.debug("Response not ok")
 		app.logger.debug(r)
 		app.logger.debug(r.text)
-		result = {'name': 'Something went wrong ...'}
+		result = {'success': False}
 		return jsonify(result)
 
 
-@app.route('/crossref/extract/<article_id>/<file_id>/<tempfile>')
+@app.route('/crossref/extract', methods=['POST'])
 @login_required
-def get_file_and_extract(article_id, file_id, tempfile):
-
-	app.logger.debug('extract: files_file_id (tempfile)', pdfs.path(tempfile))
+def get_file_and_extract():
+	figshare_file = request.get_json()
 	
 	# TODO: Use a web-based PDF extraction service instead
 	
 	# Use the reference extraction function from the bundled extract.py script
-	references = extract_references(pdfs.path(tempfile))
-		
-	return render_template('references.html',
-						   article_id = article_id, 
-						   file_id = file_id, 
-						   references = references )
+	references = extract_references(figshare_file['tempfile'])
+	
+	result = {'success': True, 'references': references}
+	return jsonify(result)
 
-@app.route('/crossref/match/<article_id>/<file_id>', methods = ['GET'])
+@app.route('/crossref/match', methods = ['POST'])
 @login_required
-def match_references(article_id, file_id):
+def match_references():
 	# CrossRef search http://crossref.org/sigg/sigg/FindWorks?version=1&access=API_KEY&format=json&op=OR&expression=allen+renear
-	text = urllib.unquote(request.args.get('text'))
+	request_data = request.get_json()
 
+	reference = request_data['reference']
+	figshare_file = request_data['file']
+	file_id = figshare_file['id']
+	
 	data = {'version': 1,
 			'access': 'API_KEY',
 			'format': 'json',
 			'op': 'OR',
-			'expression': text
+			'expression': reference['text']
 			}
 	
 	r = requests.get('http://crossref.org/sigg/sigg/FindWorks', params=data)
@@ -149,7 +143,6 @@ def match_references(article_id, file_id):
 	if urls == []:
 		urls = None
 	
-	return render_template('crossref_urls.html',
-						   urls = urls)
+	return jsonify({'title':'Crossref References','urls': urls})
 	
 	
