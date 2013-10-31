@@ -13,7 +13,6 @@ http://github.com/Data2Semantics/linkitup
 
 from flask import render_template, request, make_response, jsonify
 from flask.ext.login import login_required
-from flaskext.uploads import UploadSet
 
 from werkzeug.datastructures import FileStorage
 from tempfile import NamedTemporaryFile
@@ -27,7 +26,7 @@ import cStringIO
 
 from pprint import pprint
 
-from app import app, pdfs
+from app import app
 
 
 
