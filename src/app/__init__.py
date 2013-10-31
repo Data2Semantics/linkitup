@@ -8,10 +8,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
 
-# from simplekv.fs import FilesystemStore
-# from flaskext.kvsession import KVSessionExtension
-from flaskext.uploads import UploadSet, configure_uploads
-
 from config import basedir
 
 
@@ -79,19 +75,6 @@ if not os.path.exists(nanopubs_dir) :
 
 
 
-# Setup the Session Store
-# if not os.path.exists(app.config['SESSION_STORE']) :
-#     app.logger.warning("Session store folder '{}' does not yet exist: creating it!".format(app.config['SESSION_STORE']))
-#     os.mkdir(app.config['SESSION_STORE'])
-
-# Initialize a simplekv FileystemStore in the tmp directory 
-# store = FilesystemStore(app.config['SESSION_STORE'])
-# this will replace the app's session handling
-# KVSessionExtension(store, app)
-
-# app.logger.debug("Added KVSessionExtension file system store")
-
-
 # Setup SQLAlchemy
 
 db = SQLAlchemy(app)
@@ -114,12 +97,7 @@ oid = OpenID(app, os.path.join(basedir, 'tmp'))
 
 app.logger.debug("Initialized OpenID module")
 
-# Setup flask-uploads
 
-pdfs = UploadSet('pdfs', extensions=('pdf'))
-configure_uploads(app, (pdfs))
-
-app.logger.debug("Initialized UploadSet 'pdf'")
 
 
 # Load the plugins
