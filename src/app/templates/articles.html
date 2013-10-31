@@ -15,18 +15,71 @@
 		crossDomain: true
 	});
 
+	/*
+	// Initializes the page, clears the local storage, retrieves the list of plugins and available articles
+	// Stores the results in local storage, and sets the 'ready' flag to true (required for running plugins)
+	*/
 	$(document).ready(function() { 
 		$.localStorage('ready', false);
 		$.localStorage('selected', {});
 		$.localStorage('results', {});
 		
-		// Get the list of plugins, and render the plugin menu.
+		// Click handlers for standard menu options
+		
+		$('#preview_selection').on('click', function(e){
+			preview_selection();
+		})
+		
+		$('#preview_nanopublication').on('click', function(e){
+			preview_nanopublicaiton();
+		})
+		
+		$('#publish_to_figshare').on('click', function(e){
+			publish_to_figshare();
+		});
+		
+		initialize_plugins();
+		
+		initialize_articles();
+		
+	});
+
+	// Get the list of plugins, and render the plugin menu.
+	function initialize_plugins(){	
 		$.get("{{ url_for('load_plugins') }}", function(data) {
 			$.localStorage ( 'plugins', data.result);
 			
 			render_plugins(data.result);
 		});
+	}
+	
+	/*
+	// Renders the list of available plugins
+	*/
+	function render_plugins(plugins){
+		$.each(plugins, function(index, value){
+			var plugin_link = $('<a id="'+ value.slug +'">'+value.name+'</a>');
+			var li = $('<li></li>');
+			li.addClass('plugin');
+			li.append(plugin_link);
+			$('#plugins_header').after(li);
+			
+			plugin_link.on('click',function(e){
+				console.log(value.name + " clicked");
+				run_plugin(value.slug, value.name, value.type);
+			});
+		});	
+	}
 
+	/*
+	// Initialize the list of articles, and render the first one to #article_details
+	// Set the 'ready' flag afterwards.
+	*/
+	function initialize_articles(){
+		var loading = get_progress_bar("Retrieving list of articles from Figshare");
+		
+		$("#article_details").html(loading);
+		
 		$.get("{{ url_for('load_articles') }}", function(data){
 			// Store the list of article_id/title pairs in local storage
 			$.localStorage( 'articles', data.articles );
@@ -49,11 +102,10 @@
 			
 			$.localStorage('ready', true);
 		});
-		
-
-		
-	});
-
+	}
+	/*
+	// Renders the list of available articles
+	*/
 	function render_articles(articles) {
 		$("#articles").select2({ 
 			placeholder: "Start typing..." , 
@@ -62,8 +114,13 @@
 		}); 
 	}
 	
+	/*
+	// Retrieves an HTML representation of the article details.
+	*/
 	function render_article_details() {
-		$('#article_details').html('Loading...');
+		var loading = get_progress_bar("Rendering article details");
+		
+		$("#article_details").html(loading);
 		
 		var url = "{{ url_for('article_details')}}";
 		
@@ -74,6 +131,9 @@
 		post_article_html(url, callback);
 	}
 	
+	/*
+	// Posts the article details in JSON to the specified URL, expects HTML in return and then calls the callback function.
+	*/
 	function post_article_html(url, callback){
 		var details = get_details();
 		var payload = JSON.stringify(details);
@@ -87,6 +147,9 @@
 		}).success(callback);
 	}
 	
+	/*
+	// Posts the article details in JSON to the specified URL, expects JSON in return and then calls the callback function.
+	*/
 	function post_article_json(url, callback){
 		var details = get_details();
 		var payload = JSON.stringify(details);
@@ -99,21 +162,13 @@
 			dataType: "json",
 		}).success(callback);
 	}
-
-	function render_plugins(plugins){
-		$.each(plugins, function(index, value){
-			var plugin_link = $('<a id="'+ value.slug +'">'+value.name+'</a>');
-			var li = $('<li></li>');
-			li.append(plugin_link);
-			$('#plugins_header').after(li);
-			
-			plugin_link.on('click',function(e){
-				console.log(value.name + " clicked");
-				run_plugin(value.slug, value.name, value.type);
-			});
-		});	
-	}
 	
+	/*
+	// Gets the results for a specific plugin:
+	// * either from local storage for JSON-style plugins, or 
+	// * by calling the plugin, if a JSON-style plugin has not ran yet, or if the plugin is HTML-style (e.g. Crossref)
+	// prepares the modal window, and then calls render_plugin_results (JSON-style) to retrieve HTML content, and shows the modal.
+	*/
 	function run_plugin(plugin, name, type){
 		var ready = $.localStorage('ready');
 		
@@ -127,11 +182,7 @@
 				render_plugin_results(plugin, results);
 				$('#plugin_modal').modal('show');
 			} else {
-				var loading = "<div class='progress progress-striped active'>" +
-					"<div class='bar' style='width: 100%;'>Loading links from " + 
-					name 
-					+ "...</div> " +
-					"</div>";
+				var loading = get_progress_bar("Retrieving links from " + name);
 			
 				$('#plugin_modal_name').html(name);
 				$('#plugin_modal_body').html(loading);
@@ -145,7 +196,9 @@
 						if (data.urls != null){
 							add_results(plugin, data.urls);
 						
-							render_plugin_results(plugin, data.urls);
+							var body = $('#plugin_modal_body');
+							render_urls(body, data.urls);
+							
 							$('#'+plugin).toggleClass('active');
 						} else {
 							$('#plugin_modal_body').html('No results...');
@@ -168,45 +221,26 @@
 		}
 		
 	}
-	/*
-	{% for r in results %}
-		{% if r.urls %}
-		{% for u in r.urls %}
-			<label class='checkbox alert alert-warning' id='{{ u.short }}_label'>
-					<input type='checkbox' name='url' web='{{ u.web }}' show='{{ u.show }}' value='{{ u.uri }}' id='{{ u.short }}_checkbox'>
-					<a target="_new" href="{{ u.uri }}"><i class="icon-globe"></i></a>&nbsp;<a target="_new" href='{{ u.web }}'>{{ u.show }}</a> 
-					{% if u.extra %}
-					({{ u.extra }})
-					{% endif %}
-					{% if u.subscript %}
-					<div><small>{{ u.subscript }}</small></div>
-					{% endif %}
-			</label>
-			{% if u.description %}
-				<div style="margin-top: -1em; margin-bottom: 1em;">
-					<small>
-						{{ u.description }} ...
-					</small>
-				</div>
-			{% endif %}
-					$("#{{ u.short }}_checkbox").click(function(){  
-						$(this).parent().toggleClass('alert-warning');
-					        $(this).parent().toggleClass('alert-success');
-					    });
 
-		{% endfor %}
-		{% else %}
-			<p>No links found to {{ r.title }}</p>
-		{% endif %}
-{% endfor %}
-
-	*/
-	function render_plugin_results(plugin, urls) {
-		var body = $('#plugin_modal_body');
-		console.log(urls);
-		body.empty();
+	function preview_selection(){
+		var loading = get_progress_bar("Retrieving selections");
+	
+		$('#plugin_modal_name').html("Selected links");
+		$('#plugin_modal_body').html(loading);
+		$('#plugin_modal').modal('show');
 		
+		var selected = get_selected();
+		var body = $('#plugin_modal_body');
+		
+		render_urls(body, selected);
+	}
 
+	/*
+	// For JSON-style plugins or the selected URLs, this function renders the body of the modal that shows the list of urls.
+	*/
+	function render_urls(body, urls) {
+		body.empty();
+		var selected = get_selected();
 		
 		$.each(urls, function(uindex, url) {
 			var label = $('<label></label>');
@@ -216,7 +250,6 @@
 			var input = $('<input type="checkbox"></input>');
 			label.append(input);
 			
-			var selected = get_selected();
 			if (url.uri in selected) {
 				label.addClass('alert-success');
 				input.attr('checked',true);
@@ -270,16 +303,34 @@
 		});
 	}
 	
+	
+
+	
+	/* 
+	// *****************
+	// UTILITY FUNCTIONS
+	// ***************** 
+	*/
+	
+	/*
+	// Get the article details from local storage
+	*/
 	function get_details(){
 		var article_id = $.localStorage('current');
 		
 		return $.localStorage('details')[article_id];		
 	}
 	
+	/*
+	// Retrieves the list of selected urls
+	*/
 	function get_selected(){
 		return $.localStorage('selected');
 	}
 	
+	/*
+	// Adds a selection (url) to the list of selectec/checked urls in local storage
+	*/
 	function add_selected(key, value){
 		var selected = $.localStorage('selected');
 		
@@ -288,6 +339,9 @@
 		$.localStorage('selected', selected);
 	}
 	
+	/*
+	// Removes a selection from the list of selected/checked urls in local storage
+	*/
 	function remove_selected(key){
 		var selected = $.localStorage('selected');
 		
@@ -296,6 +350,9 @@
 		$.localStorage('selected', selected);
 	}
 	
+	/*
+	// Gets the results (list of urls) for a specific plugin, if already retrieved
+	*/
 	function get_results(plugin) {
 		var results = $.localStorage('results');
 		
@@ -306,6 +363,9 @@
 		}
 	}
 	
+	/*
+	// Adds the results (list of urls) retrieved for a specific plugin to the local storage
+	*/
 	function add_results(plugin, urls){
 		var results = $.localStorage('results');
 		
@@ -314,6 +374,16 @@
 		$.localStorage('results', results);
 	}
 	
+	/*
+	// Renders a progress bar with the 'label' as label
+	*/
+	function get_progress_bar(label){
+		return "<div class='progress progress-striped active'>" +
+			"<div class='bar' style='width: 100%;'>" + 
+			label 
+			+ "...</div> " +
+			"</div>";
+	}
 
 </script>
 {% endblock scripts %}
@@ -348,12 +418,12 @@
 	<div class="plugins">
 		<div class="well" style="padding: 8px 0;">
 			<ul class="nav nav-list">
-				<li class="nav-header" id="plugins_header">Plugins</li>
+				<li class="plugin nav-header" id="plugins_header">Plugins</li>
 				<!-- this is where we'll output the list of plugins that can be ran against the currently selected article -->
-				<li class="nav-header" id="actions_header">Actions</li>
-				<li><a id="show">Preview Selection</a></li>
-				<li><a id="rdf">Preview Nanopublication</a></li>
-				<li><a id="add_to_figshare">Add to Figshare</a></li>
+				<li class="plugin nav-header" id="actions_header">Actions</li>
+				<li class="plugin"><a id="preview_selection">Preview Selection</a></li>
+				<li class="plugin"><a id="preview_nanopublication">Preview Nanopublication</a></li>
+				<li class="plugin"><a id="publish_to_figshare">Publish to Figshare</a></li>
 			</ul>
 		</div>
 		<div class="pull-right">
