@@ -1,4 +1,7 @@
+@import url(http://fonts.googleapis.com/css?family=Share+Tech|Open+Sans:400,600,700,300);
+
 body {
+    font-family: "Open Sans";
 	background-image: url('../img/bg.png');
 }
 
@@ -57,4 +60,10 @@ body {
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
   background-color: #0088cc;
 }
+
+
+/*li.plugin {
+    font-family: "Share Tech";
+}*/
+
 
