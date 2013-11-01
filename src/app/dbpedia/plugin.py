@@ -36,7 +36,7 @@ def link_to_wikipedia():
     
     try :
         # Initialize the plugin
-        plugin = SPARQLPlugin(endpoint = endpoints[0],
+        plugin = SPARQLPlugin(endpoint = endpoints,
                           template = "dbpedia.query",
                           rewrite_function = lambda x: re.sub('dbpedia.org/resource','en.wikipedia.org/wiki',x),
                           id_function = lambda x: re.sub('http://dbpedia.org/resource/','',x),
