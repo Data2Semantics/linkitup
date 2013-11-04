@@ -437,7 +437,7 @@ function render_urls(body, urls) {
 		label.append(web);
 		
 		if (url.extra != null){ 
-			var extra = $('<span/>').text('&nbsp;('+ url.extra + ')');
+			var extra = $('<span/>').text(' ('+ url.extra + ')');
 			label.append(extra);
 		}
 		
