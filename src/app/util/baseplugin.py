@@ -12,6 +12,7 @@ import traceback
 import sys
 
 from app import app
+from util import get_qname
 
 class SPARQLPlugin(object):
 	'''
@@ -19,10 +20,12 @@ class SPARQLPlugin(object):
 	'''
 
 
-	def __init__(self, endpoint, template, match_type = 'mapping', rewrite_function = None, id_function = lambda x: re.sub('\s','_',x), id_base = 'label'):
+	def __init__(self, endpoint, template, prov_trace, match_type = 'mapping', rewrite_function = None, id_function = lambda x: re.sub('\s','_',x), id_base = 'label'):
 		'''
 		Constructor
 		'''
+		self.prov_trace = prov_trace
+		
 		app.logger.debug("Initializing SPARQLPlugin...")
 		
 		if isinstance(endpoint, list) :
@@ -151,7 +154,7 @@ class SPARQLPlugin(object):
 			match_uri = result["match"]["value"]
 			original_id = result["original_id"]["value"]
 			original_label = result["original_label"]["value"]
-			original_qname = "figshare_{}".format(original_id)
+			original_qname = get_qname(original_id)
 			
 			
 			app.logger.debug("Match URI: {}".format(match_uri))
