@@ -44,3 +44,8 @@ app.linkedlifedata.plugin:
   slug: linkedlifedata
   logo: static/img/linkedlifedata.png
   type: json
+app.sameas.plugin:
+  name: sameAs
+  slug: sameas
+  logo: static/img/sameas.png
+  type: json
