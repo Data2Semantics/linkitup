@@ -13,6 +13,9 @@ from bs4 import BeautifulSoup
 
 from app import app
 
+from app.util.baseplugin import plugin
+from app.util.provenance import provenance
+
 
 EASY_SEARCH_URL = "https://easy.dans.knaw.nl/ui/"
 
@@ -22,17 +25,15 @@ EASY_SEARCH_URL = "https://easy.dans.knaw.nl/ui/"
 
 @app.route('/danseasy', methods=['POST'])
 @login_required
-def link_to_dans_easy():
-    # Retrieve the article from the post
-    article = request.get_json()
-    article_id = article['article_id']
-    
+@plugin(fields=[('tags','id','name'),('categories','id','name')], link='mapping')
+@provenance()
+def link_to_dans_easy(*args, **kwargs):
+    # Retrieve the article from the decorator
+    article_id = kwargs['article']['id']
+    match_items = kwargs['inputs']
     app.logger.debug("Running DANS EASY plugin for article {}".format(article_id))
     
-    # Rewrite the tags and categories of the article in a form understood by the NIF Registry
-    match_items = article['tags'] + article['categories']
-    
-    query_string = "".join([ "'{}'".format(match_items[0]['name']) ] + [ " OR '{}'".format(item['name']) for item in match_items[1:]])
+    query_string = "".join([ "'{}'".format(match_items[0]['label']) ] + [ " OR '{}'".format(item['label']) for item in match_items[1:]])
     
     
     
@@ -84,13 +85,8 @@ def link_to_dans_easy():
         # Append it to all matches
         matches[match_uri] = match
 
-
-
-    if matches == {} :
-        matches = None
-    
     # Return the matches
-    return jsonify({'title':'DANS EASY Archive','urls': matches})
+    return matches
     
         
         

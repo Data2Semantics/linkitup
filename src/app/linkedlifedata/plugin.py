@@ -11,21 +11,23 @@ import requests
 
 from app import app
 
+from app.util.baseplugin import plugin
+from app.util.provenance import provenance
 
 LLD_AUTOCOMPLETE_URL = "http://linkedlifedata.com/autocomplete.json"
 
 
 @app.route('/linkedlifedata', methods=['POST'])
 @login_required
-def link_to_lld():
-    # Retrieve the article from the post
-    article = request.get_json()
-    article_id = article['article_id']
+@plugin(fields=[('tags','id','name'),('categories','id','name')], link='mapping')
+@provenance()
+def link_to_lld(*args, **kwargs):
+    # Retrieve the article from the wrapper
+    article_id = kwargs['article']['id']
     
     app.logger.debug("Running LinkedLifeData.com plugin for article {}".format(article_id))
     
-    # Group together all tags and categories
-    match_items = article['tags'] + article['categories']
+    match_items = kwargs['inputs']
     
     search_parameters = {'limit': '2'}    
 
@@ -33,8 +35,8 @@ def link_to_lld():
 
     for item in match_items :
         
-        search_parameters['q'] = item['name']
-        original_qname = "figshare_{}".format(item['id'])
+        search_parameters['q'] = item['label']
+        original_id = item['id']
         
         response = requests.get(LLD_AUTOCOMPLETE_URL, params=search_parameters)
         
@@ -49,10 +51,6 @@ def link_to_lld():
                 
             id_base = h['uri']['localName']
             
-#            if len(h['labels']) > 0 :
-#                description = ", ".join(h['labels'])
-#            else :
-#                description = None
                 
             if 'types' in h:
                 if len(h['types']) > 0 :
@@ -89,15 +87,12 @@ def link_to_lld():
                      'description': description, 
                      'extra':   types,
                      'subscript': score,
-                     'original':original_qname}
+                     'original':original_id}
             
 
             # Append it to all matches
             matches[match_uri] = match
 
-
-    if matches == {} :
-        matches = None
     
     # Return the matches
-    return jsonify({'title':'Linked Life Data','urls': matches})
+    return matches
