@@ -97,6 +97,50 @@ def provenance(inputs=['article','inputs'],outputs=[('original','uri','show')]):
 		
 		return provenance_wrapper
 	return provenance_decorator
+
+def trail_to_prov(trail):
+	
+	graph = Graph()
+	
+	for entry in trail :
+		a = entry['activity']
+		activity = Activity(a['id'],name=a['label'],description=a['description'],now=a['start'], graph=graph)
+		
+		for i in entry['inputs']:
+			if 'uri' in i:
+				input_id = i['uri']
+			else :
+				input_id = i['id']
+				
+			if 'show' in i:
+				label = i['show']
+			else :
+				label = i['label']
+				
+			activity.add_input(input_id,label=label,now=i['timestamp'])
+		
+		for o in entry['outputs']:
+			if 'uri' in o:
+				output_id = o['uri']
+			else :
+				output_id = o['id']
+			
+			if 'original' in o:
+				ancestor_id = o['original']
+			else :
+				ancestor_id = o['ancestor']
+				
+			if 'show' in o:
+				label = o['show']
+			else :
+				label = o['label']
+				
+			activity.add_output(output_id,label=label,now=o['timestamp'],ancestor=ancestor_id,ancestor_timestamp=o['ancestor_timestamp'])
+		
+		graph = activity.done()
+		
+	return graph.serialize(format='turtle')
+
 def register(plugin_slug):
 	safe_slug = urllib.quote_plus(plugin_slug)
 	
