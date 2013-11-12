@@ -19,8 +19,10 @@ import re
 import os
 import string
 import requests
-
+from util import get_qname
 from app import app, nanopubs_dir
+
+from provenance import trail_to_prov
 
 
 ## NB: Code now depends on rdflib v4.1-dev and higher
@@ -80,10 +82,10 @@ def get_trix(article, checked_urls):
     
     return serializedGraph
    
-def get_trig(article, checked_urls): 
+def get_trig(article, checked_urls, provenance): 
     ## Generate the graph with a dummy id for the nanopublication
-    graph = get_rdf('dummy', article, checked_urls)
-
+    graph = get_rdf('dummy', article, checked_urls, provenance)
+	
     # Switch comments to use the RDFLib serializer (still uses the deprecated '=' between graph URI and graph contents)
     # serializedGraph = graph.serialize(format='trig')
     # The custom serializer serializes namespace definitions within the graph portion, instead of at the beginning of the document.
@@ -120,7 +122,7 @@ def get_and_publish_trig(nanopub_id, article, checked_urls):
     
 
 
-def get_rdf(nanopub_id, article, urls):
+def get_rdf(nanopub_id, article, urls, provenance_trail):
     """Takes everything we know about the article specified in article_id, and builds a simple RDF graph. 
     
     We only consider the URLs of checkboxes that were selected by the user.
@@ -130,8 +132,8 @@ def get_rdf(nanopub_id, article, urls):
     article_id = article['article_id']
     i = article
 
-    article_id_qname = 'figshare_{}'.format(article_id)
-    nanopub_id_qname = 'figshare_{}'.format(nanopub_id)
+    article_id_qname = get_qname(article_id)
+    nanopub_id_qname = get_qname(nanopub_id)
     
     
     
@@ -150,6 +152,7 @@ def get_rdf(nanopub_id, article, urls):
     a_graph = associate_namespaces(a_graph)
     p_graph = associate_namespaces(p_graph)
     
+    p_graph += trail_to_prov(provenance_trail)
     
     # A bit annoying, but we need both the DOI and the Owner before we can start
     
@@ -175,7 +178,7 @@ def get_rdf(nanopub_id, article, urls):
         owner = i['owner']
         o_id = owner['id']
         o_label = owner['full_name']
-        o_qname = 'figshare_{}'.format(o_id)
+        o_qname = get_qname(o_id)
         
         owner_uri = LU[o_qname]
                 
@@ -254,7 +257,7 @@ def get_rdf(nanopub_id, article, urls):
 
     # print "Processing defined type"
     dt = i['defined_type']
-    o_qname = 'figshare_{}'.format(quote(dt))
+    o_qname = get_qname(quote(dt))
             
     a_graph.add((article_uri,LUV['defined_type'],LU[o_qname]))
     a_graph.add((LU[o_qname],SKOS.prefLabel,Literal(dt)))
@@ -282,7 +285,7 @@ def get_rdf(nanopub_id, article, urls):
             a_label = author['full_name'].strip()
             a_first = author['first_name'].strip()
             a_last = author['last_name'].strip()
-            a_qname = 'figshare_{}'.format(a_id)
+            a_qname = get_qname(a_id)
             
             author_count = author_count + 1
             
@@ -303,7 +306,7 @@ def get_rdf(nanopub_id, article, urls):
         
         t_id = tag['id']
         t_label = tag['name']
-        t_qname = 'figshare_{}'.format(t_id)
+        t_qname = get_qname(t_id)
 
         a_graph.add((article_uri,LUV['tag'],LU[t_qname]))
         a_graph.add((LU[t_qname],SKOS.prefLabel,Literal(t_label)))
@@ -315,7 +318,7 @@ def get_rdf(nanopub_id, article, urls):
         # print link
         l_id = link['id']
         l_value = link['link']
-        l_qname = 'figshare_{}'.format(l_id)
+        l_qname = get_qname(l_id)
         
         a_graph.add((article_uri,LUV['link'],LU[l_qname]))
         a_graph.add((LU[l_qname],LUV['id'],Literal(l_id)))
@@ -336,7 +339,7 @@ def get_rdf(nanopub_id, article, urls):
         f_value = f['name']
         f_mime = f['mime_type']
         f_size = f['size']
-        f_qname = 'figshare_{}'.format(f_id)
+        f_qname = get_qname(f_id)
         
         a_graph.add((article_uri,LUV['file'],LU[f_qname]))
         a_graph.add((LU[f_qname],LUV['id'],Literal(f_id)))
@@ -350,7 +353,7 @@ def get_rdf(nanopub_id, article, urls):
         # print cat
         c_id = cat['id']
         c_value = cat['name']
-        c_qname = 'figshare_{}'.format(c_id)
+        c_qname = get_qname(c_id)
         
         a_graph.add((article_uri,LUV['category'],LU[c_qname]))
         a_graph.add((LU[c_qname],LUV['id'],Literal(c_id)))
@@ -359,7 +362,7 @@ def get_rdf(nanopub_id, article, urls):
     
     
     for k,u in urls.items() :      
-        original_qname = u['original']
+        original_qname = get_qname(u['original'])
         uri = u['uri']
                     
         if u['type'] == 'mapping':

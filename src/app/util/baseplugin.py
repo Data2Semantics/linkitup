@@ -4,7 +4,7 @@ Created on 26 Mar 2013
 @author: Rinke Hoekstra
 '''
 
-from flask import render_template
+from flask import render_template, request, jsonify
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
@@ -12,6 +12,45 @@ import traceback
 import sys
 
 from app import app
+from util import get_qname
+
+
+def plugin(fields=[], link='match'):
+	"""
+	This function creates a plugin decorator
+	
+	-- fields: list of (key,id,label) tuples where the key a list of dictionaries to be extracted form the 
+			   article details, and id, label match keys in those dictionaries.
+	-- link:   link type to use, can be anything, as long as the RDF generator understands it.
+
+	This decorator only works if it is called with brackets, i.e. @plugin().
+	"""
+	print "Plugin: I create a plugin decorator that wraps the plugin and passes article details"
+	def plugin_decorator(func):
+		print "Plugin: I am a plugin decorator, I define a function that extracts article details from the keys in 'fields', and pass it to the plugin"
+		def plugin_wrapper(*args, **kwargs):
+			print "Plugin: I am a plugin wrapper, I extract article details and pass it to the plugin"
+			# print "Plugin: My arguments were: %s, %s" % (args, kwargs)
+			article = request.get_json()
+			
+			article_id = article['article_id']
+			article_title = article['title']
+			
+			inputs = []
+			for field, identifier, label in fields:
+				for entries in article[field] :
+					inputs.append({'id': entries[identifier], 'label': entries[label].strip()})
+			#print inputs
+			kwargs.update({'article': {'id': article_id, 'label': article_title}, 'inputs': inputs, 'link': link})
+			out = func(*args, **kwargs)
+			
+			print "Plugin: After the function ran"
+			return jsonify(out)
+			
+		plugin_wrapper.__name__ = "{}_plugin_wrapper".format(func.__name__)
+		return plugin_wrapper
+	return plugin_decorator
+
 
 class SPARQLPlugin(object):
 	'''
@@ -23,6 +62,7 @@ class SPARQLPlugin(object):
 		'''
 		Constructor
 		'''
+		
 		app.logger.debug("Initializing SPARQLPlugin...")
 		
 		if isinstance(endpoint, list) :
@@ -66,20 +106,19 @@ class SPARQLPlugin(object):
 		
 		
 		results = self.run_query(query)
-
-		matches = [] 		
+	
 		if len(results) > 0 :
 			matches = self.process_matches(results)
 			return matches
 		else :
-			return []
+			return {}
 		
 
 	
 	def match_separately(self, items, property = 'rdfs:label'):
 		app.logger.debug("Finding matches using a separate query for each item")
 		
-		matches = []
+		matches = {}
 		for item in items :
 			
 			query = render_template(self.template, 
@@ -88,7 +127,7 @@ class SPARQLPlugin(object):
 			
 			results = self.run_query(query)
 			
-			matches.extend(self.process_matches(results))
+			matches.update(self.process_matches(results))
 			
 		return matches
 	
@@ -140,18 +179,20 @@ class SPARQLPlugin(object):
 				app.logger.debug(results)
 
 				break
-				
+		app.logger.debug("Returning results from run_query")
+		app.logger.debug(results)	
 		return results
 	
 	def process_matches(self, results):
 		app.logger.debug("Processing results...")
-		matches = []
+		matches = {}
 		app.logger.debug(results)
 		for result in results :
 			match_uri = result["match"]["value"]
 			original_id = result["original_id"]["value"]
 			original_label = result["original_label"]["value"]
-			original_qname = "figshare_{}".format(original_id)
+			# Won't use the qname for 'original', will use the original_id instead. QNames should be minted in the RDF creator.
+			# original_qname = get_qname(original_id)
 			
 			
 			app.logger.debug("Match URI: {}".format(match_uri))
@@ -184,10 +225,12 @@ class SPARQLPlugin(object):
 					 'web':		web_uri,
 					 'show':	display_uri,
 					 'short':	id_base,
-					 'original':original_qname}
+					 'original':original_id}
 			
 			# Append it to all matches
-			matches.append(match)
+			matches[match_uri] = match
 			
+		app.logger.debug("Returning results from process_matches")
+		app.logger.debug(matches)
 		return matches
 		

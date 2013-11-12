@@ -13,24 +13,28 @@ import re
 
 from app import app
 
+from app.util.baseplugin import plugin
+from app.util.provenance import provenance
 
 NIF_REGISTRY_URL = "http://nif-services.neuinfo.org/nif/services/registry/search?q="
 
+## TODO: generate direct derivedfrom relations between tags/categories and results. This requires successive querying of the NIF endpoint.
 
 @app.route('/nifregistry', methods=['POST'])
 @login_required
-def link_to_nif_registry():
-    # Retrieve the article from the post
-    article = request.get_json()
-    article_id = article['article_id']
+@plugin(fields=[('tags','id','name'),('categories','id','name')], link='mapping')
+@provenance()
+def link_to_nif_registry(*args, **kwargs):
+    # Retrieve the article id from the wrapper
+    article_id = kwargs['article']['id']
     
     app.logger.debug("Running NIF Registry plugin for article {}".format(article_id))
     
     
     # Rewrite the tags and categories of the article in a form understood by the NIF Registry
-    match_items = article['tags'] + article['categories']
+    match_items = kwargs['inputs']
     
-    query_string = "".join([ "'{}'".format(match_items[0]['name']) ] + [ " OR '{}'".format(item['name']) for item in match_items[1:]])
+    query_string = "".join([ "'{}'".format(match_items[0]['label']) ] + [ " OR '{}'".format(item['label']) for item in match_items[1:]])
     
     
     query_url = NIF_REGISTRY_URL + query_string
@@ -41,7 +45,7 @@ def link_to_nif_registry():
     
     tree = ET.fromstring(response.text.encode('utf-8'))
     
-    matches = []
+    matches = {}
     
     for result in tree.iter('registryResult') :
         
@@ -56,7 +60,7 @@ def link_to_nif_registry():
         description = result[0].text[:600]
         nifid = result.attrib['id']
         entry_type = result.attrib['type']
-        original_qname = "figshare_{}".format(article_id)
+
         
         # Create the match dictionary
         match = {'type':    "link",
@@ -67,16 +71,15 @@ def link_to_nif_registry():
                  'description': description, 
                  'extra':   nifid,
                  'subscript': entry_type,
-                 'original':original_qname}
+                 'original':article_id}
         
         # Append it to all matches
-        matches.append(match)
+        matches[match_uri] = match
 
-    if matches == [] :
-        matches = None
+
     
     # Return the matches
-    return jsonify({'title':'NIF Registry','urls': matches})
+    return matches
     
         
         
