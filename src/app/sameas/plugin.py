@@ -25,7 +25,6 @@ def link_to_sameas():
     
     # Get article links
     match_items = article['links']
-    match_items.append({u'link': u'http://dbpedia.org/resource/Resource_Description_Framework', u'id': 9999})
 
     matches = {}
 
