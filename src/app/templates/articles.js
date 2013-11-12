@@ -68,7 +68,6 @@ function render_plugins(plugins){
 		$('#plugins_header').after(li);
 		
 		plugin_link.on('click',function(e){
-			console.log(value.name + " clicked");
 			run_plugin(value.slug, value.name, value.type);
 		});
 	});	
@@ -107,7 +106,7 @@ function initialize_articles(){
 	});
 }
 /*
-// Renders the list of available articles
+// Renders the dropdown list of available articles (Select2.js jQuery plugin)
 */
 function render_articles(articles) {
 	$("#articles").select2({ 
