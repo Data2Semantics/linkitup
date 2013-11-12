@@ -21,6 +21,10 @@ import traceback
 
 from app import app
 
+from app.util.baseplugin import plugin
+from app.util.provenance import provenance
+
+
 
 
 orcid_url = 'http://pub.orcid.org/'
@@ -28,21 +32,21 @@ credit_search_url = orcid_url + 'search/orcid-bio/?q=text:'
 
 @app.route('/orcid', methods=['POST'])
 @login_required
-def link_to_orcid():
-    # Retrieve the article from the post
-    article = request.get_json()
-    article_id = article['article_id']
+@plugin(fields=[('authors','id','full_name')], link='mapping')
+@provenance()
+def link_to_orcid(*args,**kwargs):
+    # Retrieve the article from the wrapper
+    article_id = kwargs['article']['id']
     
     app.logger.debug("Running ORCID plugin for article {}".format(article_id))
     
-    urls = []
+    urls = {}
     
-    authors = article['authors']
+    authors = kwargs['inputs']
     
     for a in authors:
         a_id = a['id']
-        a_qname = 'figshare_{}'.format(a_id)
-        full_name = a['full_name'].strip()
+        full_name = a['label']
 
         request_uri = credit_search_url + urllib.quote_plus(full_name) + "&rows=3"
         
@@ -85,16 +89,12 @@ def link_to_orcid():
                     
                     short = re.sub(' |/|\|\.|-','_',orcid)
                 
-                    urls.append({'type':'mapping', 'uri': uri, 'web': uri, 'show': name, 'short': short, 'original': a_qname, 'extra': orcid, 'subscript': score})
+                    urls[uri] = {'type':'mapping', 'uri': uri, 'web': uri, 'show': name, 'short': short, 'original': a_id, 'extra': orcid, 'subscript': score}
                 except Exception as e :
                     app.logger.debug("Exception in accessing ORCID entry: {}\n{}".format(e.message, pprint(sr)))
                     app.logger.debug(traceback.format_exc())
-                    return render_template('message.html',
-                                           type = 'error', 
-                                           text = e.message )
+                    return {'error': e.message }
                     
     
-    if urls == [] :
-        urls = None 
     
-    return jsonify({'title':'ORCID','urls': urls})  
+    return urls 

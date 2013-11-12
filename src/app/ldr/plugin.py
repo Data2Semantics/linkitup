@@ -19,29 +19,31 @@ from pprint import pprint
 
 from app import app
 
+from app.util.baseplugin import plugin
+from app.util.provenance import provenance
+
 _known_vocabularies = ['SciValFunders']
 
 @app.route('/ldr', methods=['POST'])
 @login_required
-def link_to_ldr():
+@plugin(fields=[('tags','id','name'),('categories','id','name')], link='mapping')
+@provenance()
+def link_to_ldr(*args, **kwargs):
     # Retrieve the article from the post
-    article = request.get_json()
-    article_id = article['article_id']
+    article_id = kwargs['article']['id']
     
     app.logger.debug("Running LDR plugin for article {}".format(article_id))
     
-    urls = []
+    urls = {}
     
-    
-      
-    tags_and_categories = article['tags'] + article['categories']
+    tags_and_categories = kwargs['inputs']
     
     for t in tags_and_categories:
         
         original_qname = "figshare_{}".format(t['id'])
         
         for v in _known_vocabularies :
-            data = {'conceptName': t['name']}
+            data = {'conceptName': t['label']}
             
             request_uri = 'http://data.elsevier.com/content/vocabulary/concept/{}'.format(v)
             
@@ -56,9 +58,7 @@ def link_to_ldr():
                     
                     short = re.sub(' |/|\|\.|-','_',label)
                     
-                    urls.append({'type':'mapping', 'uri': uri, 'web': uri, 'show': label, 'short': short, 'original': original_qname})
-            
-    if urls == [] :
-        urls = None 
+                    urls[uri] = {'type':'mapping', 'uri': uri, 'web': uri, 'show': label, 'short': short, 'original': original_qname}
+             
         
-    return jsonify({'title':'Linked Data Repository','urls': urls})  
+    return urls 
