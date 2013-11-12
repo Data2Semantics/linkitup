@@ -18,6 +18,7 @@ $(document).ready(function() {
 	
 	$.localStorage('selected', {});
 	$.localStorage('results', {});
+	$.localStorage('provenance', []);
 	
 	// Click handlers for standard menu options
 	
@@ -27,6 +28,10 @@ $(document).ready(function() {
 	
 	$('#preview_nanopublication').on('click', function(e){
 		preview_nanopublication();
+	})
+	
+	$('#preview_provenance').on('click', function(e){
+		preview_provenance();
 	})
 	
 	$('#publish_to_figshare').on('click', function(e){
@@ -209,11 +214,13 @@ function run_plugin(plugin, name, type){
 			if (type == 'json') {
 				var callback = function(data){
 					
-					if (data.urls != null){
-						add_results(plugin, data.urls);
-					
+					if (data.result != null){
+						add_results(plugin, data.result);
+						
+						add_provenance(data.provenance);
+						
 						var body = $('#plugin_modal_body');
-						render_urls(body, data.urls);
+						render_urls(body, data.result);
 						
 						$('#'+plugin).toggleClass('active');
 					} else {
@@ -277,6 +284,37 @@ function preview_nanopublication(){
 	var payload = {'details' :  details, 'selected' : selected};
 	
 	post('{{ url_for("nanopublication")}}', payload, 'html', callback);
+}
+
+function preview_provenance(){
+	var loading = get_progress_bar("Retrieving provenance");
+
+	$('#plugin_modal_name').html("Provenance Preview");
+	$('#plugin_modal_body').html(loading);
+	$('#plugin_modal').modal('show');
+	
+	var callback = function(data){
+		console.log(data.success);
+		if (data.success == true){
+			console.log("Succesfully retrieved data from provoviz");
+			$('#plugin_modal_body').html(data.result);
+		} else {
+			console.log("Rendering just the provenance code...");
+			var pre = $('<pre/>');
+			var code = $('<code/>');
+		
+			pre.text(data.result);
+			code.append(pre);
+			
+			$('#plugin_modal_body').html(code);
+		}
+	}
+	
+	var provenance = get_provenance();
+	
+	var payload = {'provenance' :  provenance};
+	
+	post('{{ url_for("provenance")}}', payload, 'json', callback);
 }
 
 function publish_to_figshare(){
@@ -395,7 +433,6 @@ function update_article_details(){
 function render_urls(body, urls) {
 	body.empty();
 	var selected = get_selected();
-	
 	$.each(urls, function(uindex, url) {
 		var label = $('<label></label>');
 		label.addClass('checkbox');
@@ -425,7 +462,6 @@ function render_urls(body, urls) {
 
 			}
 			
-			console.log(get_selected());
 		});
 		
 		
@@ -486,22 +522,54 @@ function get_selected(){
 // Adds a selection (url) to the list of selectec/checked urls in local storage
 */
 function add_selected(key, value){
+	var before = new Date().toISOString();
 	var selected = $.localStorage('selected');
 	
 	selected[key] = value;
 	
 	$.localStorage('selected', selected);
+	
+	var after = new Date().toISOString();
+	
+	var activity = {description: "Selected "+key,
+					start: before,
+					end: after,
+					label: "add_selected",
+					id: "add_selected" + "add_selected".hashCode()};
+	var inputs = [value];
+	var outputs = [];
+	
+	var prov = {activity: activity, inputs: inputs, outputs: outputs}
+	
+	add_provenance(prov);
+	
 }
 
 /*
 // Removes a selection from the list of selected/checked urls in local storage
 */
 function remove_selected(key){
+	var value = $.localStorage('selected')[key];
+	var before = new Date().toISOString();
 	var selected = $.localStorage('selected');
 	
 	delete selected[key]
 	
 	$.localStorage('selected', selected);
+	
+	var after = new Date().toISOString();
+	
+	var activity = {description: "Deselected "+key,
+					start: before,
+					end: after,
+					label: "removed_selected",
+					id: "removed_selected" + "remove_selected".hashCode()};
+	var inputs = [value];
+	var outputs = [];
+	
+	var prov = {activity: activity, inputs: inputs, outputs: outputs}
+	
+	add_provenance(prov);
 }
 
 /*
@@ -528,6 +596,24 @@ function add_results(plugin, urls){
 	$.localStorage('results', results);
 }
 
+/*
+// Adds the plugin provenance to local storage
+*/
+function add_provenance(prov){
+	var provenance = $.localStorage('provenance');
+	
+	provenance.push(prov);
+	console.log(provenance);
+	$.localStorage('provenance', provenance);
+}
+
+/*
+// Adds the plugin provenance to local storage
+*/
+function get_provenance(){
+	return $.localStorage('provenance');
+}
+
 
 /*
 // Renders a progress bar with the 'label' as label
@@ -546,3 +632,18 @@ function get_progress_bar(label){
 function get_info_box(type, text){
 	return '<div class="alert alert-' + type + '">' + text + '</div>';
 }
+
+/*
+// From http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+*/
+String.prototype.hashCode = function(){
+	var hash = 0;
+	if (this.length == 0) return hash;
+    for (i = 0; i < this.length; i++) {
+        char = this.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}
+
