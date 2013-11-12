@@ -148,6 +148,26 @@ def publish():
         return jsonify({'success': False})
 
 
+@app.route('/provenance', methods=['POST'])
+@login_required
+def provenance():
+	data = request.get_json()
+
+	provenance_trail = data['provenance']
+		
+	prov = trail_to_prov(provenance_trail)
+	
+	PROVOVIZ_SERVICE_URL = "http://semweb.cs.vu.nl/provoviz/service"
+	# PROVOVIZ_SERVICE_URL = "http://localhost:8000/service"
+	
+	r = requests.post(PROVOVIZ_SERVICE_URL,data={'graph_uri': 'http://example.com/test', 'data': prov, 'client': 'linkitup'})
+	
+	if r.status_code == requests.codes.ok :
+		app.logger.debug("Success for provoviz!")
+		return jsonify({'success':True,'result': r.content})
+	else :
+		app.logger.debug("Failure for provoviz!")
+		return jsonify({'success':False,'result': prov})
 
 @app.route('/clear')
 def clear_session_data():
