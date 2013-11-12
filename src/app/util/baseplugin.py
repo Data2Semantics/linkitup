@@ -58,11 +58,10 @@ class SPARQLPlugin(object):
 	'''
 
 
-	def __init__(self, endpoint, template, prov_trace, match_type = 'mapping', rewrite_function = None, id_function = lambda x: re.sub('\s','_',x), id_base = 'label'):
+	def __init__(self, endpoint, template, match_type = 'mapping', rewrite_function = None, id_function = lambda x: re.sub('\s','_',x), id_base = 'label'):
 		'''
 		Constructor
 		'''
-		self.prov_trace = prov_trace
 		
 		app.logger.debug("Initializing SPARQLPlugin...")
 		
@@ -107,20 +106,19 @@ class SPARQLPlugin(object):
 		
 		
 		results = self.run_query(query)
-
-		matches = [] 		
+	
 		if len(results) > 0 :
 			matches = self.process_matches(results)
 			return matches
 		else :
-			return []
+			return {}
 		
 
 	
 	def match_separately(self, items, property = 'rdfs:label'):
 		app.logger.debug("Finding matches using a separate query for each item")
 		
-		matches = []
+		matches = {}
 		for item in items :
 			
 			query = render_template(self.template, 
@@ -129,7 +127,7 @@ class SPARQLPlugin(object):
 			
 			results = self.run_query(query)
 			
-			matches.extend(self.process_matches(results))
+			matches.update(self.process_matches(results))
 			
 		return matches
 	
@@ -181,18 +179,20 @@ class SPARQLPlugin(object):
 				app.logger.debug(results)
 
 				break
-				
+		app.logger.debug("Returning results from run_query")
+		app.logger.debug(results)	
 		return results
 	
 	def process_matches(self, results):
 		app.logger.debug("Processing results...")
-		matches = []
+		matches = {}
 		app.logger.debug(results)
 		for result in results :
 			match_uri = result["match"]["value"]
 			original_id = result["original_id"]["value"]
 			original_label = result["original_label"]["value"]
-			original_qname = get_qname(original_id)
+			# Won't use the qname for 'original', will use the original_id instead. QNames should be minted in the RDF creator.
+			# original_qname = get_qname(original_id)
 			
 			
 			app.logger.debug("Match URI: {}".format(match_uri))
@@ -225,10 +225,12 @@ class SPARQLPlugin(object):
 					 'web':		web_uri,
 					 'show':	display_uri,
 					 'short':	id_base,
-					 'original':original_qname}
+					 'original':original_id}
 			
 			# Append it to all matches
-			matches.append(match)
+			matches[match_uri] = match
 			
+		app.logger.debug("Returning results from process_matches")
+		app.logger.debug(matches)
 		return matches
 		
