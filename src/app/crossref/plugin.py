@@ -31,6 +31,7 @@ from app import app
 
 
 
+
 @app.route('/crossref', methods=['POST'])
 @login_required
 def link_to_DOI():
