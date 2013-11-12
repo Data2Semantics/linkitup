@@ -122,9 +122,11 @@ def nanopublication():
 
 	details = data['details']
 	selected = data['selected']
+	provenance_trail = data['provenance']
 
-
-	graphTrig = get_trig(details, selected)
+	app.logger.debug(provenance_trail)
+	app.logger.debug("Getting trig")
+	graphTrig = get_trig(details, selected, provenance_trail)
 	
 	return graphTrig
 
@@ -156,7 +158,7 @@ def provenance():
 
 	provenance_trail = data['provenance']
 		
-	prov = trail_to_prov(provenance_trail)
+	prov = trail_to_prov(provenance_trail).serialize(format='turtle')
 	
 	PROVOVIZ_SERVICE_URL = "http://semweb.cs.vu.nl/provoviz/service"
 	# PROVOVIZ_SERVICE_URL = "http://localhost:8000/service"

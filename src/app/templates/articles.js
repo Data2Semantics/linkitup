@@ -280,8 +280,11 @@ function preview_nanopublication(){
 	
 	var details = get_details();
 	var selected = get_selected();
+	var provenance = get_provenance();
 	
-	var payload = {'details' :  details, 'selected' : selected};
+
+	
+	var payload = {'details' :  details, 'selected' : selected, 'provenance' :  provenance};
 	
 	post('{{ url_for("nanopublication")}}', payload, 'html', callback);
 }

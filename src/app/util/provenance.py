@@ -98,9 +98,10 @@ def provenance(inputs=['article','inputs'],outputs=[('original','uri','show')]):
 		return provenance_wrapper
 	return provenance_decorator
 
-def trail_to_prov(trail):
+def trail_to_prov(trail,graph=None):
 	
-	graph = Graph()
+	if not graph:
+		graph = Graph()
 	
 	for entry in trail :
 		a = entry['activity']
@@ -139,7 +140,7 @@ def trail_to_prov(trail):
 		
 		graph = activity.done()
 		
-	return graph.serialize(format='turtle')
+	return graph
 
 def register(plugin_slug):
 	safe_slug = urllib.quote_plus(plugin_slug)

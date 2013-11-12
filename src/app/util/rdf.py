@@ -22,6 +22,8 @@ import requests
 from util import get_qname
 from app import app, nanopubs_dir
 
+from provenance import trail_to_prov
+
 
 ## NB: Code now depends on rdflib v4.1-dev and higher
 
@@ -80,10 +82,10 @@ def get_trix(article, checked_urls):
     
     return serializedGraph
    
-def get_trig(article, checked_urls): 
+def get_trig(article, checked_urls, provenance): 
     ## Generate the graph with a dummy id for the nanopublication
-    graph = get_rdf('dummy', article, checked_urls)
-
+    graph = get_rdf('dummy', article, checked_urls, provenance)
+	
     # Switch comments to use the RDFLib serializer (still uses the deprecated '=' between graph URI and graph contents)
     # serializedGraph = graph.serialize(format='trig')
     # The custom serializer serializes namespace definitions within the graph portion, instead of at the beginning of the document.
@@ -120,7 +122,7 @@ def get_and_publish_trig(nanopub_id, article, checked_urls):
     
 
 
-def get_rdf(nanopub_id, article, urls):
+def get_rdf(nanopub_id, article, urls, provenance_trail):
     """Takes everything we know about the article specified in article_id, and builds a simple RDF graph. 
     
     We only consider the URLs of checkboxes that were selected by the user.
@@ -150,6 +152,7 @@ def get_rdf(nanopub_id, article, urls):
     a_graph = associate_namespaces(a_graph)
     p_graph = associate_namespaces(p_graph)
     
+    p_graph += trail_to_prov(provenance_trail)
     
     # A bit annoying, but we need both the DOI and the Owner before we can start
     
