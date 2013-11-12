@@ -38,6 +38,7 @@ def link_to_spotlight(*args, **kwargs):
     article = request.get_json()
     description = clean_html(article['description'])
 
+    # Query text consists of article title, description, tags, and categories
     text = "{}\n\n{}".format(description, labels)
     # app.logger.debug("Query text:\n {}".format(text))
 
