@@ -156,14 +156,17 @@ def publish():
 def provenance():
 	data = request.get_json()
 
+	details = data['details']
 	provenance_trail = data['provenance']
 		
 	prov = trail_to_prov(provenance_trail).serialize(format='turtle')
 	
+	graph_uri = "http://linkitup.data2semantics.org/resource/provenance/figshare_{}".format(details['article_id'])
+	
 	PROVOVIZ_SERVICE_URL = "http://semweb.cs.vu.nl/provoviz/service"
 	# PROVOVIZ_SERVICE_URL = "http://localhost:8000/service"
 	
-	r = requests.post(PROVOVIZ_SERVICE_URL,data={'graph_uri': 'http://example.com/test', 'data': prov, 'client': 'linkitup'})
+	r = requests.post(PROVOVIZ_SERVICE_URL,data={'graph_uri': graph_uri, 'data': prov, 'client': 'linkitup'})
 	
 	if r.status_code == requests.codes.ok :
 		app.logger.debug("Success for provoviz!")

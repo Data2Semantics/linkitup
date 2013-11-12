@@ -313,9 +313,10 @@ function preview_provenance(){
 		}
 	}
 	
+	var details = get_details();
 	var provenance = get_provenance();
 	
-	var payload = {'provenance' :  provenance};
+	var payload = {'provenance' :  provenance, 'details': details };
 	
 	post('{{ url_for("provenance")}}', payload, 'json', callback);
 }
