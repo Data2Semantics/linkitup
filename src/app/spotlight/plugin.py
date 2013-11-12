@@ -12,24 +12,37 @@ import requests
 
 from app import app
 
-SPOTLIGHT_URL = 'http://spotlight.dbpedia.org/rest/annotate'
+from app.util.baseplugin import plugin
+from app.util.provenance import provenance
 
+SPOTLIGHT_URL = 'http://spotlight.dbpedia.org/rest/annotate'
+SPOTLIGHT_CONFIDENCE = 0.2
+SIMILARITY_CUTOUT = 0.1
 
 @app.route('/spotlight', methods=['POST'])
 @login_required
-def link_to_spotlight():
-    # Retrieve the article from the post
-    article = request.get_json()
-    article_id = article['article_id']
-    original_qname = "figshare_{}".format(article_id)
-    
+@plugin(fields=[('tags','id','name'),('categories','id','name')], link='mapping')
+@provenance()
+def link_to_spotlight(*args, **kwargs):
+
+    article_id = kwargs['article']['id']
+
     app.logger.debug("Running DBpedia Spotlight plugin for article {}".format(article_id))
+
+    original_qname = "figshare_{}".format(article_id)
+
+    match_items = kwargs['inputs']
+    labels = ", ".join([item['label'] for item in kwargs['inputs'] + [kwargs['article']]])
     
-    # Get article description
+    # Get article description, the wrapper does not provide it yet
+    article = request.get_json()
     description = clean_html(article['description'])
-    confidence = 0.2
+
+    text = "{}\n\n{}".format(description, labels)
+    # app.logger.debug("Query text:\n {}".format(text))
+
     response = requests.post(   SPOTLIGHT_URL,
-                                data={'text': description, 'confidence': confidence},
+                                data={'text': text, 'confidence': SPOTLIGHT_CONFIDENCE},
                                 headers={'Accept': 'application/json'})
     resources = response.json().get('Resources', [])
 
@@ -37,13 +50,14 @@ def link_to_spotlight():
 
     for resource in resources:
         dbpedia_uri = resource['@URI']
-        score = 'score: {}'.format(resource['@similarityScore'][:4])
-        types = " ,".join(resource['@types'].split(',')[:5])
+        similarity_score = float(resource['@similarityScore'])
+        if similarity_score < SIMILARITY_CUTOUT:
+            continue
+        score = 'score: {:.2g}'.format(similarity_score)
+
+        types = " ,".join(resource['@types'].split(','))
         if types == '':
             types = None
-
-        # offset = int(resource['@offset'])
-        # fragment = "...{}...".format(description[offset-30 : offset+30])
 
         match = {'type': "reference",
                  'uri': dbpedia_uri,
@@ -51,14 +65,10 @@ def link_to_spotlight():
                  'show': dbpedia_uri,
                  'extra': types,
                  'subscript': score,
-                 # 'description': fragment,
                  'original': original_qname}
         
             # Append it to all matches
         matches[dbpedia_uri] = match
 
-    if matches == {} :
-        matches = None
-    
     # Return the matches
-    return jsonify({'title':'DBpedia Spotlight','urls': matches})
+    return matches
