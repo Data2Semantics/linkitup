@@ -9,7 +9,6 @@ http://github.com/Data2Semantics/linkitup
 
 """
 
-from flask import render_template, request, jsonify
 from flask.ext.login import login_required
 
 import requests
@@ -23,8 +22,6 @@ from app import app
 
 from app.util.baseplugin import plugin
 from app.util.provenance import provenance
-
-
 
 
 orcid_url = 'http://pub.orcid.org/'
@@ -96,5 +93,4 @@ def link_to_orcid(*args,**kwargs):
                     return {'error': e.message }
                     
     
-    
-    return urls 
+    return urls
