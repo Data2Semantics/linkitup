@@ -21,15 +21,13 @@ SIMILARITY_CUTOUT = 0.1
 
 @app.route('/spotlight', methods=['POST'])
 @login_required
-@plugin(fields=[('tags','id','name'),('categories','id','name')], link='mapping')
+@plugin(fields=[('tags','id','name'),('categories','id','name')], link='link')
 @provenance()
 def link_to_spotlight(*args, **kwargs):
 
     article_id = kwargs['article']['id']
 
     app.logger.debug("Running DBpedia Spotlight plugin for article {}".format(article_id))
-
-    original_qname = "figshare_{}".format(article_id)
 
     match_items = kwargs['inputs']
     labels = ", ".join([item['label'] for item in kwargs['inputs'] + [kwargs['article']]])
@@ -40,7 +38,7 @@ def link_to_spotlight(*args, **kwargs):
 
     # Query text consists of article title, description, tags, and categories
     text = "{}\n\n{}".format(description, labels)
-    # app.logger.debug("Query text:\n {}".format(text))
+    # app.logger.debug("Spotlight query text:\n {}".format(text))
 
     response = requests.post(   SPOTLIGHT_URL,
                                 data={'text': text, 'confidence': SPOTLIGHT_CONFIDENCE},
@@ -60,13 +58,13 @@ def link_to_spotlight(*args, **kwargs):
         if types == '':
             types = None
 
-        match = {'type': "reference",
+        match = {'type': 'link',
                  'uri': dbpedia_uri,
                  'web': dbpedia_uri,
                  'show': dbpedia_uri,
                  'extra': types,
                  'subscript': score,
-                 'original': original_qname}
+                 'original': article_id}
         
             # Append it to all matches
         matches[dbpedia_uri] = match
