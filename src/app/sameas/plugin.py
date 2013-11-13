@@ -4,34 +4,32 @@ Created on 4 Nov 2013
 @author: cmarat
 '''
 
-from flask import request, jsonify
 from flask.ext.login import login_required
 
 import requests
 
 from app import app
+from app.util.baseplugin import plugin
+from app.util.provenance import provenance
 
 SAMEAS_URL = "http://sameas.org/json"
 
 
 @app.route('/sameas', methods=['POST'])
 @login_required
-def link_to_sameas():
-    # Retrieve the article from the post
-    article = request.get_json()
-    article_id = article['article_id']
-    
+@plugin(fields=[('links','id','link')], link='mapping')
+@provenance()
+def link_to_sameas(*args, **kwargs):
+    # Retrieve the article from the wrapper
+    article_id = kwargs['article']['id']
     app.logger.debug("Running sameAs.org plugin for article {}".format(article_id))
     
     # Get article links
-    match_items = article['links']
-    match_items.append({u'link': u'http://dbpedia.org/resource/Resource_Description_Framework', u'id': 9999})
-
+    match_items = kwargs['inputs']
     matches = {}
 
     for item in match_items:
-        
-        item_link = item['link']
+        item_link = item['label']
         original_qname = "figshare_{}".format(item['id'])
         
         # Query sameas.org
@@ -44,7 +42,7 @@ def link_to_sameas():
         for uri in sameas_links:
         
             # Create the match dictionary
-            match = {'type':    "mapping",
+            match = {'type':    'mapping',
                      'uri':     uri,
                      'web':     uri,
                      'show':    uri,
@@ -53,8 +51,5 @@ def link_to_sameas():
             # Append it to all matches
             matches[uri] = match
 
-    if matches == {} :
-        matches = None
-    
     # Return the matches
-    return jsonify({'title':'sameAs.org links','urls': matches})
+    return matches
