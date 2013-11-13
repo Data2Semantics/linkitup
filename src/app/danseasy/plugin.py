@@ -4,7 +4,6 @@ Created on 26 Mar 2013
 @author: hoekstra
 '''
 
-from flask import render_template, g, request, jsonify
 from flask.ext.login import login_required
 
 import requests
@@ -19,9 +18,6 @@ from app.util.provenance import provenance
 
 EASY_SEARCH_URL = "https://easy.dans.knaw.nl/ui/"
 
- 
-
-
 
 @app.route('/danseasy', methods=['POST'])
 @login_required
@@ -34,8 +30,6 @@ def link_to_dans_easy(*args, **kwargs):
     app.logger.debug("Running DANS EASY plugin for article {}".format(article_id))
     
     query_string = "".join([ "'{}'".format(match_items[0]['label']) ] + [ " OR '{}'".format(item['label']) for item in match_items[1:]])
-    
-    
     
     app.logger.debug("Query: {}".format(query_string))
 
@@ -87,8 +81,6 @@ def link_to_dans_easy(*args, **kwargs):
 
     # Return the matches
     return matches
-    
-        
         
     
 def get_detailed_hit(h):
@@ -117,7 +109,6 @@ def get_detailed_hit(h):
     
     if col2.span :
         hit[u'year'] = col2.span.text
-    
 
     
     col3 = h.find('div','searchHit-col3')
