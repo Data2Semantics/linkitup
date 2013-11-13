@@ -4,7 +4,6 @@ Created on 26 Mar 2013
 @author: hoekstra
 '''
 
-from flask import render_template, g, request, jsonify
 from flask.ext.login import login_required
 
 import xml.etree.ElementTree as ET
