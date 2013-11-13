@@ -4,14 +4,14 @@ Created on 6 Nov 2013
 @author: cmarat
 '''
 
-from flask import request, jsonify
+from flask import request
 from flask.ext.login import login_required
 
 from nltk import clean_html
+
 import requests
 
 from app import app
-
 from app.util.baseplugin import plugin
 from app.util.provenance import provenance
 
