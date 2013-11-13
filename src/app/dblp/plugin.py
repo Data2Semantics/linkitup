@@ -8,14 +8,12 @@ Copyright (c) 2012, Rinke Hoekstra, VU University Amsterdam
 http://github.com/Data2Semantics/linkitup
 
 """
-from flask import render_template, g, request, jsonify
 from flask.ext.login import login_required
 
 
 from app import app
 from app.util.baseplugin import plugin, SPARQLPlugin
 from app.util.provenance import provenance
-
 
 
 @app.route('/dblp', methods=['POST'])
@@ -43,12 +41,8 @@ def link_to_dblp(*args, **kwargs):
 		# Run the plugin, and retrieve matches using the FOAF name property
 		matches = plugin.match_separately(match_items, property="foaf:name")
 		
-		
 		# Return the matches
 		return matches
 		
 	except Exception as e:
 		return {'error': e.message}
-
-	
-
