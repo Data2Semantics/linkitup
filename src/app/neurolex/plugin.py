@@ -8,7 +8,6 @@ Copyright (c) 2012,2013 Rinke Hoekstra, VU University Amsterdam
 http://github.com/Data2Semantics/linkitup
 
 """
-from flask import render_template, g, request, jsonify
 from flask.ext.login import login_required
 
 
