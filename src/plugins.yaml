@@ -49,3 +49,8 @@ app.sameas.plugin:
   slug: sameas
   logo: static/img/sameas.png
   type: json
+app.spotlight.plugin:
+  name: DBpedia Spotlight
+  slug: spotlight
+  logo: static/img/spotlight.png
+  type: json
