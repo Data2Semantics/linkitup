@@ -9,13 +9,11 @@ http://github.com/Data2Semantics/linkitup
 
 """
 
-from flask import render_template, request, jsonify
 from flask.ext.login import login_required
 
 import requests
 import json
 import re
-from pprint import pprint
 
 from app import app
 
