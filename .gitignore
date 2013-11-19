@@ -21,4 +21,5 @@ bin/*
 src/dist/*
 *.egg-info
 MANIFEST
+src/build/*
 
