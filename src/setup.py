@@ -13,7 +13,7 @@ setup(name='Linkitup',
       scripts=['config.py','db_create.py','run.py'],
       long_description=open('README.txt').read(),
       install_requires=['flask', 'flask-login', 'flask-openid','sqlalchemy','flask-sqlalchemy','sqlalchemy-migrate',
-      'flask-wtf','rdflib > 4.0','SPARQLWrapper','beautifulsoup4','pdfminer','requests','pyyaml'])
+      'flask-wtf','rdflib > 4.0','SPARQLWrapper','beautifulsoup4','pdfminer','requests','requests_oauthlib','pyyaml','nltk'])
 
 
 # import os, subprocess, sys
