@@ -19,6 +19,11 @@ app.ldr.plugin:
   slug: ldr
   logo: static/img/ldr.png
   type: json
+app.bio2rdf.plugin:
+  name: Bio2RDF
+  slug: bio2rdf
+  logo: static/img/bio2rdf.png
+  type: json
 app.orcid.plugin:
   name: ORCID
   slug: orcid
@@ -43,4 +48,14 @@ app.linkedlifedata.plugin:
   name: LinkedLifeData
   slug: linkedlifedata
   logo: static/img/linkedlifedata.png
+  type: json
+app.sameas.plugin:
+  name: sameAs
+  slug: sameas
+  logo: static/img/sameas.png
+  type: json
+app.spotlight.plugin:
+  name: DBpedia Spotlight
+  slug: spotlight
+  logo: static/img/spotlight.png
   type: json

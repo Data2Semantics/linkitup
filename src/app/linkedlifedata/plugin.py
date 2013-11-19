@@ -4,7 +4,6 @@ Created on 26 Mar 2013
 @author: hoekstra
 '''
 
-from flask import render_template, g, request, jsonify
 from flask.ext.login import login_required
 
 import requests
@@ -74,10 +73,8 @@ def link_to_lld(*args, **kwargs):
                 description = None
                 
             score = "Score: {}".format(h['score'])
-            
-        
-            
-            
+
+
             # Create the match dictionary
             match = {'type':    "mapping",
                      'uri':     match_uri,

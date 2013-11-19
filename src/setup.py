@@ -39,3 +39,4 @@ setup(name='Linkitup',
 # subprocess.call(['pip', 'install', 'beautifulsoup4'])
 # subprocess.call(['pip', 'install', 'pdfminer'])
 # subprocess.call(['pip', 'install', 'requests'])
+
