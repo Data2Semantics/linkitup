@@ -24,6 +24,10 @@ from app import app, nanopubs_dir
 
 from provenance import trail_to_prov
 
+# Override RDFLib trig serializer with app/util/trig.py
+# RDFLib serializer still uses the deprecated '=' between graph URI and graph contents
+from rdflib.serializer import Serializer
+plugin.register('trig', Serializer, 'app.util.trig', 'TrigSerializer')
 
 ## NB: Code now depends on rdflib v4.1-dev and higher
 
@@ -35,7 +39,6 @@ DCTERMS = Namespace('http://purl.org/dc/terms/')
 NANOPUB = Namespace('http://www.nanopub.org/nschema#')
 PROV = Namespace('http://www.w3.org/ns/prov#')
 OA = Namespace('http://www.w3.org/ns/oa#')
-
 
 def associate_namespaces(graph):
     graph.bind('luv',LUV)
@@ -50,30 +53,6 @@ def associate_namespaces(graph):
     
     return graph
 
-
-def reindent(s, numSpaces):
-    s = s.split('\n')
-    s = [(numSpaces * ' ') + string.lstrip(line) for line in s]
-    s = "\n".join(s)
-    return s
-
-
-def serializeTrig(graph):
-    app.logger.info("Using custom Trig serializer")
-    
-    turtles = []
-    for c in graph.contexts():
-        turtle = "<{id}> {{\n".format(id=c.identifier)
-        turtle += reindent(c.serialize(format='turtle'), 4)
-        turtle += "}\n\n"
-    
-        turtles.append(turtle)
-        
-    return "\n".join(turtles)
-
-
-
-
 def get_trix(article, checked_urls):
     ## Generate the graph with a dummy id for the nanopublication
     graph = get_rdf('dummy', article, checked_urls)
@@ -84,13 +63,9 @@ def get_trix(article, checked_urls):
    
 def get_trig(article, checked_urls, provenance): 
     ## Generate the graph with a dummy id for the nanopublication
+    app.logger.info("Using modified RDFLib TriG serializer")
     graph = get_rdf('dummy', article, checked_urls, provenance)
-	
-    # Switch comments to use the RDFLib serializer (still uses the deprecated '=' between graph URI and graph contents)
-    # serializedGraph = graph.serialize(format='trig')
-    # The custom serializer serializes namespace definitions within the graph portion, instead of at the beginning of the document.
-    # Although this is valid TriG/Turtle practice, some parsers will fall flat on their face.
-    serializedGraph = serializeTrig(graph)
+    serializedGraph = graph.serialize(format='trig')
     return serializedGraph
 
 
