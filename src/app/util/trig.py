@@ -3,6 +3,9 @@ Trig RDF graph serializer for RDFLib.
 See <http://www.w3.org/TR/trig/> for syntax specification.
 """
 
+# Derived from
+# https://raw.github.com/RDFLib/rdflib/04a019ecf5e86c5cf65bbabd6cbd31a787ba24d6/rdflib/plugins/serializers/trig.py
+
 from collections import defaultdict
 
 from rdflib.plugins.serializers.turtle import TurtleSerializer, _GEN_QNAME_FOR_DT, VERB
@@ -76,7 +79,7 @@ class TrigSerializer(TurtleSerializer):
             self.store = store
             self._subjects = subjects
 
-            self.write(self.indent() + '\n<%s> = {' % store.identifier)
+            self.write(self.indent() + '\n<%s> {' % store.identifier)
             self.depth += 1
             for subject in ordered_subjects:
                 if self.isDone(subject):
