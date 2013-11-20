@@ -58,7 +58,7 @@ class SPARQLPlugin(object):
 	'''
 
 
-	def __init__(self, endpoint, template, match_type = 'mapping', rewrite_function = None, id_function = lambda x: re.sub('\s','_',x), id_base = 'label',all=False):
+	def __init__(self, endpoint, template, match_type = 'mapping', rewrite_function = None, id_function = lambda x: re.sub('\s','_',x), id_base = 'label'):
 		'''
 		Constructor
 		'''
@@ -92,10 +92,7 @@ class SPARQLPlugin(object):
 		else :
 			raise Exception("The only valid values for 'id_base' are 'label' and 'uri'.")
 		
-		self.all = all
-        
 		app.logger.debug("Done")
-        
 		
 	def match(self, items, property = 'rdfs:label'):
 		app.logger.debug("Finding matches using a single query")
@@ -136,7 +133,7 @@ class SPARQLPlugin(object):
 	
 	
 	def run_query(self, query):
-		all_results = []
+		results = []
 		tries = []
 		
 		app.logger.debug(self.endpoints)
@@ -167,9 +164,7 @@ class SPARQLPlugin(object):
 				
 				# Will give problems if the return type is not what we expected (e.g. XML instead of JSON)
 				if "results" in results:
-					all_results.extend(results["results"]["bindings"])
-					
-					app.logger.debug("Found {} results".format(len(results)))
+					results = results["results"]["bindings"]
 					
 			except :
 
@@ -180,17 +175,13 @@ class SPARQLPlugin(object):
 				app.logger.debug("Continuing with next endpoint...")
 				continue 
 			else: 
-				if not self.all :
-					app.logger.debug("Finally, after calling {}".format(endpoint))
-					app.logger.debug(all_results)
-					break
-				else :
-					app.logger.debug("Continuing with next endpoint... (calling all)")
-					continue
+				app.logger.debug("Finally, after calling {}".format(endpoint))
+				app.logger.debug(results)
 
+				break
 		app.logger.debug("Returning results from run_query")
-		app.logger.debug(all_results)	
-		return all_results
+		app.logger.debug(results)	
+		return results
 	
 	def process_matches(self, results):
 		app.logger.debug("Processing results...")
@@ -226,10 +217,6 @@ class SPARQLPlugin(object):
 			else :
 				id_base = self.id_function(original_id)
 				
-			if 'match_label' in result:
-				description = result['match_label']['value']
-			else :
-				description = original_label
 
 				
 			# Create the match dictionary
@@ -238,7 +225,6 @@ class SPARQLPlugin(object):
 					 'web':		web_uri,
 					 'show':	display_uri,
 					 'short':	id_base,
-					 'description':   description,
 					 'original':original_id}
 			
 			# Append it to all matches

@@ -19,11 +19,6 @@ app.ldr.plugin:
   slug: ldr
   logo: static/img/ldr.png
   type: json
-app.bio2rdf.plugin:
-  name: Bio2RDF
-  slug: bio2rdf
-  logo: static/img/bio2rdf.png
-  type: json
 app.orcid.plugin:
   name: ORCID
   slug: orcid
