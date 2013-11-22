@@ -1,4 +1,4 @@
-![linkitup](https://raw.github.com/Data2Semantics/linkitup/master/src/static/img/linkitup-logo-72dpi.png) 
+![linkitup](https://raw.github.com/Data2Semantics/linkitup/master/src/app/static/img/linkitup-logo-72dpi.png) 
 
 Copyright © 2012,2013, Rinke Hoekstra, VU University Amsterdam/Data2Semantics Project
 
