@@ -205,8 +205,10 @@ def login():
 @oid.after_login
 def after_login(resp):
 	if resp.email is None or resp.email == "":
-		flash('Invalid login. Please try again.')
-		redirect(url_for('index'))
+		app.logger.debug("The response does not contain a valid e-mail")
+		# TODO Notify user, flash() doesn't work here
+		# flash('Invalid login. Please try again.')
+		return redirect(url_for('index'))
 		
 	user = User.query.filter_by(email = resp.email).first()
 	
