@@ -4,6 +4,10 @@ import tempfile
 basedir = os.path.abspath(os.path.dirname(__file__))
 tempdir = tempfile.gettempdir()
 
+# Name and port number of the server
+# SERVER_NAME = 'localhost:5000'
+SERVER_NAME = 'linkitup.data2semantics.org'
+
 SESSION_COOKIE_NAME = "linkitup_session"
 
 CSRF_ENABLED = True

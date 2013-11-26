@@ -54,7 +54,6 @@ def figshare_authorize():
                                message = e.message,
                                user = g.user)
 
-
 @app.route('/callback', methods=['GET'])
 @login_required
 def figshare_validate():
@@ -83,21 +82,18 @@ def figshare_validate():
         return render_template('error.html',
                                message = e.message,
                                user = g.user )
-    
-
-
-
-
-
 
 def get_auth_url():
     """Uses the consumer key and secret to get a token and token secret for requesting authorization from Figshare
     
     Returns the authorization URL, or raises an exception if the response contains an error.
     """
-    oauth = OAuth1(client_key, client_secret=client_secret)
-    
-    
+    callback_uri = "http://{}/callback".format(
+        app.config['SERVER_NAME']) if app.config['SERVER_NAME'] else None
+    app.logger.debug("Figshare OAuth callback URI: {}".format(callback_uri))
+
+    oauth = OAuth1(client_key, client_secret=client_secret, callback_uri=callback_uri)
+        
     response = requests.post(url=request_token_url, auth=oauth)
     
     qs = parse_qs(response.content)
