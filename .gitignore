@@ -15,4 +15,11 @@ linkitup/linkitup.xcodeproj/*
 *.komodoproject
 *.log
 *.tmproj
+lib/*
+include/*
+bin/*
+src/dist/*
+*.egg-info
+MANIFEST
+src/build/*
 
