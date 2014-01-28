@@ -10,9 +10,10 @@ http://github.com/Data2Semantics/linkitup
 """
 # -*- coding: utf-8 -*-
 
-from pdfminer.pdfinterp import PDFResourceManager, process_pdf
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
+from pdfminer.pdfpage import PDFPage
 from cStringIO import StringIO
 from pprint import pprint
 import re
@@ -102,7 +103,10 @@ def convert_pdf(path):
     device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
 
     fp = file(path, 'rb')
-    process_pdf(rsrcmgr, device, fp)
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+    for page in PDFPage.get_pages(fp, pagenos):
+        interpreter.process_page(page)
+    
     fp.close()
     device.close()
 
