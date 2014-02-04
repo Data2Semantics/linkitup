@@ -12,7 +12,7 @@ setup(name='Linkitup',
       packages=find_packages(),
       scripts=['config.py','db_create.py','run.py'],
       long_description=open('README.txt').read(),
-      install_requires=['flask', 'flask-login', 'flask-openid','sqlalchemy','flask-sqlalchemy','sqlalchemy-migrate',
+      install_requires=['flask', 'flask-login', 'flask-openid','sqlalchemy','flask-sqlalchemy','flask-migrate','sqlalchemy-migrate',
       'flask-wtf','rdflib > 4.0','SPARQLWrapper','beautifulsoup4','pdfminer','requests','requests_oauthlib','pyyaml','nltk'])
 
 
