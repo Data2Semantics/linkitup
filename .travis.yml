@@ -1,0 +1,17 @@
+language: python
+
+python:
+    - 2.7
+
+branches:
+  only:
+    - develop
+    - travis
+
+before_install:
+
+install:
+    - python setup.py install
+    - python setup.py install
+    - python setup.py install
+

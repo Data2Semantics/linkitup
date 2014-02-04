@@ -4,6 +4,7 @@
 *.ipynb
 .settings
 .*
+!.travis.yml
 *.db
 src/sqlite.db
 src/app.db
