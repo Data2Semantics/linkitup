@@ -104,9 +104,9 @@ def convert_pdf(path):
 
     fp = file(path, 'rb')
     interpreter = PDFPageInterpreter(rsrcmgr, device)
-    for page in PDFPage.get_pages(fp, pagenos):
+    for page in PDFPage.get_pages(fp):
         interpreter.process_page(page)
-    
+
     fp.close()
     device.close()
 
