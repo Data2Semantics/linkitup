@@ -6,12 +6,9 @@ python:
 branches:
   only:
     - develop
-    - travis
 
 before_install:
 
 install:
-    - python setup.py install
-    - python setup.py install
     - python setup.py install
 
