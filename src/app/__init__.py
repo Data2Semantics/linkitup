@@ -10,16 +10,12 @@ from flask.ext.openid import OpenID
 
 from config import basedir
 
-
-
 # Add the current dir to the Python path
 this_dir = os.path.dirname(__file__)
 sys.path.insert(0, this_dir)
 
-
 # Make sure we have an absolute path to the template dir
 TEMPLATE_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-
 
 # Intialize the Flask Appliation
 app = Flask(__name__, template_folder = TEMPLATE_FOLDER)
@@ -29,7 +25,6 @@ app.config.from_object('config')
 app.debug = app.config['DEBUG']
 
 app.logger.debug("Loaded configuration")
-
 app.logger.info("Set app.debug={}".format(app.debug))
 
 if not app.debug:
@@ -53,17 +48,9 @@ if not app.debug:
         '%(asctime)s %(levelname)s: %(message)s '
         '[in %(pathname)s:%(lineno)d]'
     ))
-    
     app.logger.addHandler(file_handler)
 
-
-
 app.logger.debug("Initializing Linkitup Flask Application")
-
-
-
-
-
 
 # Setup the Nanopublication Store
 nanopubs_dir = app.config['NANOPUBLICATION_STORE']
@@ -73,17 +60,10 @@ if not os.path.exists(nanopubs_dir) :
     app.logger.warning("Nanopublications folder '{}' does not yet exist: creating it!".format(nanopubs_dir))
     os.mkdir(nanopubs_dir)
 
-
-
 # Setup SQLAlchemy
 
 db = SQLAlchemy(app)
-
 app.logger.debug("Intialized database")
-
-
-
-
 
 # Setup LoginManager
 lm = LoginManager()
@@ -97,29 +77,18 @@ oid = OpenID(app, os.path.join(basedir, 'tmp'))
 
 app.logger.debug("Initialized OpenID module")
 
-
-
-
 # Load the plugins
 try :
     app.logger.debug("Loading plugins...")
-    
     plugins = yaml.load(open(app.config['PLUGINS_FILE'],'r'))
-    
     map(__import__, plugins.keys())
-    
     app.logger.debug("Intialized plugins")
-    
 except Exception as e :
     app.logger.error("Error loading plugins from {}".format(app.config['PLUGINS_FILE']))
     app.logger.error(e.message)
     quit()
     
-
 app.logger.debug("Now importing views and models")
 import views, models
-
-
-
 
 app.logger.debug("Finalized initialization")
