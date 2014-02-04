@@ -10,5 +10,5 @@ branches:
 before_install:
 
 install:
-    - cd src; python setup.py install
-
+    - pip install setuptools
+    - cd src; python setup.py install; python setup.py install; python setup.py install
