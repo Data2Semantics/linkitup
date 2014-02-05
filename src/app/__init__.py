@@ -4,11 +4,11 @@ import pickle
 import sys
 
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
 
 from config import basedir
+from models import db
 
 # Add the current dir to the Python path
 this_dir = os.path.dirname(__file__)
@@ -19,6 +19,10 @@ TEMPLATE_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'temp
 
 # Intialize the Flask Appliation
 app = Flask(__name__, template_folder = TEMPLATE_FOLDER)
+
+# Setup SQLAlchemy
+db.init_app(app)
+app.logger.debug("Intialized database")
 
 # Load the configuration file
 app.config.from_object('config')
@@ -60,11 +64,6 @@ if not os.path.exists(nanopubs_dir) :
     app.logger.warning("Nanopublications folder '{}' does not yet exist: creating it!".format(nanopubs_dir))
     os.mkdir(nanopubs_dir)
 
-# Setup SQLAlchemy
-
-db = SQLAlchemy(app)
-app.logger.debug("Intialized database")
-
 # Setup LoginManager
 lm = LoginManager()
 lm.init_app(app)
@@ -89,6 +88,6 @@ except Exception as e :
     quit()
     
 app.logger.debug("Now importing views and models")
-import views, models
+import views
 
 app.logger.debug("Finalized initialization")
