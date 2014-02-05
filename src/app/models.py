@@ -1,4 +1,6 @@
-from app import db
+from flask.ext.sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 ROLE_USER = 0
 ROLE_ADMIN = 1

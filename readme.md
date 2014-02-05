@@ -135,6 +135,20 @@ version 3.
 	* Linkitup includes its own reference extraction functionality, but this may perform sub-optimally for non-standard PDF layouts. You could try using [pdf-extract](https://github.com/CrossRef/pdfextract) instead (the code for calling pdf-extract is ready to use)
 	
 ### Setup
+
+Install dependencies
+
+	$ python setup.py install
+	
+initialise the local database
+
+	$ python manage.py db upgrade
+
+and start **Linki**tup server
+
+	$ python manage.py runserver
+
+
 **Linki**tup is a [Flask](http://flask.pocoo.org/) project. Refer to its documentation to see how to install Linkitup as a WSGI module.
 
 Happy linking!
