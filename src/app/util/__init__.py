@@ -1,2 +1,2 @@
-def get_qname(label, type='figshare'):
-	return "{}_{}".format(type, label)
+def get_qname(label, category='figshare'):
+	return "{}_{}".format(category, label)

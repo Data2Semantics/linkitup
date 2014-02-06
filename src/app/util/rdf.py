@@ -72,36 +72,25 @@ def get_trig(article, checked_urls, provenance):
 SESAME_UPDATE_URL = "http://semweb.cs.vu.nl:8080/openrdf-sesame/repositories/goldendemo/statements"
 
 def get_and_publish_trig(nanopub_id, article, checked_urls):
+    # NB: provenance is not included
     graph = get_rdf(nanopub_id, article, checked_urls)
-    
-    for c in graph.contexts() :
-        app.logger.debug("Preparing graph {}".format(c.identifier))
-        headers =  {'content-type':'text/turtle;charset=UTF-8'}
-        params = {'context': "<{}>".format(c.identifier)}
-        data = c.serialize(format='turtle')
-        app.logger.debug("Uploading graph {} to {}".format(c.identifier, SESAME_UPDATE_URL))
-        r = requests.put(SESAME_UPDATE_URL,
-                         data = data,
-                         params = params,
-                         headers = headers)
-                         
-        if r.ok :
-            app.logger.debug("Success!")
-        else :
-            app.logger.warning("Something went wrong: couldn't upload {} to {}".format(c.identifier, SESAME_UPDATE_URL))
-            app.logger.debug(r.content)
-            
-    return serializeTrig(graph)
-    
-
-    
-
+    app.logger.debug("Preparing TriG")
+    headers =  {'content-type':'application/trig;charset=UTF-8'}
+    data = graph.serialize(format='trig')
+    app.logger.debug("Uploading TriG to {}".format(SESAME_UPDATE_URL))
+    r = requests.put(SESAME_UPDATE_URL,
+                     data = data,
+                     headers = headers)
+    if r.ok :
+        app.logger.debug("Success!")
+    else :
+        app.logger.warning("Something went wrong: couldn't upload {} to {}".format(c.identifier, SESAME_UPDATE_URL))
+        app.logger.debug(r.content)
+    return data
 
 def get_rdf(nanopub_id, article, urls, provenance_trail):
     """Takes everything we know about the article specified in article_id, and builds a simple RDF graph. 
-    
     We only consider the URLs of checkboxes that were selected by the user.
-    
     Returns the RDF graph as a ConjunctiveGraph"""
     
     article_id = article['article_id']
@@ -109,8 +98,6 @@ def get_rdf(nanopub_id, article, urls, provenance_trail):
 
     article_id_qname = get_qname(article_id)
     nanopub_id_qname = get_qname(nanopub_id)
-    
-    
     
     nano = LU["nanopublication/{}".format(article_id_qname)]
     assertion = LU["assertion/{}".format(article_id_qname)]
@@ -145,9 +132,6 @@ def get_rdf(nanopub_id, article, urls, provenance_trail):
     a_graph.add((article_uri,OWL.sameAs,LU[article_id_qname]))
     a_graph.add((article_uri,LUV['doi'],URIRef(doi)))
     
-    
-    
-
     # print "Processing owner..."
     if 'owner' in i:
         owner = i['owner']
@@ -164,7 +148,6 @@ def get_rdf(nanopub_id, article, urls, provenance_trail):
     else :
         owner_uri = None
 
-
     # Add the stuff necessary to define the nanopublication
     np_graph.add((nano, RDF.type, NANOPUB['Nanopublication']))
     np_graph.add((nano, NANOPUB['hasAssertion'], assertion))
@@ -176,9 +159,6 @@ def get_rdf(nanopub_id, article, urls, provenance_trail):
     np_graph.add((nanopub_uri, OWL.sameAs, LU[nanopub_id_qname]))
     np_graph.add((nano, RDFS['seeAlso'], nanopub_uri))
     
-
-
-
     now = datetime.now()
     nowstr = datetime.now().strftime("%Y%m%dT%H%M%S%z")
 
@@ -196,7 +176,6 @@ def get_rdf(nanopub_id, article, urls, provenance_trail):
     p_graph.add((nano, PROV['wasGeneratedAt'], Literal(now)))
     p_graph.add((nano, PROV['wasAttributedTo'], user_uri))
     
-
     p_graph.add((activity_uri, RDF.type, PROV['Activity']))
     p_graph.add((activity_uri, PROV['used'], article_uri))
     p_graph.add((activity_uri, PROV['generated'], nano))
@@ -273,8 +252,6 @@ def get_rdf(nanopub_id, article, urls, provenance_trail):
             a_graph.add((LU[a_qname],RDF.type,LUV['Author']))
             a_graph.add((LU[a_qname],RDF.type,FOAF['Person']))
     
-
-    
     # print "Processing tags..."
     for tag in i['tags'] :
         # print tag
@@ -335,7 +312,6 @@ def get_rdf(nanopub_id, article, urls, provenance_trail):
         a_graph.add((LU[c_qname],RDFS.label,Literal(c_value))) 
         a_graph.add((LU[c_qname],RDF.type,LUV['Category']))
     
-    
     for k,u in urls.items() :      
         original_qname = get_qname(u['original'])
         uri = u['uri']
@@ -356,6 +332,5 @@ def get_rdf(nanopub_id, article, urls, provenance_trail):
     #    out += "{} > {} {} {}\n".format(gr.identifier, s, p, o)
     #
     # app.logger.debug(out)
-
 
     return graph
