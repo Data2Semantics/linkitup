@@ -4,6 +4,8 @@ import tempfile
 basedir = os.path.abspath(os.path.dirname(__file__))
 tempdir = tempfile.gettempdir()
 
+# FIGSHARE_CALLBACK_URI = 'http://localhost:5000/callback'
+
 SESSION_COOKIE_NAME = "linkitup_session"
 
 CSRF_ENABLED = True
@@ -42,5 +44,3 @@ LOG_FOLDER = os.path.join(basedir, 'log')
 # Logging at DEBUG level?
 
 DEBUG = True
-
-
