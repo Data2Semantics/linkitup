@@ -79,14 +79,19 @@ app.logger.debug("Initialized OpenID module")
 # Load the plugins
 app.logger.debug("Loading plugins...")
 plugins = yaml.load(open(app.config['PLUGINS_FILE'],'r'))
+failed_plugins = []
+
 for plugin in plugins:
     try :
         __import__(plugin)
         app.logger.debug("Intialized {}".format(plugin))
     except Exception as e :
-        app.logger.error("Failed to load {}".format(plugin))
-        app.logger.error(e.message)
+        app.logger.error("Failed to load {}: {}".format(plugin, e.message))
+        failed_plugins.append(plugin)
         # quit()
+
+for plugin in failed_plugins:
+    plugins.pop(plugin)
     
 app.logger.debug("Now importing views and models")
 import views
