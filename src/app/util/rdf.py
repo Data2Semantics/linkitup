@@ -73,7 +73,7 @@ SESAME_UPDATE_URL = "http://semweb.cs.vu.nl:8080/openrdf-sesame/repositories/gol
 
 def get_and_publish_trig(nanopub_id, article, checked_urls):
     # NB: provenance is not included
-    graph = get_rdf(nanopub_id, article, checked_urls)
+    graph = get_rdf(nanopub_id, article, checked_urls, [])
     app.logger.debug("Preparing TriG")
     headers =  {'content-type':'application/trig;charset=UTF-8'}
     data = graph.serialize(format='trig')
@@ -86,6 +86,15 @@ def get_and_publish_trig(nanopub_id, article, checked_urls):
     else :
         app.logger.warning("Something went wrong: couldn't upload {} to {}".format(c.identifier, SESAME_UPDATE_URL))
         app.logger.debug(r.content)
+    return data
+
+def get_nano_trig(nanopub_id, article, checked_urls):
+    # This is a get_and_publish_trig which does not attempt to publish
+    # TODO: remove this method or the get_and_publish_trig
+    graph = get_rdf(nanopub_id, article, checked_urls, [])
+    app.logger.debug("Preparing TriG")
+    data = graph.serialize(format='trig')
+    app.logger.debug("Returning from get_nano_trig")
     return data
 
 def get_rdf(nanopub_id, article, urls, provenance_trail):

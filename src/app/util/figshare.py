@@ -22,7 +22,7 @@ import json
 import os
 
 from app import app, db, lm, oid, nanopubs_dir
-from rdf import get_and_publish_trig
+from rdf import get_and_publish_trig, get_nano_trig
 
 ## NB: Code now depends on requests v1.0 and oauth_requests
 
@@ -313,14 +313,14 @@ def publish_nanopublication(article, checked_urls, oauth):
                             'description': 'This dataset was automatically published through Linkitup by {}'.format(g.user.nickname),
                             'defined_type': 'dataset'}
     headers = {'content-type': 'application/json' }
-    
+
     response = requests.post("http://api.figshare.com/v1/my_data/articles", data=json.dumps(body), headers=headers, auth=oauth)
     
     nanopub = json.loads(response.content)
     
     nanopub_id = nanopub['article_id']
     
-    nano_rdf = get_and_publish_trig(nanopub_id, article, checked_urls)
+    nano_rdf = get_nano_trig(nanopub_id, article, checked_urls)
     
     app.logger.debug("Add a tag, linking the original article to the nanopublication")
     body = {'tag_name': 'RDF={}'.format(nanopub_id)}
