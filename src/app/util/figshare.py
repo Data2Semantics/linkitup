@@ -54,7 +54,6 @@ def figshare_authorize():
                                message = e.message,
                                user = g.user)
 
-
 @app.route('/callback', methods=['GET'])
 @login_required
 def figshare_validate():
@@ -83,21 +82,17 @@ def figshare_validate():
         return render_template('error.html',
                                message = e.message,
                                user = g.user )
-    
-
-
-
-
-
 
 def get_auth_url():
     """Uses the consumer key and secret to get a token and token secret for requesting authorization from Figshare
     
     Returns the authorization URL, or raises an exception if the response contains an error.
     """
-    oauth = OAuth1(client_key, client_secret=client_secret)
-    
-    
+    callback_uri = app.config['FIGSHARE_CALLBACK_URI']
+    app.logger.debug("Figshare OAuth callback URI: {}".format(callback_uri))
+
+    oauth = OAuth1(client_key, client_secret=client_secret, callback_uri=callback_uri)
+        
     response = requests.post(url=request_token_url, auth=oauth)
     
     qs = parse_qs(response.content)
@@ -184,7 +179,6 @@ def get_articles():
                    client_secret=client_secret,
                    resource_owner_key=oauth_token,
                    resource_owner_secret=oauth_token_secret)
-
     
     # We'll start at page 0, will be updated at the start of the first loop.
     page = 0
@@ -231,7 +225,6 @@ def get_articles():
 
     
     return articles, details
-
 
 def get_article(article_id):
     app.logger.debug("Refreshing information for article {}.".format(article_id))
@@ -304,21 +297,16 @@ def update_article(article, checked_urls):
 
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(article_id),
                         data=json.dumps(body), headers=headers, auth=oauth)
-                        
-    
-    
+ 
     app.logger.debug("Added enriched with Linkitup tag")
     
     publish_nanopublication(article, checked_urls, oauth)
-
-    
     return
     
 def publish_nanopublication(article, checked_urls, oauth):
     # Get the original title
     source_article_title = article['title']
     article_id = article['article_id']
-    
     
     app.logger.debug("Create the new Figshare article for the Nanopublication")
     body = {'title': 'Nanopublication for "{}"'.format(source_article_title),
@@ -329,7 +317,6 @@ def publish_nanopublication(article, checked_urls, oauth):
     response = requests.post("http://api.figshare.com/v1/my_data/articles", data=json.dumps(body), headers=headers, auth=oauth)
     
     nanopub = json.loads(response.content)
-    
     
     nanopub_id = nanopub['article_id']
     
@@ -342,14 +329,12 @@ def publish_nanopublication(article, checked_urls, oauth):
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/tags'.format(article_id),
                                 data=json.dumps(body), headers=headers, auth=oauth)
                                 
-                                
     app.logger.debug("Add a link to the Nanopublication")
     body = {'link': "http://dx.doi.org/10.6084/m3.figshare.{}".format(nanopub_id)}
     headers = {'content-type': 'application/json'}
     
     response = requests.put('http://api.figshare.com/v1/my_data/articles/{}/links'.format(article_id),
                         data=json.dumps(body), headers=headers, auth=oauth)
-    
     
     app.logger.debug("Add a tag, linking the nanopublication to the original article")
     body = {'tag_name': 'about={}'.format(article_id)}
@@ -398,11 +383,8 @@ def publish_nanopublication(article, checked_urls, oauth):
     
     return 
 
-
 class FigshareEmptyResponse(Exception):
     pass
 
 class FigshareNoTokenError(Exception):
     pass
-
-
