@@ -77,15 +77,16 @@ oid = OpenID(app, os.path.join(basedir, 'tmp'))
 app.logger.debug("Initialized OpenID module")
 
 # Load the plugins
-try :
-    app.logger.debug("Loading plugins...")
-    plugins = yaml.load(open(app.config['PLUGINS_FILE'],'r'))
-    map(__import__, plugins.keys())
-    app.logger.debug("Intialized plugins")
-except Exception as e :
-    app.logger.error("Error loading plugins from {}".format(app.config['PLUGINS_FILE']))
-    app.logger.error(e.message)
-    quit()
+app.logger.debug("Loading plugins...")
+plugins = yaml.load(open(app.config['PLUGINS_FILE'],'r'))
+for plugin in plugins:
+    try :
+        __import__(plugin)
+        app.logger.debug("Intialized {}".format(plugin))
+    except Exception as e :
+        app.logger.error("Failed to load {}".format(plugin))
+        app.logger.error(e.message)
+        # quit()
     
 app.logger.debug("Now importing views and models")
 import views
