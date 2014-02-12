@@ -90,6 +90,7 @@ for plugin in plugins:
         failed_plugins.append(plugin)
         # quit()
 
+# Remove  plugins which failed to load so that they are not used later
 for plugin in failed_plugins:
     plugins.pop(plugin)
     

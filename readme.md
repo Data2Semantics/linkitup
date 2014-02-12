@@ -136,14 +136,15 @@ version 3.
 	
 ### Setup
 
-Install dependencies and initialise the local database:
+Install dependencies
 
-	$ python setup.py install
+	$ pip install -r requirements.txt
+	
+initialise the local database
+
 	$ python manage.py db upgrade
 	
-
-To start **Linki**tup server use
-
+and start **Linki**tup server
 
 	$ python manage.py runserver
 

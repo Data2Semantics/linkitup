@@ -1,0 +1,16 @@
+flask
+flask-login
+flask-openid
+flask-sqlalchemy
+flask-migrate
+flask-script
+flask-wtf
+sqlalchemy
+rdflib>4.0
+SPARQLWrapper
+beautifulsoup4
+pdfminer>=20131113
+requests
+requests_oauthlib
+pyyaml
+nltk
