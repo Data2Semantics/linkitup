@@ -11,6 +11,8 @@ import re
 import traceback
 import sys
 
+from functools import wraps
+
 from app import app
 from util import get_qname
 
@@ -28,6 +30,7 @@ def plugin(fields=[], link='match'):
 	print "Plugin: I create a plugin decorator that wraps the plugin and passes article details"
 	def plugin_decorator(func):
 		print "Plugin: I am a plugin decorator, I define a function that extracts article details from the keys in 'fields', and pass it to the plugin"
+		@wraps(func)
 		def plugin_wrapper(*args, **kwargs):
 			print "Plugin: I am a plugin wrapper, I extract article details and pass it to the plugin"
 			# print "Plugin: My arguments were: %s, %s" % (args, kwargs)
@@ -46,8 +49,6 @@ def plugin(fields=[], link='match'):
 			
 			print "Plugin: After the function ran"
 			return jsonify(out)
-			
-		plugin_wrapper.__name__ = "{}_plugin_wrapper".format(func.__name__)
 		return plugin_wrapper
 	return plugin_decorator
 
