@@ -27,13 +27,15 @@ def plugin(fields=[], link='match'):
 
 	This decorator only works if it is called with brackets, i.e. @plugin().
 	"""
-	print "Plugin: I create a plugin decorator that wraps the plugin and passes article details"
 	def plugin_decorator(func):
-		print "Plugin: I am a plugin decorator, I define a function that extracts article details from the keys in 'fields', and pass it to the plugin"
+		"""
+		Defines a function that extracts article details from the keys in 'fields', and pass it to the plugin
+		"""
 		@wraps(func)
 		def plugin_wrapper(*args, **kwargs):
-			print "Plugin: I am a plugin wrapper, I extract article details and pass it to the plugin"
-			# print "Plugin: My arguments were: %s, %s" % (args, kwargs)
+			"""
+			Extracts article details and pass it to the plugin
+			"""
 			article = request.get_json()
 			
 			article_id = article['article_id']
@@ -43,11 +45,9 @@ def plugin(fields=[], link='match'):
 			for field, identifier, label in fields:
 				for entries in article[field] :
 					inputs.append({'id': entries[identifier], 'label': entries[label].strip()})
-			#print inputs
 			kwargs.update({'article': {'id': article_id, 'label': article_title}, 'inputs': inputs, 'link': link})
 			out = func(*args, **kwargs)
 			
-			print "Plugin: After the function ran"
 			return jsonify(out)
 		return plugin_wrapper
 	return plugin_decorator
