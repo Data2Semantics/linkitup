@@ -159,7 +159,6 @@ def validate_oauth_verifier(oauth_verifier):
         db.session.commit()
     return
 
-
 def get_articles():
     """Uses the oauth token and secret to obtain all articles of the authenticated user from Figshare
     
@@ -225,6 +224,34 @@ def get_articles():
 
     
     return articles, details
+
+def get_public_articles():
+    # Load pre-defined list of sample articles
+    sample_ids = app.config['FIGSHARE_PREVIEW_IDS']
+    # The list of articles + titles we will return later.
+    articles = []
+    # The dictionary of article details that we'll return later.
+    details = {}
+    for article_id in sample_ids:
+        article = get_public_article(article_id)
+        articles.append({'id': article['article_id'], 'text': article['title']})
+        details[str(article['article_id'])] = article
+    return articles, details
+
+def get_public_article(article_id):
+    app.logger.debug("Refreshing information for article {}.".format(article_id))
+    response = requests.get(url='http://api.figshare.com/v1/articles/{}'.format(article_id))
+    
+    results = response.json()
+        
+    if 'error' in results:
+        app.logger.error(results)
+        raise Exception(results['error'])
+    elif results == {} :
+        app.logger.error("No article found, retrieved empty response.")
+        raise FigshareEmptyResponse("No articles found, retrieved empty response.")
+        
+    return results['items'][0]
 
 def get_article(article_id):
     app.logger.debug("Refreshing information for article {}.".format(article_id))

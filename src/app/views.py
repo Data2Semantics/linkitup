@@ -11,7 +11,7 @@ from pprint import pprint
 import yaml
 import requests
 
-from util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, get_article, update_article, FigshareEmptyResponse, FigshareNoTokenError
+from util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, get_article, get_public_articles, get_public_article, update_article, FigshareEmptyResponse, FigshareNoTokenError
 from util.rdf import get_rdf, get_trig
 from util.provenance import trail_to_prov
 
@@ -28,15 +28,16 @@ def before_request():
 @app.route('/')
 @app.route('/index')
 def index():
-	return render_template('landing.html', 
-						  user=g.user)
-	
+	return render_template('landing.html', user=g.user)
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
+	if not g.user.oauth_token:
+		return render_template('public_articles.html', user = g.user, results = {},
+			plugins = plugins.values())
 	return render_template('articles.html', user = g.user, results = {}, plugins = plugins.values())
-	
+
 @app.route('/articles')
 @login_required
 def load_articles():
@@ -76,6 +77,19 @@ def load_articles():
 			return render_template('error.html', 
 								   message = "Error retrieving articles!: " + e.message, 
 								   user=g.user)
+		
+@app.route('/public_articles')
+def load_public_articles():
+	"""
+	"""
+	try :
+		articles, details = get_public_articles()
+		return jsonify({'articles': articles, 'details': details})
+	except Exception as e :
+		app.logger.error(e)
+		return render_template('error.html', 
+							   message = "Error retrieving articles!: " + e.message, 
+							   user=g.user)
 		
 @app.route('/plugins')
 @login_required
