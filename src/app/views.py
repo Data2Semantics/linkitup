@@ -59,24 +59,10 @@ def load_articles():
         
         try :
             articles, details = get_articles()
-            
             return jsonify({'articles': articles, 'details': details})
-            
-            # return render_template('articles.html', 
-            #                    results = articles, 
-            #                    plugins = plugins.values(),
-            #                    user = g.user)
-        except FigshareEmptyResponse as e :
-            app.logger.error(e)
-            return redirect(url_for('figshare_authorize'))
-        except FigshareNoTokenError as e :
-            app.logger.error(e)
-            return redirect(url_for('figshare_authorize'))
         except Exception as e :
             app.logger.error(e)
-            return render_template('error.html', 
-                                   message = "Error retrieving articles!: " + e.message, 
-                                   user=g.user)
+            return jsonify({'error': True , 'message': e.message})
         
 @app.route('/public_articles')
 def load_public_articles():

@@ -88,26 +88,32 @@ function initialize_articles(){
 	$("#article_details").html(loading);
 	
 	$.get("{{ url_for('load_articles') }}", function(data){
-		// Store the list of article_id/title pairs in local storage
-		$.localStorage( 'articles', data.articles );
-		// Store the dictionaries of all article details in local storage
-		$.localStorage( 'details', data.details );
-		
-		// Render the list of articles
-		render_articles(data.articles);
-		
-		// Render the details of the first article, and set the 'current' flag to that article_id
-		if (data.articles.length > 0) {
-			var article_id = data.articles[0].id;
-			
-			$.localStorage( 'current', article_id );
-			
-			render_article_details();
+
+		// Attempt to fix problems by authorizing with figshare
+		if (data['error']) {
+			window.location.href = "{{ url_for('figshare_authorize') }}";
 		} else {
-			$("#article_details").html("Warning: no published or private articles found in your figshare account!")
+			// Store the list of article_id/title pairs in local storage
+			$.localStorage( 'articles', data.articles );
+			// Store the dictionaries of all article details in local storage
+			$.localStorage( 'details', data.details );
+			
+			// Render the list of articles
+			render_articles(data.articles);
+			
+			// Render the details of the first article, and set the 'current' flag to that article_id
+			if (data.articles.length > 0) {
+				var article_id = data.articles[0].id;
+				
+				$.localStorage( 'current', article_id );
+				
+				render_article_details();
+			} else {
+				$("#article_details").html("Warning: no published or private articles found in your figshare account!")
+			}
+			
+			$.localStorage('ready', true);
 		}
-		
-		$.localStorage('ready', true);
 	});
 }
 /*
