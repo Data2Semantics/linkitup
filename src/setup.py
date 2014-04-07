@@ -2,6 +2,7 @@
 
 from setuptools import setup, find_packages
 
+requirements = open('requirements.txt').read().splitlines()
 setup(name='Linkitup',
       version='1.1',
       description='Linkitup Web-based Dashboard for Enriching Research Data',
@@ -10,10 +11,9 @@ setup(name='Linkitup',
       url='http://github.com/Data2Semantics/linkitup',
       package_data={'app':['templates/*.html','templates/*.query','templates/*.js','static/js/*.js','static/css/*.css','static/css/*.png','static/img/*.png','static/js/vendor/*.js']},
       packages=find_packages(),
-      scripts=['config.py','db_create.py','run.py'],
+      scripts=['config.py','manage.py','run.py', 'plugins.yaml'],
       long_description=open('README.txt').read(),
-      install_requires=['flask', 'flask-login', 'flask-openid','sqlalchemy','flask-sqlalchemy','sqlalchemy-migrate',
-      'flask-wtf','rdflib > 4.0','SPARQLWrapper','beautifulsoup4','pdfminer','requests','requests_oauthlib','pyyaml','nltk'])
+      install_requires=requirements)
 
 
 # import os, subprocess, sys

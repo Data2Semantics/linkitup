@@ -59,6 +59,10 @@
 		<div class='span3'>
 			<div class='well'>
 				To get started with <span style='font-family: "Open Sans"'><strong>linki</strong>tup</span>, all you need is a <a href="http://figshare.com">Figshare</a> account and a dataset with a tag or a category assigned. <span style='font-family: "Open Sans"'><strong>linki</strong>tup</span> does the rest!
+				{% if g.user.is_authenticated() and (g.user.oauth_token == None or g.user.oauth_token == "") %}
+				<br><br>
+				Or just continue to the <a href="/dashboard">Dashboard</a> to see what you can do with <strong>linki</strong>tup</span> and a small selection of public Figshare datasets.
+				{% endif %}
 			</div>
 		</div>
 	</div>
