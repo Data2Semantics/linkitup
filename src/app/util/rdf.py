@@ -37,6 +37,13 @@ NANOPUB = Namespace('http://www.nanopub.org/nschema#')
 PROV = Namespace('http://www.w3.org/ns/prov#')
 OA = Namespace('http://www.w3.org/ns/oa#')
 
+graph_store_endpoint = app.config.get('GRAPH_STORE_ENDPOINT')
+graph_store_auth_string = app.config.get('GRAPH_STORE_AUTH')
+if graph_store_auth_string:
+    graph_store_auth = requests.auth.HTTPDigestAuth(*graph_store_auth_string.split(':'))
+else:
+    graph_store_auth = None
+
 def associate_namespaces(graph):
     graph.bind('luv',LUV)
     graph.bind('lu',LU)
@@ -65,33 +72,33 @@ def get_trig(article, checked_urls, provenance):
     serializedGraph = graph.serialize(format='trig')
     return serializedGraph
 
-
-SESAME_UPDATE_URL = "http://semweb.cs.vu.nl:8080/openrdf-sesame/repositories/goldendemo/statements"
+def store_conjunctive_graph(conjunctive_graph):
+    """
+    Stores the conjunctive_graph using Graph Store HTTP Protocol endpoint ignoring contexts
+    which are not identified by an URI.
+    """
+    if not graph_store_endpoint:
+        app.logger.warning("Failed to store the graph: Graph Store endpoint is not defined.")
+        return False
+    headers =  {'content-type':'application/n-triples;charset=UTF-8'}
+    graphs = [g for g in conjunctive_graph.contexts() if isinstance(g.identifier, URIRef)]
+    for graph in graphs:
+        data = graph.serialize(format='nt')
+        graph_url = '{}?graph={}'.format(graph_store_endpoint, graph.identifier)
+        app.logger.debug("Uploading to {}.".format(graph_url))
+        r = requests.put(graph_url, data = data, headers = headers, auth=graph_store_auth)
+        if not r.ok :
+            app.logger.warning("Something went wrong: couldn't upload to {}".format(graph_url))
+            app.logger.debug(r.content)
+            return False
+        return True
 
 def get_and_publish_trig(nanopub_id, article, checked_urls):
     # NB: provenance is not included
     graph = get_rdf(nanopub_id, article, checked_urls, [])
-    app.logger.debug("Preparing TriG")
-    headers =  {'content-type':'application/trig;charset=UTF-8'}
+    app.logger.debug("Storing to triplestore")
+    store_conjunctive_graph(graph)
     data = graph.serialize(format='trig')
-    app.logger.debug("Uploading TriG to {}".format(SESAME_UPDATE_URL))
-    r = requests.put(SESAME_UPDATE_URL,
-                     data = data,
-                     headers = headers)
-    if r.ok :
-        app.logger.debug("Success!")
-    else :
-        app.logger.warning("Something went wrong: couldn't upload {} to {}".format(c.identifier, SESAME_UPDATE_URL))
-        app.logger.debug(r.content)
-    return data
-
-def get_nano_trig(nanopub_id, article, checked_urls):
-    # This is a get_and_publish_trig which does not attempt to publish
-    # TODO: remove this method or the get_and_publish_trig
-    graph = get_rdf(nanopub_id, article, checked_urls, [])
-    app.logger.debug("Preparing TriG")
-    data = graph.serialize(format='trig')
-    app.logger.debug("Returning from get_nano_trig")
     return data
 
 def get_rdf(nanopub_id, article, urls, provenance_trail):

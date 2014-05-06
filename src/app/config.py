@@ -41,6 +41,11 @@ SESSION_STORE = os.path.join(basedir, 'tmp')
 
 NANOPUBLICATION_STORE = os.path.join(basedir, 'nanopublications')
 
+## Graph Store configuration
+
+# GRAPH_STORE_ENDPOINT = 'http://d2s.ops.few.vu.nl/rdf-graph-store'
+# GRAPH_STORE_AUTH = 'linkitup:password'
+
 # Logging folder
 
 LOG_FOLDER = os.path.join(basedir, 'log')
