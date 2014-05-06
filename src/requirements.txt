@@ -6,7 +6,7 @@ flask-migrate
 flask-script
 flask-wtf
 sqlalchemy
-rdflib>4.0
+rdflib>=4.1
 SPARQLWrapper
 beautifulsoup4
 pdfminer>=20131113

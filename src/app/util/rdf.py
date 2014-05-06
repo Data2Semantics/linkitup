@@ -29,8 +29,6 @@ from provenance import trail_to_prov
 from rdflib.serializer import Serializer
 plugin.register('trig', Serializer, 'app.util.trig', 'TrigSerializer')
 
-## NB: Code now depends on rdflib v4.1-dev and higher
-
 LUV = Namespace('http://linkitup.data2semantics.org/vocab/')
 LU = Namespace('http://linkitup.data2semantics.org/resource/')
 DBPEDIA = Namespace('http://dbpedia.org/resource/')
