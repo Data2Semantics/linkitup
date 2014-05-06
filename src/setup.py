@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 requirements = open('requirements.txt').read().splitlines()
 setup(name='Linkitup',
-      version='1.1',
+      version='2.1',
       description='Linkitup Web-based Dashboard for Enriching Research Data',
       author='Rinke Hoekstra, Marat Charlaganov',
       author_email='rinke.hoekstra@vu.nl',
