@@ -7,7 +7,6 @@ from flask import Flask
 from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
 
-from config import basedir
 from models import db
 
 # Add the current dir to the Python path
@@ -24,11 +23,15 @@ app = Flask(__name__, template_folder = TEMPLATE_FOLDER)
 db.init_app(app)
 app.logger.debug("Intialized database")
 
-# Load the configuration file
+# Load the default configuration
 app.config.from_object('config')
+app.logger.debug("Loaded default configuration")
+# Eventually override config using the file specified in enviromental variable LINKITUP_CONFIG
+if app.config.from_envvar('LINKITUP_CONFIG', silent=True):
+    app.logger.debug("Loaded configuration from LINKITUP_CONFIG={}".format(os.environ['LINKITUP_CONFIG']))
+
 app.debug = app.config['DEBUG']
 
-app.logger.debug("Loaded configuration")
 app.logger.info("Set app.debug={}".format(app.debug))
 
 if not app.debug:
@@ -72,9 +75,7 @@ lm.login_view = 'login'
 app.logger.debug("Initialized LoginManager")
 
 # Setup OpenID
-oid = OpenID(app, os.path.join(basedir, 'tmp'))
-
-app.logger.debug("Initialized OpenID module")
+oid = OpenID(app)
 
 # Load the plugins
 app.logger.debug("Loading plugins...")
@@ -94,7 +95,7 @@ for plugin in plugins:
 for plugin in failed_plugins:
     plugins.pop(plugin)
     
-app.logger.debug("Now importing views and models")
+app.logger.debug("Now importing views")
 import views
 
 app.logger.debug("Finalized initialization")

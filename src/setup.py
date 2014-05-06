@@ -11,7 +11,7 @@ setup(name='Linkitup',
       url='http://github.com/Data2Semantics/linkitup',
       package_data={'app':['templates/*.html','templates/*.query','templates/*.js','static/js/*.js','static/css/*.css','static/css/*.png','static/img/*.png','static/js/vendor/*.js']},
       packages=find_packages(),
-      scripts=['config.py','manage.py','run.py', 'plugins.yaml'],
+      scripts=['manage.py','run.py'],
       long_description=open('README.txt').read(),
       install_requires=requirements)
 

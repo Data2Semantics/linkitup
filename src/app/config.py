@@ -1,10 +1,11 @@
 import os
 import tempfile
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+configdir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.dirname(configdir)
 tempdir = tempfile.gettempdir()
 
-# FIGSHARE_CALLBACK_URI = 'http://localhost:5000/callback'
+FIGSHARE_CALLBACK_URI = 'http://localhost:5000/callback'
 
 # These articles appear in the dashboard if the user did not authenticate with Figshare
 FIGSHARE_PREVIEW_IDS = ['90206', '860460', '886693', '91672', '92089', '785731', '104629', '94593', '840542']
@@ -14,6 +15,7 @@ SESSION_COOKIE_NAME = "linkitup_session"
 CSRF_ENABLED = True
 SECRET_KEY = '\x14%<`2\xecT*\xa7M\xd0\x90%\x8d\x9a\xdd\xdbCF\xec\x96\x0e\x0e\x96'
 
+OPENID_FS_STORE_PATH = os.path.join(basedir, 'tmp')
 OPENID_PROVIDERS = [
     { 'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id' },
     { 'name': 'Yahoo', 'url': 'https://me.yahoo.com' },
@@ -29,7 +31,7 @@ UPLOADS_DEFAULT_DEST = os.path.join(tempdir, 'linkitup')
 
 # Setup Plugins
 
-PLUGINS_FILE = os.path.join(basedir, "plugins.yaml")
+PLUGINS_FILE = os.path.join(configdir, "plugins.yaml")
 
 # Session store location
 
