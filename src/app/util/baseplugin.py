@@ -14,7 +14,7 @@ import sys
 from functools import wraps
 
 from app import app
-from util import get_qname
+from app.util import get_qname
 
 
 def plugin(fields=[], link='match'):

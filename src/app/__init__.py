@@ -9,10 +9,6 @@ from flask.ext.openid import OpenID
 
 from models import db
 
-# Add the current dir to the Python path
-this_dir = os.path.dirname(__file__)
-sys.path.insert(0, this_dir)
-
 # Make sure we have an absolute path to the template dir
 TEMPLATE_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 
@@ -23,15 +19,14 @@ app = Flask(__name__, template_folder = TEMPLATE_FOLDER)
 db.init_app(app)
 app.logger.debug("Intialized database")
 
-# Load the default configuration
-app.config.from_object('config')
-app.logger.debug("Loaded default configuration")
+# Load default configuration
+app.config.from_object('app.config')
+app.logger.info("Loaded default configuration")
 # Eventually override config using the file specified in enviromental variable LINKITUP_CONFIG
 if app.config.from_envvar('LINKITUP_CONFIG', silent=True):
-    app.logger.debug("Loaded configuration from LINKITUP_CONFIG={}".format(os.environ['LINKITUP_CONFIG']))
+    app.logger.info("Loaded configuration from LINKITUP_CONFIG={}".format(os.environ['LINKITUP_CONFIG']))
 
 app.debug = app.config['DEBUG']
-
 app.logger.info("Set app.debug={}".format(app.debug))
 
 if not app.debug:
@@ -96,6 +91,6 @@ for plugin in failed_plugins:
     plugins.pop(plugin)
     
 app.logger.debug("Now importing views")
-import views
+from app import views
 
 app.logger.debug("Finalized initialization")

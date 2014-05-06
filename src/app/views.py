@@ -11,9 +11,9 @@ from pprint import pprint
 import yaml
 import requests
 
-from util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, get_article, get_public_articles, get_public_article, update_article, FigshareEmptyResponse, FigshareNoTokenError
-from util.rdf import get_rdf, get_trig
-from util.provenance import trail_to_prov
+from app.util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, get_article, get_public_articles, get_public_article, update_article, FigshareEmptyResponse, FigshareNoTokenError
+from app.util.rdf import get_rdf, get_trig
+from app.util.provenance import trail_to_prov
 
 @lm.user_loader
 def load_user(id):

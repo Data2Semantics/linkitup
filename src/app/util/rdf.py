@@ -19,9 +19,8 @@ import re
 import os
 import string
 import requests
-from util import get_qname
-from app import app, nanopubs_dir
-
+from app.util import get_qname
+from app import app
 from provenance import trail_to_prov
 
 # Override RDFLib trig serializer with app/util/trig.py
