@@ -57,8 +57,8 @@ def link_to_orcid(*args,**kwargs):
             for sr in search_results['orcid-search-results']['orcid-search-result']:
                 app.logger.debug(sr)
                 try :
-                    orcid = sr['orcid-profile']['orcid']['value']
-                    
+                    orcid_uri = sr['orcid-profile']['orcid-identifier']['uri']
+                    orcid_path = sr['orcid-profile']['orcid-identifier']['path']
                     score_double = sr['relevancy-score']['value']
                  
                     
@@ -76,21 +76,15 @@ def link_to_orcid(*args,**kwargs):
                         app.logger.debug('No name found in ORCID entry')
                         continue
                         
-                
-                        
                     if score_double < 0.7 :
                         app.logger.debug("Score {} for {} is below 0.7, not including it in results.".format(sr['relevancy-score']['value'], name))
                         continue   
                     
-                    uri = "http://orcid.org/{}".format(orcid)
-                    
-                    short = re.sub(' |/|\|\.|-','_',orcid)
+                    short = re.sub(' |/|\|\.|-','_',orcid_path)
                 
-                    urls[uri] = {'type':'mapping', 'uri': uri, 'web': uri, 'show': name, 'short': short, 'original': a_id, 'extra': orcid, 'subscript': score}
+                    urls[orcid_uri] = {'type':'mapping', 'uri': orcid_uri, 'web': orcid_uri, 'show': name, 'short': short, 'original': a_id, 'extra': orcid_path, 'subscript': score}
                 except Exception as e :
                     app.logger.debug("Exception in accessing ORCID entry: {}\n{}".format(e.message, pprint(sr)))
                     app.logger.debug(traceback.format_exc())
                     return {'error': e.message }
-                    
-    
     return urls
