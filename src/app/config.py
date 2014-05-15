@@ -8,7 +8,7 @@ tempdir = tempfile.gettempdir()
 FIGSHARE_CALLBACK_URI = 'http://localhost:5000/callback'
 
 # These articles appear in the dashboard if the user did not authenticate with Figshare
-FIGSHARE_PREVIEW_IDS = ['90206', '860460', '886693', '91672', '92089', '785731', '104629', '94593', '840542']
+FIGSHARE_PREVIEW_IDS = ['828798' ,'90206', '860460', '91672', '92089', '785731', '104629', '94593']
 
 SESSION_COOKIE_NAME = "linkitup_session"
 
