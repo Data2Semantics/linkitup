@@ -232,8 +232,10 @@ class Activity(object):
 			resource_uri = URIRef(uri)
 		else :
 			resource_uri = LU[get_qname(uri)]
-			
-		resource_entity_uri = LU[urllib.quote_plus("entity/{}_{}".format(label, now), safe="/")]
+
+		ascii_label = label.encode('ascii', 'ignore') if label else 'undefined'
+
+		resource_entity_uri = LU[urllib.quote_plus(u"entity/{}_{}".format(ascii_label, now), safe="/")]
 		
 		self.graph.add((resource_uri, RDFS['label'], Literal(label)))
 		

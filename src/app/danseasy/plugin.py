@@ -42,7 +42,7 @@ def link_to_dans_easy(*args, **kwargs):
     
 #    app.logger.debug(response.content)
     
-    soup = BeautifulSoup(response.content)
+    soup = BeautifulSoup(response.content.decode('utf-8','ignore'))
         
     matches = {}
     
@@ -54,7 +54,7 @@ def link_to_dans_easy(*args, **kwargs):
         match_uri = hit['uri']
         web_uri = hit['uri']
         display_uri = hit['title']
-            
+
         id_base = re.sub('\:','_',hit['urn'])
         
         if 'Description' in hit :
