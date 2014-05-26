@@ -163,7 +163,7 @@ def provenance():
     
     graph_uri = "http://linkitup.data2semantics.org/resource/provenance/figshare_{}".format(details['article_id'])
     
-    PROVOVIZ_SERVICE_URL = "http://semweb.cs.vu.nl/provoviz/service"
+    PROVOVIZ_SERVICE_URL = "http://provoviz.org/service"
     # PROVOVIZ_SERVICE_URL = "http://localhost:8000/service"
     
     r = requests.post(PROVOVIZ_SERVICE_URL,data={'graph_uri': graph_uri, 'data': prov, 'client': 'linkitup'})
