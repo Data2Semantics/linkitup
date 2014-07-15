@@ -118,7 +118,7 @@ def trail_to_prov(trail,graph=None):
 			else :
 				label = i['label']
 				
-			activity.add_input(input_id,label=label,now=i['timestamp'])
+			activity.add_input(input_id,label=label,now=['timestamp'])
 		
 		for o in entry['outputs']:
 			if 'uri' in o:
