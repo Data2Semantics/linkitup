@@ -1,0 +1,61 @@
+linkitup.dbpedia.plugin:
+  name: Wikipedia
+  slug: dbpedia
+  logo: static/img/wikipedia.png
+  type: json
+linkitup.dblp.plugin:
+  name: DBLP 
+  slug: dblp 
+  logo: static/img/dblp.png
+  type: json
+linkitup.crossref.plugin:
+  name: CrossRef
+  slug: crossref
+  logo: static/img/crossref.png
+  type: html
+  script: crossref.js
+linkitup.ldr.plugin:
+  name: Linked Data Repository
+  slug: ldr
+  logo: static/img/ldr.png
+  type: json
+linkitup.bio2rdf.plugin:
+  name: Bio2RDF
+  slug: bio2rdf
+  logo: static/img/bio2rdf.png
+  type: json
+linkitup.orcid.plugin:
+  name: ORCID
+  slug: orcid
+  logo: static/img/orcid.png
+  type: json
+linkitup.neurolex.plugin:
+  name: NeuroLex
+  slug: neurolex
+  logo: static/img/neurolex.png
+  type: json
+linkitup.nifregistry.plugin:
+  name: NIF Registry
+  slug: nifregistry
+  logo: static/img/nifregistry.png
+  type: json
+linkitup.danseasy.plugin:
+  name: DANS EASY
+  slug: danseasy
+  logo: static/img/danseasy.png
+  type: json
+linkitup.linkedlifedata.plugin:
+  name: LinkedLifeData
+  slug: linkedlifedata
+  logo: static/img/linkedlifedata.png
+  type: json
+linkitup.sameas.plugin:
+  name: sameAs
+  slug: sameas
+  logo: static/img/sameas.png
+  type: json
+linkitup.spotlight.plugin:
+  name: DBpedia Spotlight
+  slug: spotlight
+  logo: static/img/spotlight.png
+  type: json
