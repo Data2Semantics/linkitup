@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import app as linkitup
 from app import app, db
 from app.models import User
 from flask.ext.script import Manager, Shell
@@ -14,9 +15,11 @@ if os.path.exists('.env'):
 
 manager = Manager(app)
 
+
 @manager.shell
 def make_shell_context():
     return dict(app=app, db=db, User=User)
+
 
 @manager.command
 def test(coverage=False):
@@ -24,6 +27,7 @@ def test(coverage=False):
     import unittest
     tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
+
 
 @manager.command
 def deploy():
@@ -33,7 +37,8 @@ def deploy():
     upgrade()
 
 # Setup migrate command
-migrate = Migrate(app, db)
+migrations_dir = os.path.join(os.path.dirname(linkitup.__file__), 'migrations')
+migrate = Migrate(app, db, directory=migrations_dir)
 manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
