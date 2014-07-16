@@ -19,8 +19,8 @@ import re
 import os
 import string
 import requests
-from app.util import get_qname
-from app import app
+from linkitup.util import get_qname
+from linkitup import app
 from provenance import trail_to_prov
 
 # Override RDFLib trig serializer with app/util/trig.py

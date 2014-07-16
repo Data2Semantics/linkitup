@@ -26,7 +26,7 @@ import cStringIO
 
 from pprint import pprint
 
-from app import app
+from linkitup import app
 
 
 

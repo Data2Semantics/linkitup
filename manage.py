@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import os
-import app as linkitup
-from app import app, db
-from app.models import User
+import linkitup
+from linkitup import app, db
+from linkitup.models import User
 from flask.ext.script import Manager, Shell
 from flask.ext.migrate import Migrate, MigrateCommand
 

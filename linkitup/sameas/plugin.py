@@ -8,9 +8,9 @@ from flask.ext.login import login_required
 
 import requests
 
-from app import app
-from app.util.baseplugin import plugin
-from app.util.provenance import provenance
+from linkitup import app
+from linkitup.util.baseplugin import plugin
+from linkitup.util.provenance import provenance
 
 SAMEAS_URL = "http://sameas.org/json"
 

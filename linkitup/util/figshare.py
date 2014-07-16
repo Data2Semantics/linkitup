@@ -21,7 +21,7 @@ from urllib import unquote
 import json
 import os
 
-from app import app, db, lm, oid, nanopubs_dir
+from linkitup import app, db, lm, oid, nanopubs_dir
 from rdf import get_and_publish_trig
 
 ## NB: Code now depends on requests v1.0 and oauth_requests

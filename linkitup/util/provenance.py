@@ -2,9 +2,9 @@ from datetime import datetime
 import urllib
 
 from flask import g
-from app import app
+from linkitup import app
 
-from app.util import get_qname
+from linkitup.util import get_qname
 
 from rdflib import Graph, URIRef, Literal, BNode, Namespace, plugin
 from rdflib.namespace import RDF, RDFS, SKOS, OWL, XSD

@@ -11,9 +11,9 @@ http://github.com/Data2Semantics/linkitup
 from flask.ext.login import login_required
 
 
-from app import app
-from app.util.baseplugin import plugin, SPARQLPlugin
-from app.util.provenance import provenance
+from linkitup import app
+from linkitup.util.baseplugin import plugin, SPARQLPlugin
+from linkitup.util.provenance import provenance
 
 
 @app.route('/dblp', methods=['POST'])

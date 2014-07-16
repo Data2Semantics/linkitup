@@ -10,10 +10,10 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
-from app import app
+from linkitup import app
 
-from app.util.baseplugin import plugin
-from app.util.provenance import provenance
+from linkitup.util.baseplugin import plugin
+from linkitup.util.provenance import provenance
 
 
 EASY_SEARCH_URL = "https://easy.dans.knaw.nl/ui/"

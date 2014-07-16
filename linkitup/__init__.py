@@ -20,7 +20,7 @@ db.init_app(app)
 app.logger.debug("Intialized database")
 
 # Load default configuration
-app.config.from_object('app.config')
+app.config.from_object('linkitup.config')
 app.logger.info("Loaded default configuration")
 # Eventually override config using the file specified in enviromental variable LINKITUP_CONFIG
 if app.config.from_envvar('LINKITUP_CONFIG', silent=True):
@@ -91,6 +91,6 @@ for plugin in failed_plugins:
     plugins.pop(plugin)
     
 app.logger.debug("Now importing views")
-from app import views
+from linkitup import views
 
 app.logger.debug("Finalized initialization")

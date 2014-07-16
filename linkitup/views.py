@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, request, g, make_response, jsonify
 from flask.ext.login import login_user, logout_user, current_user, login_required
 
-from app import app, db, lm, oid, plugins
+from linkitup import app, db, lm, oid, plugins
 
 from forms import LoginForm
 from models import User, ROLE_USER, ROLE_ADMIN
@@ -11,9 +11,9 @@ from pprint import pprint
 import yaml
 import requests
 
-from app.util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, get_article, get_public_articles, get_public_article, update_article, FigshareEmptyResponse, FigshareNoTokenError
-from app.util.rdf import get_rdf, get_trig
-from app.util.provenance import trail_to_prov
+from linkitup.util.figshare import figshare_authorize, get_auth_url, validate_oauth_verifier, get_articles, get_article, get_public_articles, get_public_article, update_article, FigshareEmptyResponse, FigshareNoTokenError
+from linkitup.util.rdf import get_rdf, get_trig
+from linkitup.util.provenance import trail_to_prov
 
 @lm.user_loader
 def load_user(id):

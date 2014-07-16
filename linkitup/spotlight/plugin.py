@@ -11,9 +11,9 @@ from nltk import clean_html
 
 import requests
 
-from app import app
-from app.util.baseplugin import plugin
-from app.util.provenance import provenance
+from linkitup import app
+from linkitup.util.baseplugin import plugin
+from linkitup.util.provenance import provenance
 
 SPOTLIGHT_URL = 'http://spotlight.dbpedia.org/rest/annotate'
 SPOTLIGHT_CONFIDENCE = 0.2

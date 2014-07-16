@@ -13,8 +13,8 @@ import sys
 
 from functools import wraps
 
-from app import app
-from app.util import get_qname
+from linkitup import app
+from linkitup.util import get_qname
 
 
 def plugin(fields=[], link='match'):

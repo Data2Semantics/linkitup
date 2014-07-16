@@ -18,10 +18,10 @@ import urllib
 from pprint import pprint
 import traceback
 
-from app import app
+from linkitup import app
 
-from app.util.baseplugin import plugin
-from app.util.provenance import provenance
+from linkitup.util.baseplugin import plugin
+from linkitup.util.provenance import provenance
 
 
 orcid_url = 'http://pub.orcid.org/'
