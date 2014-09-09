@@ -13,6 +13,7 @@ from linkitup import app
 from linkitup.util import wikipedia_url
 from linkitup.util.baseplugin import plugin
 from linkitup.util.provenance import provenance
+from linkitup.util.preflabel import label
 
 SPOTLIGHT_URL = 'http://spotlight.dbpedia.org/rest/annotate'
 SPOTLIGHT_CONFIDENCE = 0.2
@@ -59,10 +60,11 @@ def link_to_spotlight(*args, **kwargs):
             types = None
 
         wikipedia_link = wikipedia_url(dbpedia_uri)
+        concept_label = label(dbpedia_uri, fallback=True)
         match = {'type': 'link',
                  'uri': dbpedia_uri,
                  'web': wikipedia_link,
-                 'show': wikipedia_link,
+                 'show': concept_label,
                  'extra': types,
                  'subscript': score,
                  'original': article_id}
