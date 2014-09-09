@@ -6,10 +6,8 @@ Created on 6 Nov 2013
 
 from flask import request
 from flask.ext.login import login_required
-
-from nltk import clean_html
-
 import requests
+from bs4 import BeautifulSoup
 
 from linkitup import app
 from linkitup.util.baseplugin import plugin
@@ -34,15 +32,16 @@ def link_to_spotlight(*args, **kwargs):
     
     # Get article description, the wrapper does not provide it yet
     article = request.get_json()
-    description = clean_html(article['description'])
+    soup = BeautifulSoup(article['description'])
+    description = soup.get_text()
 
     # Query text consists of article title, description, tags, and categories
-    text = "{}\n\n{}".format(description, labels)
     # app.logger.debug("Spotlight query text:\n {}".format(text))
 
     response = requests.post(   SPOTLIGHT_URL,
                                 data={'text': text, 'confidence': SPOTLIGHT_CONFIDENCE},
                                 headers={'Accept': 'application/json'})
+    text = u"{}\n\n{}".format(description, labels)
     resources = response.json().get('Resources', [])
 
     matches = {}
