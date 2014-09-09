@@ -10,6 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from linkitup import app
+from linkitup.util import wikipedia_url
 from linkitup.util.baseplugin import plugin
 from linkitup.util.provenance import provenance
 
@@ -57,10 +58,11 @@ def link_to_spotlight(*args, **kwargs):
         if types == '':
             types = None
 
+        wikipedia_link = wikipedia_url(dbpedia_uri)
         match = {'type': 'link',
                  'uri': dbpedia_uri,
-                 'web': dbpedia_uri,
-                 'show': dbpedia_uri,
+                 'web': wikipedia_link,
+                 'show': wikipedia_link,
                  'extra': types,
                  'subscript': score,
                  'original': article_id}
