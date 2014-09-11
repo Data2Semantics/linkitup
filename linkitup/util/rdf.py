@@ -26,7 +26,7 @@ from provenance import trail_to_prov
 # Override RDFLib trig serializer with app/util/trig.py
 # RDFLib serializer still uses the deprecated '=' between graph URI and graph contents
 from rdflib.serializer import Serializer
-plugin.register('trig', Serializer, 'app.util.trig', 'TrigSerializer')
+plugin.register('trig', Serializer, 'linkitup.util.trig', 'TrigSerializer')
 
 LUV = Namespace('http://linkitup.data2semantics.org/vocab/')
 LU = Namespace('http://linkitup.data2semantics.org/resource/')
