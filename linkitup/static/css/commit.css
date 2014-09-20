@@ -109,9 +109,21 @@ font-weight: 300;
 
 .btn {
 line-height: 2.5;
+}
 
 
+#about-linkitup {
+  margin: 40px 0px;
+}
 
+#about-linkitup .span4{
+  text-align: center;
+}
+
+#about-linkitup img {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
 
 
 
