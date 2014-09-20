@@ -50,7 +50,10 @@ border-left: 1px solid #e1e1e1;
 }
 
 
-
+#footer {
+  background-color: #f1f1f1;
+  padding: 30px 0px;
+}
 
 
 
