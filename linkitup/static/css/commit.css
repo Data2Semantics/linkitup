@@ -91,6 +91,12 @@ font-weight: 300;
   text-align: center;
 }
 
+#get-started-box .login-box {
+  color: #444;
+  font-weight: 300;
+  text-align: left;
+}
+
 #get-started-box .well {
   background-color: #eaeaea;
   margin: 30px;

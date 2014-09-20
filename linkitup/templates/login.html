@@ -11,34 +11,68 @@
 	{% include 'login.js' %}
 </script>
 
-<div class="row">
-	<div class="offset4 span4">
-		<div class="well">
-		<form action="" method="post" name="login">
-			<fieldset>
-				<legend>Login</legend>
-		   	 	{{form.hidden_tag()}}
-		    	<label>
-		        Please enter your OpenID<br/><small>(or select one of the providers below)</small>
-		        </label>
-		        {{form.openid(size=100)}}
-		        {% for error in form.errors.openid %}
-		        <span class="text-error">[{{error}}]</span>
-		        {% endfor %}
-		    	<div class="help-block">
-		        |{% for pr in providers %}
-		        <a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');">{{pr.name}}</a> |
-		        {% endfor %}
-		    	</div>
-		    	<label class="checkbox">
-		    		{{form.remember_me}} Remember Me
-		    	</label>
-		    	<input class="btn btn-primary" type="submit" value="Sign In">
-		    </fieldset>
-		</form>
+
+<div id="get-started" class="clearfix">
+		<div class="span12 container">	
+			<div id="text-get-started" class="span5">
+				<div class="page-header span5">
+	  				<h1>Get started!<h1>
+					<h3>Link your Figshare.com dataset to a multitude of vocabularies. <strong>linki</strong>tup</span> already links to Wikipedia, DBPedia, DBLP, Crossref/DOIs, ORCID. <br />More to come!</h3>
+				</div>
+			</div>
+
+			<div id="get-started-box" class="span5">
+
+				<div class="login-box well span4" >
+					
+					<form action="" method="post" name="login">
+						<fieldset>
+							<legend>Login</legend>
+					   	 	{{form.hidden_tag()}}
+					    	<label>
+					        Please enter your OpenID<br/><small>(or select one of the providers below)</small>
+					        </label>
+					        {{form.openid(size=100)}}
+					        {% for error in form.errors.openid %}
+					        <span class="text-error">[{{error}}]</span>
+					        {% endfor %}
+					    	<div class="help-block">
+					        |{% for pr in providers %}
+					        <a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');">{{pr.name}}</a> |
+					        {% endfor %}
+					    	</div>
+					    	<label class="checkbox">
+					    		{{form.remember_me}} Remember Me
+					    	</label>
+					    	<input style="margin-top: 10px;" class="btn btn-primary" type="submit" value="Sign In">
+					   </fieldset>
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
 
-</div>
+	<div id="about-linkitup" class="clearfix">
+		<div class="container">
+			<div class="row">
+		        <div class="span4">
+		          <img src="static/img/carousel-1.png" style="max-width: 100%; max-height: 140px;">
+		          
+		          <p><strong>Linki</strong>tup taps into your favourite research data repository, and enriches your datasets with links to vocabularies, registries and the Linked Data cloud.</p>
+		        </div><!-- /.col-lg-4 -->
+		          <div class="span4">
+		         <img src="static/img/carousel-2.png" style="max-width: 100%; max-height: 140px;">
+		          
+		          <p>Publish the metadata of your dataset as Linked Data. <strong>Linki</strong>tup allows you to publish the metadata you generated as Figshare.com dataset as well as directly to the Linked Data Cloud.</p>
+		        </div><!-- /.col-lg-4 -->
+		          <div class="span4">
+		          <img src="static/img/carousel-3.png" style="max-width: 100%; max-height: 140px;">
+		          
+		          <p><strong>Linki</strong>tup is developed as part of the COMMIT/ project Data2Semantics, which is committed to bringing Linked Science to the masses.</p>
+		        </div><!-- /.col-lg-4 -->
+      		</div>
+		</div>
+	</div>
+
 
 {% endblock %}
