@@ -50,6 +50,16 @@ border-left: 1px solid #e1e1e1;
 }
 
 
+.loggedinas {
+ line-height: 50px;
+ font-size:16px!important;
+padding-bottom: 0px!important;
+margin-right: 20px!important; 
+text-align: right;
+
+}
+
+
 #footer {
   background-color: #f1f1f1;
   padding: 30px 0px;

@@ -31,10 +31,11 @@
 						{% block navbar %}
 
 							
-								{% block loggedin %}
-								{% include 'loggedin.html' %}
-								{% endblock %}
+								
 								<ul class="nav navbar-nav pull-right">
+									{% block loggedin %}
+									{% include 'loggedin.html' %}
+									{% endblock %}
 									{% block nav %}
 									{% endblock %}
 								</ul>
