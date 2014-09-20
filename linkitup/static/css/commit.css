@@ -56,10 +56,59 @@ border-left: 1px solid #e1e1e1;
 }
 
 
+#get-started {
+  background-image: url('../img/bg.png');
+  padding:60px 50px;
+
+}
+
+.page-header{
+padding-bottom: 9px;
+margin: 20px 0 30px;
+text-align: left;
+border-bottom: none;
+}
+
+.page-header h1 {
+  color: #f1f1f1;
+  font-weight: 600;
+  font-size: 36px;
+}
+
+.page-header h3 {
+  color: #aaa;
+line-height: 30px!important;
+font-size: 20px;
+font-weight: 300;
+
+}
+
+#get-started-box .text-box {
+  color: #444;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 30px;
+  text-align: center;
+}
+
+#get-started-box .well {
+  background-color: #eaeaea;
+  margin: 30px;
+}
+
+
+#text-get-started {
+  margin-left: 30px;
+}
 
 
 
+.login-button {
+  margin-top: 20px;
+}
 
+.btn {
+line-height: 2.5;
 
 
 
