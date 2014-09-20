@@ -5,16 +5,19 @@ body {
 	background-image: url('../img/bg.png');
 }
 
-.container {
-	background-color: white;
-	padding: 1em;
-	margin-top: 1em;
-	margin-bottom: 1em;
-	border: 1px solid #333;
-	box-shadow: 5px 5px 5px #222;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
+#header {
+	background-color: #f1f1f1;
 
+}
+
+#logo img {
+  float: left;
+  margin-top: 0px;
+  margin-left: 5px;
+  margin-right: 15px;
+  margin-bottom: 15px;
+  width: 165px;
+  
 }
 
 
