@@ -2,7 +2,7 @@
 
 body {
     font-family: "Open Sans";
-	background-image: url('../img/bg.png');
+	/*background-image: url('../img/bg.png');*/
 }
 
 #header {
@@ -12,10 +12,7 @@ body {
 
 #logo img {
   float: left;
-  margin-top: 0px;
-  margin-left: 5px;
-  margin-right: 15px;
-  margin-bottom: 15px;
+  margin-top: 6px;
   width: 165px;
   
 }
@@ -34,6 +31,48 @@ body {
 }
 
 
+
+.navbar {
+  margin-bottom: 0px!important
+}
+
+
+.navbar-nav li {
+  line-height: 45px;
+}
+
+
+.navbar .divider-vertical {
+height: 65px;
+margin: 0 9px;
+border-right: 1px solid #ffffff;
+border-left: 1px solid #e1e1e1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* OTHER STYLES */
 
 .nav > li > input.text-button {
   display: block;

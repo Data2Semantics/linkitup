@@ -14,35 +14,43 @@
 	{% block header %}
 	<div id="header">
 		<div class="container">
-			<div class="row">
-				<div class="span12">
-					<div id="logo">
-						<a href='/'><img src='static/img/linkitup-logo-150dpi.png' /></a>
-					</div>	
+			<div class="navbar-primary">
+				<nav class="navbar navbar-static-top" role="navigation">
+		  			<div class="container-fluid">
+		    
+		    			<div class="navbar-header">
+		      				<a class="navbar-brand" href="/">
+		      					<div id="logo">
+									<img src='static/img/linkitup-logo-150dpi.png' />
+								</div>	
+							</a>
+		   				 </div>
 
 
 
-					{% block navbar %}
-					<div class="navbar">
-						<div class="navbar-inner">
-							{% block loggedin %}
-							{% include 'loggedin.html' %}
-							{% endblock %}
-							<ul class="nav pull-right">
-								{% block nav %}
+						{% block navbar %}
+
+							
+								{% block loggedin %}
+								{% include 'loggedin.html' %}
 								{% endblock %}
-							</ul>
-						</div>
-					</div>
-					{% endblock %}
-
-
-
-
+								<ul class="nav navbar-nav pull-right">
+									{% block nav %}
+									{% endblock %}
+								</ul>
+						
 					
-				</div>
-			</div>
-		</div>
+						{% endblock %}
+
+
+
+
+							
+						
+					</div>
+				</nav>
+			</div>	
+		</div>	
 	</div>
 
 	{% endblock %}
