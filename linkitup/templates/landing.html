@@ -8,36 +8,46 @@
 
 {% block content %}
 	<div id="get-started" class="clearfix">
-	<div class="span12 container">	
-		<div id="text-get-started" class="span5">
-			<div class="page-header span5">
-  				<h1>Get started!<h1>
-				<h3>Link your Figshare.com dataset to a multitude of vocabularies. <strong>linki</strong>tup</span> already links to Wikipedia, DBPedia, DBLP, Crossref/DOIs, ORCID. <br />More to come!</h3>
+		<div class="span12 container">	
+			<div id="text-get-started" class="span5">
+				<div class="page-header span5">
+	  				<h1>Get started!<h1>
+					<h3>Link your Figshare.com dataset to a multitude of vocabularies. <strong>linki</strong>tup</span> already links to Wikipedia, DBPedia, DBLP, Crossref/DOIs, ORCID. <br />More to come!</h3>
+				</div>
 			</div>
-		</div>
 
-		<div id="get-started-box" class="span5">
+			<div id="get-started-box" class="span5">
 
-			<div class="text-box well span4" >
+				<div class="text-box well span4" >
+					
+					All you need is a <a style="color: #C74D5A;" href="http://figshare.com">Figshare</a> account and a dataset with a tag or a category assigned. <br /><span style='font-family: "Open Sans"; '><strong>linki</strong>tup</span> does the rest!
+					{% if g.user.is_authenticated() and (g.user.oauth_token == None or g.user.oauth_token == "") %}
+					<br /><br />
+					Or just continue to the <a href="/dashboard">Dashboard</a> to see what you can do with <strong>linki</strong>tup</span> and a small selection of public Figshare datasets.
+					{% endif %}
 				
-				All you need is a <a style="color: #C74D5A;" href="http://figshare.com">Figshare</a> account and a dataset with a tag or a category assigned. <br /><span style='font-family: "Open Sans"; '><strong>linki</strong>tup</span> does the rest!
-				{% if g.user.is_authenticated() and (g.user.oauth_token == None or g.user.oauth_token == "") %}
-				<br /><br />
-				Or just continue to the <a href="/dashboard">Dashboard</a> to see what you can do with <strong>linki</strong>tup</span> and a small selection of public Figshare datasets.
-				{% endif %}
-			
-				
-				<div class='login-button'>
-				{% if not g.user.is_authenticated() %}
-				<a class='btn btn-primary btn-warning' href="{{ url_for('login') }}"><strong>Login</strong> with OpenID</a><br/>
-				{% elif g.user.oauth_token == None or g.user.oauth_token == "" %}
-				<a class='btn btn-primary btn-warning' href="{{ url_for('figshare_authorize') }}"><strong>Authorize</strong> with Figshare</a><br/>
-				{% else %}
-				<a class='btn btn-primary' href='/dashboard'><strong>Linki</strong>tup Dashboard</a>
-				{% endif %}
+					
+					<div class='login-button'>
+					{% if not g.user.is_authenticated() %}
+					<a class='btn btn-primary btn-warning' href="{{ url_for('login') }}"><strong>Login</strong> with OpenID</a><br/>
+					{% elif g.user.oauth_token == None or g.user.oauth_token == "" %}
+					<a class='btn btn-primary btn-warning' href="{{ url_for('figshare_authorize') }}"><strong>Authorize</strong> with Figshare</a><br/>
+					{% else %}
+					<a class='btn btn-primary' href='/dashboard'><strong>Linki</strong>tup Dashboard</a>
+					{% endif %}
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	<div id="about-linkitup">
+		<div class="span12 container">
+			
+		</div>
 	</div>
+
+
+
+
 {% endblock %}
