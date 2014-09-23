@@ -1,18 +1,13 @@
 <!-- extend base layout -->
-{% extends "base.html" %}
+{% extends "landing.html" %}
 
 {% block nav %}
  	  {% set active = 'home' %}
  	  {% include 'menu.html' %}
 {% endblock %}
 
-{% block content %}
-<script type="text/javascript">
-	{% include 'login.js' %}
-</script>
-
-
-<div id="get-started" class="clearfix">
+	{% block jumbotron %}
+	<div id="get-started" class="clearfix">
 		<div class="span12 container">	
 			<div id="text-get-started" class="span5">
 				<div class="page-header span5">
@@ -21,6 +16,7 @@
 				</div>
 			</div>
 
+			{% block login_form %}
 			<div id="get-started-box" class="span5">
 
 				<div class="login-box well span4" >
@@ -49,8 +45,15 @@
 					</form>
 				</div>
 			</div>
+			{% endblock %}
 		</div>
 	</div>
+	{% endblock %}
+{% block content %}
+<script type="text/javascript">
+	{% include 'login.js' %}
+</script>
+
 
 	<div id="about-linkitup" class="clearfix">
 		<div class="container">

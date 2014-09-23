@@ -6,7 +6,7 @@
 {% endblock %}
 
 
-{% block content %}
+	{% block jumbotron %}
 	<div id="get-started" class="clearfix">
 		<div class="span12 container">	
 			<div id="text-get-started" class="span5">
@@ -15,7 +15,7 @@
 					<h3>Link your Figshare.com dataset to a multitude of vocabularies. <strong>linki</strong>tup</span> already links to Wikipedia, DBPedia, DBLP, Crossref/DOIs, ORCID. <br />More to come!</h3>
 				</div>
 			</div>
-
+			{% block login_form %}
 			<div id="get-started-box" class="span5">
 
 				<div class="text-box well span4" >
@@ -38,9 +38,11 @@
 					</div>
 				</div>
 			</div>
+			{% endblock %}
 		</div>
 	</div>
-
+	{% endblock %}
+{% block content %}
 	<div id="about-linkitup" class="clearfix">
 		<div class="container">
 			<div class="row">
@@ -62,8 +64,4 @@
       		</div>
 		</div>
 	</div>
-
-
-
-
 {% endblock %}
