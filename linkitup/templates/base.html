@@ -16,44 +16,32 @@
 		<div class="container">
 			<div class="navbar-primary">
 				<nav class="navbar navbar-static-top" role="navigation">
-		  			<div class="container-fluid">
-		    
-		    			<div class="navbar-header">
-		      				<a class="navbar-brand" href="/">
-		      					<div id="logo">
+					<div class="container-fluid">
+
+						<div class="navbar-header">
+							<a class="navbar-brand" href="/">
+								<div id="logo">
 									<img src='static/img/linkitup-logo-150dpi.png' />
 								</div>	
 							</a>
-		   				 </div>
-
-
+						</div>
 
 						{% block navbar %}
+						<ul class="nav navbar-nav pull-right">
+							{% block loggedin %}
+							{% include 'loggedin.html' %}
+							{% endblock %}
 
-							
-								
-								<ul class="nav navbar-nav pull-right">
-									{% block loggedin %}
-									{% include 'loggedin.html' %}
-									{% endblock %}
-									{% block nav %}
-									{% endblock %}
-								</ul>
-						
-					
+							{% block nav %}
+							{% endblock %}
+						</ul>
 						{% endblock %}
 
-
-
-
-							
-						
 					</div>
 				</nav>
 			</div>	
 		</div>	
 	</div>
-
 	{% endblock %}
 
 	<a href="https://github.com/Data2Semantics/linkitup"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
@@ -82,17 +70,12 @@
 
 	<div id="footer">
 		<div class="container">
-			
-				<img src="static/img/logo-no-text-150dpi.png" style="height: 80px; margin-top:-5px; float:left;"><div style='margin-top: 15px; float: left;'>The <span style="font-family: 'Open Sans';"><strong>linki</strong>tup</span> service was developed by the <a href="http://www.data2semantics.org">Data2Semantics</a> project.<br/><small>Copyright &copy; 2012, 2013 Rinke Hoekstra, VU University Amsterdam</small></div>
-			
+			<img src="static/img/logo-no-text-150dpi.png" style="height: 80px; margin-top:-5px; float:left;"><div style='margin-top: 15px; float: left;'>The <span style="font-family: 'Open Sans';"><strong>linki</strong>tup</span> service was developed by the <a href="http://www.data2semantics.org">Data2Semantics</a> project.<br/><small>Copyright &copy; 2012, 2013 Rinke Hoekstra, VU University Amsterdam</small></div>
 		</div>
 	</div> 
 
-
 	{% block scripts %}
-
 	{% endblock scripts %}
-
 
 	<script src="static/js/bootstrap.js"></script>
 	<script src="static/js/select2.js"></script>
@@ -100,19 +83,19 @@
 	<script src="static/js/jquery.iframe-transport.js"></script> 
 	<script src="static/js/jquery.fileupload.js"></script> 
 	<script src="static/js/jquery.storage.js">
-	</body>
+</body>
 
-	<script type="text/javascript">
+<script type="text/javascript">
 
-	var _gaq = _gaq || [];
-	_gaq.push(['_setAccount', 'UA-36060503-2']);
-	_gaq.push(['_trackPageview']);
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-36060503-2']);
+_gaq.push(['_trackPageview']);
 
-	(function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	})();
+(function() {
+	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
 
-	</script>
-	</html>
+</script>
+</html>
