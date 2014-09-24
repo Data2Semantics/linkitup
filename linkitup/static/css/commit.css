@@ -18,6 +18,11 @@ body {
 }
 
 
+#content {
+  margin: 30px auto;
+}
+
+
 .text-button {
    border: none;
    background-color: transparent;
@@ -114,7 +119,7 @@ font-weight: 300;
 
 
 #text-get-started {
-  margin-left: 30px;
+  margin-left: 50px;
 }
 
 
@@ -143,10 +148,17 @@ line-height: 2.5;
 
 
 #dashboard {
-  margin: 50px 0px;
+  margin: 50px 0px; 
 }
 
 
+.title-sections-info {
+  font-size: 16px;
+  text-transform: capitalize;
+  border-bottom: 1px solid #cbcbcb;
+  margin-bottom: 12px;
+  margin-top: 15px;
+}
 
 
 

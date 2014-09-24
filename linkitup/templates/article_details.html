@@ -5,29 +5,56 @@
                 <hr/>
         </div>
 </div>
-<div class="row">
+<div class="row" class="span9">
+        <div class="span5">
+
+                
+
+
+
+        </div>
+       
+        
+
+
         <div class="span4">
+
                 <div class="row">
-                        <div class="span1"><strong>status</strong></div>
+                        <div class="span4 title-sections-info"><strong>Description</strong></div>
+                        {% if article.description_nohtml %}
+                                <p class="span4">
+                               
+                                        {{ article.description_nohtml }}
+                                </p>
+                                
+                        {% endif %}
+                </div>
+                
+
+
+                <div class="row">
+                <div class="span4 title-sections-info"><strong>General info</strong></div>
+
+                        <div class="span1"><strong>Status</strong></div>
                         <div class="span3">
                                 {{ article.status }}
                         </div>
                 </div>
                 <div class="row">
-                        <div class="span1"><strong>date</strong></div>
+                        <div class="span1"><strong>Date</strong></div>
                         <div class="span3">
                                 {{ article.published_date }}
                         </div>
                 </div>
                 <div class="row">
-                        <div class="span1"><strong>type</strong></div>
+                        <div class="span1"><strong>Type</strong></div>
                         <div class="span3">
                                 {{ article.defined_type }}
                         </div>
                 </div>
                 {% if article.total_size %}
                 <div class="row">
-                        <div class="span1"><strong>size</strong></div>
+                        <div class="span1"><strong>Size</strong></div>
                         <div class="span3">
                                 {{ article.total_size }}
                         </div>
@@ -35,14 +62,14 @@
                 {% endif %}
                 {% if article.version %}
                         <div class="row">
-                                <div class="span1"><strong>version</strong></div>
+                                <div class="span1"><strong>Version</strong></div>
                                 <div class="span3">
                                         {{ article.version }}
                                 </div>
                         </div>
                 {% endif %}
                 <div class="row">
-                        <div class="span1"><strong>files</strong></div>
+                        <div class="span1"><strong>Files</strong></div>
                         <div class="span3">
                                 <ul class="unstyled">
                                 {% for f in article.files %}
@@ -51,24 +78,12 @@
                                 </ul>
                         </div>
                 </div>
-        </div>
-        <div class="span5">
-                {% if article.description_nohtml %}
-                <blockquote>
-                        <p>
-                                {{ article.description_nohtml }}
-                        </p>
-                </blockquote>
-        {% endif %}
-        </div>
+
         
-</div>
-<div class="row">
-        <div class="span4">
                 {% if article.authors %}
                 <div class="row">
-                        <div class="span1"><strong>authors</strong></div>
-                        <div class="span3">
+                        <div class="span4 title-sections-info"><strong>authors</strong></div>
+                        <div class="span4">
                                 <ul class="unstyled">
                                 {% for a in article.authors %}
                                         <li><i class='icon-user'></i> {{ a.full_name }}</li>
@@ -78,12 +93,13 @@
                 </div>
                 {% endif %}
 
-        </div>
-        <div class="span5">
+
+
+
                 {% if article.tags %}
                 <div class="row">
-                        <div class="span1"><strong>tags</strong></div>
-                        <div class="span3">
+                        <div class="span4 title-sections-info"><strong>tags</strong></div>
+                        <div class="span4">
                                 <ul class="unstyled">
                                 {% for t in article.tags %}
                                         <li><i class='icon-tag'></i> {{ t.name }}</li>
@@ -93,14 +109,12 @@
                 </div>
                 {% endif %}
 
-        </div>
-</div>
-<div class="row">
-        <div class="span4">					
+
+					
                 {% if article.categories %}
                 <div class="row">
-                        <div class="span1"><strong>categories</strong></div>
-                        <div class="span3">
+                        <div class="span4 title-sections-info"><strong>categories</strong></div>
+                        <div class="span4">
                                 <ul class="unstyled">
                                         {% for c in article.categories %}
                                         <li><i class='icon-th-list'></i> {{ c.name }}</li>
@@ -109,12 +123,12 @@
                         </div>
                 </div>
                 {% endif %}
-        </div>
-        <div class="span5">
+
+
                 {% if article.links %}
                 <div class="row">
-                        <div class="span1"><strong>links</strong></div>
-                        <div class="span3">
+                        <div class="span4 title-sections-info"><strong>links</strong></div>
+                        <div class="span4">
                                 <ul class="unstyled">
                                         {% for l in article.links %}
                                                 {% if l.link|length > 30 %}
