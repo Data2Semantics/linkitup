@@ -197,6 +197,15 @@ box-shadow: none;
   text-shadow: none;
 }
 
+.control-group {
+  padding: 20px;
+}
+
+
+#plugin-container {
+  padding: 10px;
+}
+
 .nav-pills.nav-stacked {
   margin-bottom: 0px;
 }
@@ -204,35 +213,34 @@ box-shadow: none;
 
 
 .nav-pills.nav-stacked > li > a {
-  background-color: #fff;
+
   color: #666;
   border-radius: 0px;
   padding: 12px;
   margin-bottom: 0px;
   margin-top: 0px;
-  border-top: 1px solid #efefef;
+  
 }
 
 
 
 
 .panel-default>.panel-heading {
-color: #333;
-background-color: #efefef;
+color: #555;
+font-weight: bold;
 
 }
 .panel-heading {
 padding: 10px 15px;
-border-bottom: 1px solid transparent;
+border-bottom: 1px solid #ededed;
 }
 
 
-.panel-default {
-border-color: #efefef;
-}
-.panel {
-margin-bottom: 20px;
-border: 1px solid #efefef;
+
+
+
+.sidebar {
+  background-color: #efefef;
 }
 
 
