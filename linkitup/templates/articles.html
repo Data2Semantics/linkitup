@@ -47,24 +47,17 @@
 {% endblock %}
 
 {% block plugins %}
-	<div class="plugins">
-		<div class="well" style="padding: 8px 0;">
-			<ul class="nav nav-list">
-				<li class="plugin nav-header" id="plugins_header">Plugins</li>
-				<!-- this is where we'll output the list of plugins that can be ran against the currently selected article -->
-				<li class="plugin nav-header" id="actions_header">Actions</li>
-				<li class="plugin"><a id="preview_selection">Preview Selection</a></li>
-				<li class="plugin"><a id="preview_nanopublication">Preview Nanopublication</a></li>
-				<li class="plugin"><a id="preview_provenance">Preview Provenance (beta)</a></li>
-				<li class="plugin"><a id="publish_to_figshare">Publish to Figshare</a></li>
-			</ul>
-		</div>
-		<div class="pull-right">
-			<a id="refresh" style="cursor: pointer;" title="refresh article details"><i class="icon-refresh"></i></a>
-			<a id="uncheck_all" style="cursor: pointer;"  title="uncheck all selected links"><i class="icon-remove"></i></a>
-			<a href="{{ url_for('clear_session_data') }}" title="clear session data"><i class="icon-fire"></i></a>
-		</div>
-	</div>
+<div class="panel panel-default plugins">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Plugins</div>
+
+
+  <!-- List group -->
+  <ul class="list-group nav nav-pills nav-stacked" id="plugins-list">
+
+  </ul>
+</div>
+
 {% endblock %}
 
 

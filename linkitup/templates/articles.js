@@ -66,11 +66,11 @@ function initialize_plugins(){
 */
 function render_plugins(plugins){
 	$.each(plugins, function(index, value){
-		var plugin_link = $('<a id="'+ value.slug +'">'+value.name+'</a>');
+		var plugin_link = $('<a id="'+ value.slug +'"><span class="badge pull-right">42</span>'+value.name+'</a>');
 		var li = $('<li></li>');
-		li.addClass('plugin');
+		li.addClass('plugin list-group-item');
 		li.append(plugin_link);
-		$('#plugins_header').after(li);
+		$('#plugins-list').append(li);
 		
 		plugin_link.on('click',function(e){
 			run_plugin(value.slug, value.name, value.type);
