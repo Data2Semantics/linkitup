@@ -12,6 +12,10 @@ body {
 
 }
 
+li {
+  margin: 5px 0px;
+}
+
 #logo img {
   float: left;
   margin-top: 6px;
@@ -226,7 +230,7 @@ box-shadow: none;
 
   color: #666;
   border-radius: 0px;
-  padding: 12px;
+  padding: 9px;
   margin-bottom: 0px;
   margin-top: 0px;
   
@@ -257,6 +261,23 @@ border-bottom: 1px solid #ededed;
 }
 
 
+
+
+.well-modal {
+min-height: 20px;
+padding: 20px;
+margin-bottom: 20px;
+background-color: #f5f5f5;
+}
+
+
+.well-modal-selected {
+min-height: 20px;
+padding: 20px;
+margin-bottom: 20px;
+background-color: #dff0d8;
+color: #3c763d;;
+}
 
 /* OTHER STYLES */
 /*.nav > li > input.text-button {

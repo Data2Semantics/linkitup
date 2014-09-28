@@ -446,21 +446,21 @@ function render_urls(body, urls) {
 	$.each(urls, function(uindex, url) {
 		var label = $('<label></label>');
 		label.addClass('checkbox');
-		label.addClass('alert');
+		label.addClass('well-modal');
 		
 		var input = $('<input type="checkbox"></input>');
 		label.append(input);
 		
 		if (url.uri in selected) {
-			label.addClass('alert-success');
+			label.addClass('well-modal-selected');
 			input.attr('checked',true);
 		} else {
-			label.addClass('alert-warning');
+			label.addClass('well-modal');
 		}
 		
 		input.on('click', function(){
-			label.toggleClass('alert-warning');
-			label.toggleClass('alert-success');
+			label.toggleClass('well-modal');
+			label.toggleClass('well-modal-selected');
 			
 			if (input.is(':checked')) {
 
