@@ -58,6 +58,25 @@
   </ul>
 </div>
 
+
+
+
+
+<div role="presentation" class="divider"></div>
+<div class="panel panel-default plugins">
+<div class="panel-heading">Actions</div>
+			<ul class="list-group nav nav-pills nav-stacked" id="plugins-list">
+				<li class="plugin"><a id="preview_selection">Preview Selection</a></li>
+				<li class="plugin"><a id="preview_nanopublication">Preview Nanopublication</a></li>
+				<li class="plugin"><a id="preview_provenance">Preview Provenance (beta)</a></li>
+				<li class="plugin"><a id="publish_to_figshare">Publish to Figshare</a></li>
+			</ul>
+		</div>
+		<div class="pull-right">
+			<a id="refresh" style="cursor: pointer;" title="refresh article details"><i class="icon-refresh"></i></a>
+			<a id="uncheck_all" style="cursor: pointer;"  title="uncheck all selected links"><i class="icon-remove"></i></a>
+			<a href="{{ url_for('clear_session_data') }}" title="clear session data"><i class="icon-fire"></i></a>
+		</div>
 {% endblock %}
 
 

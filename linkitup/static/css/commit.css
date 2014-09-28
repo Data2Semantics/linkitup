@@ -3,6 +3,8 @@
 body {
     font-family: "Open Sans";
 	/*background-image: url('../img/bg.png');*/
+  color: #555;
+
 }
 
 #header {
@@ -35,6 +37,14 @@ body {
    outline-color: rgb(0, 85, 128);
 }
 
+
+.divider {
+height: 1px;
+margin: 15px 0;
+overflow: hidden;
+background-color: #ddd;
+
+}
 
 
 .navbar {
@@ -222,8 +232,11 @@ box-shadow: none;
   
 }
 
+.nav-pills.nav-stacked > li > a:hover {
+  background-color: #ccc;
+  color: #fafafa;
 
-
+}
 
 .panel-default>.panel-heading {
 color: #555;
@@ -231,7 +244,7 @@ font-weight: bold;
 
 }
 .panel-heading {
-padding: 10px 15px;
+padding: 10px 11px;
 border-bottom: 1px solid #ededed;
 }
 
