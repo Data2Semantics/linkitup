@@ -49,6 +49,8 @@ $(document).ready(function() {
 	initialize_plugins();
 	
 	initialize_articles();
+
+	render_selected_count();
 	
 });
 
@@ -66,7 +68,8 @@ function initialize_plugins(){
 */
 function render_plugins(plugins){
 	$.each(plugins, function(index, value){
-		var plugin_link = $('<a id="'+ value.slug +'"><span class="badge pull-right">42</span>'+value.name+'</a>');
+		var plugin_link = $('<a id="'+ value.slug +'">'+value.name+'</a>');
+		// var plugin_link = $('<a id="'+ value.slug +'"><span class="badge pull-right">42</span>'+value.name+'</a>');
 		var li = $('<li></li>');
 		li.addClass('plugin list-group-item');
 		li.append(plugin_link);
@@ -503,8 +506,13 @@ function render_urls(body, urls) {
 	});
 }
 
-
-
+/*
+// Update the number of selected urls next to "Preview selection"
+*/
+function render_selected_count(){
+	selected_count = Object.keys(get_selected()).length;
+	$("#selected_count").text(selected_count);
+}
 
 /* 
 // *****************
@@ -552,7 +560,9 @@ function add_selected(key, value){
 	var prov = {activity: activity, inputs: inputs, outputs: outputs}
 	
 	add_provenance(prov);
-	
+
+	render_selected_count();
+
 }
 
 /*
@@ -580,6 +590,9 @@ function remove_selected(key){
 	var prov = {activity: activity, inputs: inputs, outputs: outputs}
 	
 	add_provenance(prov);
+
+	render_selected_count();
+
 }
 
 /*
