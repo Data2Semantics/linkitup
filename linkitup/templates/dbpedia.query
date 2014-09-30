@@ -1,0 +1,27 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dbpprop: <http://dbpedia.org/property/> 
+PREFIX dbo: <http://dbpedia.org/ontology/>
+
+SELECT DISTINCT ?match ?original_id ?original_label ?match_label WHERE {
+	{% for item in items %}
+	{% if not loop.first %} UNION {% endif %} {
+		SELECT DISTINCT ?match ('{{ item.id }}' AS ?original_id) ('{{ item.label }}' AS ?original_label) WHERE {
+			?initialMatch rdfs:label ?label .
+			?label bif:contains '"{{ item.label }}"' .
+			FILTER (regex(str(?label), '^{{ item.label }}$', 'i')).
+			BIND (str(?initialMatch) AS ?uri_string) .
+			FILTER ( regex(?uri_string, '^http://dbpedia.org/resource') && !regex(?uri_string, '^http://dbpedia.org/resource/Category') && !regex(?uri_string, '^http://dbpedia.org/resource/List')) .
+			OPTIONAL {
+				?initialMatch (dbo:wikiPageRedirects | dbo:wikiPageDisambiguates) ?replacementMatch
+			} .
+			BIND (COALESCE (?replacementMatch, ?initialMatch) as ?match)
+		}
+	} {% endfor %}
+	MINUS {
+		?match (dbo:wikiPageRedirects | dbo:wikiPageDisambiguates) []
+	} .
+	?match rdfs:label ?match_label .
+	FILTER ( lang(?match_label) = "en" )
+}
+
+LIMIT 100
