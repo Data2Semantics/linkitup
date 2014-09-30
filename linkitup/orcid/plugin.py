@@ -45,7 +45,7 @@ def link_to_orcid(*args,**kwargs):
         a_id = a['id']
         full_name = a['label']
 
-        request_uri = credit_search_url + urllib.quote_plus(full_name) + "&rows=3"
+        request_uri = credit_search_url + urllib.quote_plus(full_name.encode('utf8', 'ignore')) + "&rows=3"
         
         headers = {'Accept': 'application/orcid+json'}
         
