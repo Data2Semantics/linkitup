@@ -1,7 +1,7 @@
 '''
-Created on 6 Nov 2013
+Created on 1 Oct 2014
 
-@author: cmarat
+@author: RinkeHoekstra
 '''
 
 from flask import request
@@ -21,7 +21,7 @@ from linkitup.util.preflabel import label
 @plugin(fields=[('tags', 'id', 'name'), ('categories', 'id', 'name')],
         link='link')
 @provenance()
-def link_to_spotlight(*args, **kwargs):
+def link_to_s4(*args, **kwargs):
 
     article_id = kwargs['article']['id']
 
