@@ -280,6 +280,18 @@ background-color: #dff0d8;
 color: #3c763d;
 }
 
+
+/* RIBBON STYLES *?
+
+ /* The default background color is #c00 */
+        .right-bottom .github-fork-ribbon {
+            background-color: #6d6d6d;
+        }
+
+
+
+
+
 /* OTHER STYLES */
 /*.nav > li > input.text-button {
   display: block;
