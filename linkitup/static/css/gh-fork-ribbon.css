@@ -129,8 +129,8 @@
 }
 
 .github-fork-ribbon-wrapper.right-bottom .github-fork-ribbon {
-  top: 80px!important;
-  right: -43px;
+  top: 76px!important;
+right: -41px!important;
 
   -webkit-transform: rotate(-45deg);
   -moz-transform: rotate(-45deg);
