@@ -6,6 +6,8 @@
 	<link rel="stylesheet" href="static/css/select2.css" />
 	<link rel="stylesheet" href="static/css/select2-bootstrap.css" />
 	<link rel="stylesheet" href="static/css/commit.css" />
+	<link rel="stylesheet" href="static/css/gh-fork-ribbon.css" />
+	<link rel="stylesheet" href="static/css/gh-fork-ribbon.ie.css" />
 	<title>{% block title %}LinkItUp!{% endblock %}</title>
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
 </head>
@@ -42,8 +44,7 @@
 	</div>
 	{% endblock %}
 
-	<a href="https://github.com/Data2Semantics/linkitup"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
-
+	
 
 {% block jumbotron %}
 
@@ -55,6 +56,13 @@
 		{% endblock %}
 	</div> 
 
+<!-- BOTTOM RIGHT RIBBON: START COPYING HERE -->
+    <div class="github-fork-ribbon-wrapper right-bottom">
+        <div class="github-fork-ribbon">
+            <a href="https://github.com/Data2Semantics/linkitup">Fork me on GitHub</a>
+        </div>
+    </div>
+    <!-- BOTTOM RIGHT RIBBON: END COPYING HERE -->
 
 	<div id="footer">
 		<div class="container">
