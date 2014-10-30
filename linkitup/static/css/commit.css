@@ -281,6 +281,13 @@ color: #3c763d;
 }
 
 
+
+.radio input[type="radio"], .checkbox input[type="checkbox"] {
+  margin-left: 0px!important;
+  margin-right: 10px!important;
+}
+
+
 /* RIBBON STYLES *?
 
  /* The default background color is #c00 */
