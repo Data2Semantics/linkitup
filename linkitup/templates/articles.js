@@ -204,17 +204,17 @@ function run_plugin(plugin, name, type){
 	
 	if (ready) {
 		var article_id = $.localStorage('current');
+		console.log("Running plugin " + name + " on article " + article_id + ".")
 		
 		/// Check whether the results are already in!
 		
 		var results = get_results(plugin);
+		$('#plugin_modal_name').html(name);
 		if (results != null && type == 'json') {
 			render_urls($('#plugin_modal_body'), results);
 			$('#plugin_modal').modal('show');
 		} else {
 			var loading = get_progress_bar("Retrieving links from " + name);
-		
-			$('#plugin_modal_name').html(name);
 			$('#plugin_modal_body').html(loading);
 			$('#plugin_modal').modal('show');
 		
@@ -626,7 +626,7 @@ function add_provenance(prov){
 	var provenance = $.localStorage('provenance');
 	
 	provenance.push(prov);
-	console.log(provenance);
+	// console.log(provenance);
 	$.localStorage('provenance', provenance);
 }
 
