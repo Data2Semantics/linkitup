@@ -216,10 +216,10 @@ class SPARQLPlugin(object):
                 web_uri = match_uri
             
             # If the web URI is too long, we shorten it, otherwise the display URI is the same as the web URI
-            if len(web_uri) > 61 :
-                display_uri = web_uri[:29] + "..." + web_uri[-29:]
+            if len(match_uri) > 61 :
+                display_uri = match_uri[:29] + "..." + match_uri[-29:]
             else :
-                display_uri = web_uri
+                display_uri = match_uri
             
             # Rewrite the original label or uri to something we can use as a basis for generating HTML identifiers
             if self.id_base == 'label' :

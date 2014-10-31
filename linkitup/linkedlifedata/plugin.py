@@ -46,11 +46,9 @@ def link_to_lld(*args, **kwargs):
             
             match_uri = h['uri']['namespace'] + h['uri']['localName']
             web_uri = match_uri
-            display_uri = h['label']
-                
+            # display_uri = web_uri
             id_base = h['uri']['localName']
             
-                
             if 'types' in h:
                 if len(h['types']) > 0 :
                     types = ", ".join(h['types'])
@@ -61,16 +59,8 @@ def link_to_lld(*args, **kwargs):
             else :
                 types = None
                 
-            if 'definition' in h :
-                if h['definition'] != None :
-                    if h['definition'].strip() != "" :
-                        description = h['definition']
-                    else :
-                        description = None
-                else :
-                    description = None
-            else :
-                description = None
+            # description = h.get('definition', '').strip() or None
+            description = h['label']
                 
             score = "Score: {}".format(h['score'])
 
@@ -79,7 +69,7 @@ def link_to_lld(*args, **kwargs):
             match = {'type':    "mapping",
                      'uri':     match_uri,
                      'web':     web_uri,
-                     'show':    display_uri,
+                     'show':    match_uri,
                      'short':   id_base,
                      'description': description, 
                      'extra':   types,

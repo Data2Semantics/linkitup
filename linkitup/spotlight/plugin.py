@@ -55,17 +55,18 @@ def link_to_spotlight(*args, **kwargs):
             continue
         score = 'score: {:.2g}'.format(similarity_score)
 
-        types = " ,".join(resource['@types'].split(','))
-        if types == '':
-            types = None
+        # types = ", ".join(resource['@types'].lower().split(','))
+        # if types == '':
+        #     types = None
 
         wikipedia_link = wikipedia_url(dbpedia_uri)
         concept_label = label(dbpedia_uri, fallback=True)
         match = {'type': 'link',
                  'uri': dbpedia_uri,
+                 'description': concept_label,
                  'web': wikipedia_link,
-                 'show': concept_label,
-                 'extra': types,
+                 'show': dbpedia_uri,
+                 'extra': None,
                  'subscript': score,
                  'original': article_id}
         matches[dbpedia_uri] = match

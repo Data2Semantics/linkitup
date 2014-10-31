@@ -451,41 +451,39 @@ function render_urls(body, urls) {
 		label.addClass('checkbox');
 		label.addClass('well-modal');
 		
+		if (url.description != null) {
+			var description_div = $('<div style="margin-top: 0em; margin-bottom: 0.4em;"></div>');
+			var description = $('<span style="font-size: 14px;">' + url.description + '</span>');
+			if (url.web != url.uri) {
+				description = $('<a href="' + url.web + '">' + '</a>').append(description)
+			}
+			description_div.append(description);
+			label.append(description_div);
+		}
+
 		var input = $('<input type="checkbox"></input>');
 		label.append(input);
-		
 		if (url.uri in selected) {
 			label.addClass('well-modal-selected');
 			input.attr('checked',true);
 		} else {
 			label.addClass('well-modal');
 		}
-		
 		input.on('click', function(){
 			label.toggleClass('well-modal');
 			label.toggleClass('well-modal-selected');
-			
 			if (input.is(':checked')) {
-
 				add_selected(url.uri, url);
-
 			} else {
-
 				remove_selected(url.uri);
-
 			}
-			
 		});
 		
-		
-		var uri = $('<a href="' + url.uri + '"><i class="icon-globe"></i></a>');
+		var uri = $('<a href="' + url.uri + '">' + url.show + '</a>');
 		label.append(uri);
 		
-		var web = $('<a href="' + url.web + '">' + url.show + '</a>');
-		label.append(web);
-		
 		if (url.extra != null){ 
-			var extra = $('<span/>').text(' ('+ url.extra + ')');
+			var extra = $('<div/>').text(' ('+ url.extra + ')');
 			label.append(extra);
 		}
 		
@@ -496,13 +494,6 @@ function render_urls(body, urls) {
 		
 		body.append(label);
 		
-		if (url.description != null) {
-			var description_div = $('<div style="margin-top: -1em; margin-bottom: 1em;"></div>');
-			var description = $('<small>' + url.description + '</small>');
-			description_div.append(description);
-			
-			body.append(description_div);
-		}
 	});
 }
 

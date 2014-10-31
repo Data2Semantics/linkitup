@@ -86,11 +86,12 @@ def link_to_orcid(*args,**kwargs):
                         'type': 'mapping',
                         'uri': orcid_uri,
                         'web': orcid_uri,
-                        'show': name,
+                        'show': orcid_path,
+                        'description': name,
                         'short': short,
                         'original': a_id,
                         'original_label': full_name,
-                        'extra': orcid_path,
+                        # 'extra': orcid_path,
                         'subscript': score,
                         'score': score_double}
                 except Exception as e :

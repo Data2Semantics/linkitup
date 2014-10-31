@@ -72,7 +72,8 @@ def link_to_s4(*args, **kwargs):
                 'type': 'link',
                 'uri': s4_uri,
                 'web': s4_uri,
-                'show': s4_name,
+                'show': s4_uri,
+                'description': s4_name,
                 'extra': s4_types,
                 'original': article_id
             }
