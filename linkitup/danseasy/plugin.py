@@ -64,15 +64,14 @@ def link_to_dans_easy(*args, **kwargs):
         urn = hit['urn']
         score = "Score: {}%".format(hit['score'])
         original_qname = "figshare_{}".format(article_id)
-        
+
         # Create the match dictionary
         match = {'type':    "link",
                  'uri':     match_uri,
                  'web':     web_uri,
-                 'show':    display_uri,
+                 'show':    urn,
                  'short':   id_base,
-                 'description': description, 
-                 'extra':   urn,
+                 'description': display_uri, 
                  'subscript': score,
                  'original':original_qname}
         

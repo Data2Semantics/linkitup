@@ -59,8 +59,8 @@ linkitup.spotlight.plugin:
   slug: spotlight
   logo: static/img/spotlight.png
   type: json
-# linkitup.s4.plugin:
-#   name: Ontotext S4
-#   slug: s4
-#   logo: static/img/s4.png
-#   type: json
+linkitup.s4.plugin:
+  name: Ontotext S4
+  slug: s4
+  logo: static/img/s4.png
+  type: json

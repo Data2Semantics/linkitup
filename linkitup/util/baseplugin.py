@@ -105,7 +105,7 @@ class SPARQLPlugin(object):
                                 items=items, 
                                 property=property)
         
-        app.logger.debug("Query set to:\n {}".format(query))
+        app.logger.debug("Query set to:\n{}".format(query))
         
         
         
@@ -210,7 +210,7 @@ class SPARQLPlugin(object):
             # If we have a rewrite function, apply it to the match uri to obtain a web uri
             # We use this e.g. for converting DBPedia URIs into less scary Wikipedia URIs
             if self.rewrite_function :
-                app.logger.debug("Rewrite function defined...")
+                # app.logger.debug("Rewrite function defined...")
                 web_uri = self.rewrite_function(match_uri)
             else :
                 web_uri = match_uri

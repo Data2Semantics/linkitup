@@ -45,7 +45,7 @@ def link_to_orcid(*args,**kwargs):
         a_id = a['id']
         full_name = a['label']
 
-        request_uri = credit_search_url + urllib.quote_plus(full_name) + "&rows=3"
+        request_uri = credit_search_url + urllib.quote_plus(full_name.encode('utf8', 'ignore')) + "&rows=3"
         
         headers = {'Accept': 'application/orcid+json'}
         
@@ -82,7 +82,17 @@ def link_to_orcid(*args,**kwargs):
                     
                     short = re.sub(' |/|\|\.|-','_',orcid_path)
                 
-                    urls[orcid_uri] = {'type':'mapping', 'uri': orcid_uri, 'web': orcid_uri, 'show': name, 'short': short, 'original': a_id, 'extra': orcid_path, 'subscript': score}
+                    urls[orcid_uri] = {
+                        'type': 'mapping',
+                        'uri': orcid_uri,
+                        'web': orcid_uri,
+                        'show': name,
+                        'short': short,
+                        'original': a_id,
+                        'original_label': full_name,
+                        'extra': orcid_path,
+                        'subscript': score,
+                        'score': score_double}
                 except Exception as e :
                     app.logger.debug("Exception in accessing ORCID entry: {}\n{}".format(e.message, pprint(sr)))
                     app.logger.debug(traceback.format_exc())

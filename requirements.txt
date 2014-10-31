@@ -12,5 +12,6 @@ beautifulsoup4
 pdfminer>=20131113
 requests
 requests_oauthlib
+requests-futures
 pyyaml
 nltk

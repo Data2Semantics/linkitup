@@ -1,0 +1,18 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dbpprop: <http://dbpedia.org/property/> 
+PREFIX dbo: <http://dbpedia.org/ontology/>
+
+# Not tested!
+SELECT DISTINCT ?match ?original_id ?original_label WHERE {
+	{% for item in items %}
+	{% if not loop.first %} UNION {% endif %} {
+		SELECT DISTINCT ?match ('{{ item.id }}' AS ?original_id) ('{{ item.label }}' AS ?original_label) WHERE {
+			{% for item in items %}
+			{% if not loop.first %} UNION {% endif %} 
+				{
+					?match dbpprop:inchikey "{{ item.label }}"
+				}
+			} {% endfor %}
+		}
+	} {% endfor %}
+}
