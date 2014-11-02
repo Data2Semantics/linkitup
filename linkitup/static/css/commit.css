@@ -326,6 +326,12 @@ color: #3c763d;
 }
 
 
+#categories, #links, #tags {
+  text-align: center;
+  margin-top: 15px;
+}
+
+
 /* RIBBON STYLES *?
 
  /* The default background color is #c00 */
