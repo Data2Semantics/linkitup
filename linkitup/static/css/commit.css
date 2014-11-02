@@ -288,6 +288,44 @@ color: #3c763d;
 }
 
 
+
+.list_authors {
+  text-align: center;
+}
+
+.list_authors li{
+  display: inline-block;
+  margin: 2px 10px;
+}
+
+
+.list_tags li, .list_categories li, .list_links li {
+  display: inline-block;
+  margin: 2px 10px 2px 0px;
+}
+
+#title p{
+  text-align: center;
+}
+
+#text-description p {
+  text-align: justify;
+  margin: 15px auto;
+}
+
+#basic_info {
+  margin-left: 0px!important;
+}
+
+#basic_info .row {
+  margin-bottom: 12px;
+}
+
+#list_files {
+  margin-top: -3px;
+}
+
+
 /* RIBBON STYLES *?
 
  /* The default background color is #c00 */
