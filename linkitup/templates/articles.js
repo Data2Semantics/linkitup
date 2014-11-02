@@ -488,7 +488,7 @@ function render_urls(body, urls) {
 		}
 		
 		if (url.subscript != null) {
-			var subscript = $('<div><small>' + url.subscript + '</small></div>');
+			var subscript = $('<div style="margin-left:22px;"><small>' + url.subscript + '</small></div>');
 			label.append(subscript);
 		}
 		
