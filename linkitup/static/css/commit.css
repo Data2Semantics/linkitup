@@ -25,7 +25,7 @@ li {
 
 
 #content {
-  margin: 30px auto;
+  margin: 30px auto!important;
 }
 
 
@@ -163,7 +163,7 @@ line-height: 2.5;
 
 
 #dashboard {
-  margin: 50px 0px; 
+  margin: 50px 0px!important; 
 }
 
 
